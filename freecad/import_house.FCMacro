@@ -1,0 +1,399 @@
+# -*- coding: utf-8 -*-
+"""import_house.FCMacro — импорт дома из FreeCAD Checker в FreeCAD.
+
+Как запустить (FreeCAD 0.20 и новее):
+  1. В веб-приложении нажмите «Экспорт в FreeCAD» — скачается файл *.freecad.json.
+  2. FreeCAD → Макрос → Макросы… → укажите папку с этим файлом → import_house → Выполнить.
+     (или Макрос → Макросы… → «Пользовательские макросы» и скопируйте сюда этот файл)
+  3. Выберите *.freecad.json. После импорта макрос предложит сохранить модель в .FCStd;
+     можно отказаться и сохранить позже через Файл → Сохранить как…
+
+Запуск без интерфейса (консольный FreeCAD):
+  FREECAD_CHECKER_JSON=house.freecad.json FREECAD_CHECKER_OUT=house.FCStd FreeCADCmd import_house.FCMacro
+
+Что создаётся: параметрические объекты верстака Part —
+  Part::Box   — фундаменты, стены, полы, плоские крыши, блоки окон и дверные полотна;
+  Part::Wedge — двускатная крыша (треугольная призма);
+  Part::Cut   — проёмы окон и дверей, вырезанные из стен.
+Размеры можно менять в панели свойств (Length/Width/Height, Placement) — модель пересчитается.
+Это редактируемая CAD-геометрия, а НЕ BIM/IFC-модель: у объектов нет семантики Arch/BIM,
+есть только свойства группы «FreeCADChecker» (CheckerId, CheckerType, материал, категория).
+"""
+
+import json
+import os
+
+import FreeCAD as App
+import Part  # noqa: F401 — загружает типы Part::Box/Part::Wedge/Part::Cut
+
+EXPORT_FORMAT = "freecad-checker-export"
+SUPPORTED_VERSION = 1
+GROUP_LABELS = {"foundation": "Фундамент", "wall": "Стены", "floor": "Полы", "roof": "Крыши",
+                "window": "Окна", "door": "Двери"}
+GLASS_COLOR = "#7fb6e0"
+
+
+# ---------------------------------------------------------------- служебные функции
+
+def log(msg):
+    App.Console.PrintMessage(msg + "\n")
+
+
+def warn(msg):
+    App.Console.PrintWarning(msg + "\n")
+
+
+def vec(p):
+    return App.Vector(float(p["x"]), float(p["y"]), float(p["z"]))
+
+
+def placement(p, local_rotation=None):
+    """Placement из JSON: точка начала + поворот вокруг Z (градусы)."""
+    rot = App.Rotation(App.Vector(0, 0, 1), float(p.get("rotationZ", 0.0)))
+    if local_rotation is not None:
+        rot = rot.multiply(local_rotation)
+    return App.Placement(vec(p), rot)
+
+
+def safe_name(text):
+    """Внутреннее имя объекта FreeCAD: только латиница, цифры и '_'."""
+    name = "".join(c if (c.isascii() and c.isalnum()) else "_" for c in str(text))
+    if not name or name[0].isdigit():
+        name = "E_" + name
+    return name
+
+
+def tag(obj, el, role):
+    """Сохраняет данные исходной модели в свойствах объекта."""
+    values = [
+        ("CheckerId", el["id"]),
+        ("CheckerType", el["type"]),
+        ("CheckerRole", role),
+        ("CheckerMaterial", el.get("materialLabel") or el.get("material", "")),
+        ("CheckerCategory", el.get("category", "")),
+    ]
+    for prop, value in values:
+        if prop not in obj.PropertiesList:
+            obj.addProperty("App::PropertyString", prop, "FreeCADChecker", "Данные из FreeCAD Checker")
+        setattr(obj, prop, str(value))
+
+
+def style(obj, color_hex, transparency=0):
+    if not App.GuiUp or getattr(obj, "ViewObject", None) is None:
+        return
+    try:
+        h = color_hex.lstrip("#")
+        obj.ViewObject.ShapeColor = tuple(int(h[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+        obj.ViewObject.Transparency = int(transparency)
+    except Exception as exc:  # цвет — не критично
+        warn("Не удалось задать цвет {}: {}".format(obj.Name, exc))
+
+
+def hide(obj):
+    if App.GuiUp and getattr(obj, "ViewObject", None) is not None:
+        obj.ViewObject.Visibility = False
+
+
+def make_box(doc, name, label, length, width, height, place):
+    obj = doc.addObject("Part::Box", name)
+    obj.Label = label
+    obj.Length = float(length)
+    obj.Width = float(width)
+    obj.Height = float(height)
+    obj.Placement = place
+    return obj
+
+
+# ---------------------------------------------------------------- проверка файла
+
+def load_export(path):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, dict):
+        raise ValueError("Файл должен содержать JSON-объект")
+    if data.get("format") == "freecad-checker-project":
+        raise ValueError("Это файл проекта. Для FreeCAD нужен файл экспорта: кнопка «Экспорт в FreeCAD» в веб-приложении")
+    if data.get("format") != EXPORT_FORMAT:
+        raise ValueError("Неизвестный формат файла (ожидался {})".format(EXPORT_FORMAT))
+    if data.get("version", 0) > SUPPORTED_VERSION:
+        raise ValueError("Версия файла {} новее поддерживаемой ({})".format(data.get("version"), SUPPORTED_VERSION))
+    if data.get("units") != "mm":
+        raise ValueError("Ожидались размеры в миллиметрах (units = mm)")
+    if not isinstance(data.get("elements"), list):
+        raise ValueError("В файле нет списка elements")
+    return data
+
+
+# ---------------------------------------------------------------- создание объектов
+
+def make_opening(doc, el):
+    """Возвращает (вырез для стены, видимое заполнение проёма)."""
+    base = safe_name(el["id"])
+    v = el["void"]
+    void = make_box(doc, base + "_void", "Вырез " + el["id"],
+                    v["size"]["length"], v["size"]["width"], v["size"]["height"], placement(v["placement"]))
+    tag(void, el, "opening-void")
+    hide(void)
+
+    p = el["panel"]
+    label = el.get("name") or el["id"]
+    panel = make_box(doc, base, label,
+                     p["size"]["length"], p["size"]["width"], p["size"]["height"], placement(p["placement"]))
+    tag(panel, el, el["type"])
+    if el["type"] == "window":
+        style(panel, GLASS_COLOR, 55)
+    else:
+        style(panel, el.get("color", "#7a4a24"))
+    return void, panel
+
+
+def make_wall(doc, el, voids):
+    """Стена = Part::Box, из которого последовательно вырезаются проёмы (цепочка Part::Cut)."""
+    base_name = safe_name(el["id"])
+    s = el["size"]
+    label = el.get("name") or el["id"]
+    box = make_box(doc, base_name + "_body" if voids else base_name, label,
+                   s["length"], s["thickness"], s["height"], placement(el["placement"]))
+    tag(box, el, "wall-body" if voids else "wall")
+    style(box, el.get("color", "#b4643c"))
+    result = box
+    for i, (opening_id, void) in enumerate(voids, start=1):
+        cut = doc.addObject("Part::Cut", base_name if i == len(voids) else "{}_cut{}".format(base_name, i))
+        cut.Base = result
+        cut.Tool = void
+        cut.Label = label if i == len(voids) else "{} − {}".format(label, opening_id)
+        hide(result)
+        hide(void)
+        style(cut, el.get("color", "#b4643c"))
+        result = cut
+    if result is not box:
+        box.Label = label + " (тело стены)"
+        tag(result, el, "wall")
+    return result
+
+
+def make_floor(doc, el):
+    """Пол или фундамент — брус length × width × thickness."""
+    s = el["size"]
+    obj = make_box(doc, safe_name(el["id"]), el.get("name") or el["id"],
+                   s["length"], s["width"], s["thickness"], placement(el["placement"]))
+    tag(obj, el, el["type"])
+    style(obj, el.get("color", "#9ea3a8"))
+    return obj
+
+
+def make_roof(doc, el):
+    s = el["size"]
+    name = safe_name(el["id"])
+    label = el.get("name") or el["id"]
+    if el.get("roofType") != "gable":
+        obj = make_box(doc, name, label, s["length"], s["width"], s["thickness"], placement(el["placement"]))
+    else:
+        # Клин с вырожденным верхом = треугольная призма.
+        # Оси клина: X — пролёт, Y — высота, Z — длина вдоль конька.
+        # Поворот на 120° вокруг (1,1,1) переводит X→Y, Y→Z, Z→X мировых осей.
+        obj = doc.addObject("Part::Wedge", name)
+        obj.Label = label
+        obj.Xmin, obj.Xmax = 0.0, float(s["width"])
+        obj.Ymin, obj.Ymax = 0.0, float(s["rise"])
+        obj.Zmin, obj.Zmax = 0.0, float(s["length"])
+        obj.X2min = obj.X2max = float(s["width"]) / 2.0
+        obj.Z2min, obj.Z2max = 0.0, float(s["length"])
+        obj.Placement = placement(el["placement"], App.Rotation(App.Vector(1, 1, 1), 120))
+    tag(obj, el, "roof")
+    style(obj, el.get("color", "#8c3b32"))
+    return obj
+
+
+def gable_roof_fallback(doc, obj, el):
+    """Запасной вариант, если в этой версии FreeCAD клин с вырожденным верхом не строится."""
+    s = el["size"]
+    w, r, length = float(s["width"]), float(s["rise"]), float(s["length"])
+    profile = Part.makePolygon([App.Vector(0, 0, 0), App.Vector(0, w, 0), App.Vector(0, w / 2.0, r), App.Vector(0, 0, 0)])
+    solid = Part.Face(profile).extrude(App.Vector(length, 0, 0))
+    label, name = obj.Label, obj.Name
+    doc.removeObject(name)
+    new = doc.addObject("Part::Feature", name + "_solid")
+    new.Shape = solid
+    new.Placement = placement(el["placement"])
+    new.Label = label
+    tag(new, el, "roof")
+    style(new, el.get("color", "#8c3b32"))
+    warn("Крыша {} построена как неразборный Part::Feature (клин не поддерживается)".format(el["id"]))
+    return new
+
+
+def shape_ok(obj):
+    try:
+        return not obj.Shape.isNull() and obj.Shape.isValid()
+    except Exception:
+        return False
+
+
+def import_house(path):
+    data = load_export(path)
+    project = data.get("project", {})
+    doc = App.newDocument("House")
+    doc.Label = project.get("name") or "House"
+
+    root = doc.addObject("App::DocumentObjectGroup", "House")
+    root.Label = project.get("name") or "Дом"
+    groups = {}
+    for kind, label in GROUP_LABELS.items():
+        g = doc.addObject("App::DocumentObjectGroup", "Group_" + kind)
+        g.Label = label
+        root.addObject(g)
+        groups[kind] = g
+
+    elements = data["elements"]
+    by_type = lambda t: [e for e in elements if e.get("type") == t]  # noqa: E731
+    stats = {k: 0 for k in GROUP_LABELS}
+
+    # 1. Проёмы: вырезы для стен и видимые заполнения
+    voids_by_wall = {}
+    for el in by_type("window") + by_type("door"):
+        void, panel = make_opening(doc, el)
+        voids_by_wall.setdefault(el["hostId"], []).append((el["id"], void))
+        groups[el["type"]].addObject(panel)
+        stats[el["type"]] += 1
+
+    # 2. Стены с вырезанными проёмами
+    wall_ids = set()
+    for el in by_type("wall"):
+        wall_ids.add(el["id"])
+        groups["wall"].addObject(make_wall(doc, el, voids_by_wall.get(el["id"], [])))
+        stats["wall"] += 1
+    for host_id in set(voids_by_wall) - wall_ids:
+        warn("Стена {} не найдена в файле — её проёмы не вырезаны".format(host_id))
+
+    # 3. Фундаменты, полы и крыши
+    for kind in ("foundation", "floor"):
+        for el in by_type(kind):
+            groups[kind].addObject(make_floor(doc, el))
+            stats[kind] += 1
+    roofs = []
+    for el in by_type("roof"):
+        obj = make_roof(doc, el)
+        roofs.append((obj, el))
+        stats["roof"] += 1
+
+    doc.recompute()
+    for obj, el in roofs:
+        if el.get("roofType") == "gable" and not shape_ok(obj):
+            obj = gable_roof_fallback(doc, obj, el)
+        groups["roof"].addObject(obj)
+    doc.recompute()
+
+    for el in elements:
+        if el.get("type") not in GROUP_LABELS:
+            warn("Пропущен элемент неизвестного типа: {}".format(el.get("id")))
+    return doc, stats
+
+
+# ---------------------------------------------------------------- интерфейс
+
+def qt_widgets():
+    """Модуль с QFileDialog/QMessageBox: в FreeCAD это обычно PySide.QtGui."""
+    try:
+        from PySide import QtGui
+        if hasattr(QtGui, "QFileDialog"):
+            return QtGui
+    except ImportError:
+        pass
+    import importlib
+    for mod in ("PySide6.QtWidgets", "PySide2.QtWidgets"):
+        try:
+            return importlib.import_module(mod)
+        except ImportError:
+            continue
+    return None
+
+
+def main_window():
+    import FreeCADGui
+    return FreeCADGui.getMainWindow()
+
+
+def choose_json_path():
+    env_path = os.environ.get("FREECAD_CHECKER_JSON")
+    if env_path:
+        return env_path
+    if not App.GuiUp:
+        return None
+    qt = qt_widgets()
+    result = qt.QFileDialog.getOpenFileName(
+        main_window(), "Выберите файл экспорта FreeCAD Checker", os.path.expanduser("~"),
+        "FreeCAD Checker (*.json);;Все файлы (*)")
+    path = result[0] if isinstance(result, (tuple, list)) else result
+    return path or None
+
+
+def default_fcstd_path(json_path):
+    base = os.path.splitext(json_path)[0]
+    if base.lower().endswith(".freecad"):
+        base = base[: -len(".freecad")]
+    return base + ".FCStd"
+
+
+def save_document(doc, json_path):
+    out = os.environ.get("FREECAD_CHECKER_OUT")
+    if out:
+        doc.saveAs(out)
+        return out
+    if not App.GuiUp:
+        out = default_fcstd_path(json_path)
+        doc.saveAs(out)
+        return out
+    qt = qt_widgets()
+    result = qt.QFileDialog.getSaveFileName(
+        main_window(), "Сохранить модель FreeCAD (.FCStd)", default_fcstd_path(json_path), "FreeCAD (*.FCStd)")
+    path = result[0] if isinstance(result, (tuple, list)) else result
+    if not path:
+        return None
+    if not path.lower().endswith(".fcstd"):
+        path += ".FCStd"
+    doc.saveAs(path)
+    return path
+
+
+def show_message(title, text, error=False):
+    if error:
+        App.Console.PrintError(text + "\n")
+    else:
+        log(text)
+    if App.GuiUp:
+        qt = qt_widgets()
+        box = qt.QMessageBox.critical if error else qt.QMessageBox.information
+        box(main_window(), title, text)
+
+
+def main():
+    path = choose_json_path()
+    if not path:
+        show_message("FreeCAD Checker", "Файл не выбран. Укажите *.freecad.json или переменную FREECAD_CHECKER_JSON.",
+                     error=not App.GuiUp)
+        return None
+    try:
+        doc, stats = import_house(path)
+    except Exception as exc:
+        show_message("FreeCAD Checker — ошибка импорта", "Не удалось импортировать {}:\n{}".format(path, exc), error=True)
+        return None
+
+    if App.GuiUp:
+        import FreeCADGui
+        view = FreeCADGui.activeDocument().activeView()
+        view.viewIsometric()
+        FreeCADGui.SendMsgToActiveView("ViewFit")
+
+    summary = ("Импортировано: фундаментов {foundation}, стен {wall}, полов {floor}, крыш {roof}, "
+               "окон {window}, дверей {door}.").format(**stats)
+    saved = save_document(doc, path)
+    if saved:
+        summary += "\nМодель сохранена: " + saved
+    else:
+        summary += "\nМодель не сохранена — используйте Файл → Сохранить как… (.FCStd)."
+    show_message("FreeCAD Checker", summary)
+    return doc
+
+
+main()

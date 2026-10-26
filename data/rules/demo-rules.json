@@ -1,0 +1,87 @@
+{
+  "document": {
+    "id": "DEMO",
+    "title": "Демонстрационные правила FreeCAD Checker (не нормативный документ)"
+  },
+  "disclaimer": "Значения в этом файле придуманы для учебного примера и НЕ являются требованиями СНиП, СП или ГОСТ. Они показывают, как проверяются отдельные элементы модели. Результат по ним всегда NOT VERIFIED.",
+  "rules": [
+    {
+      "id": "DEMO-WALL-THICKNESS",
+      "document": { "id": "DEMO", "title": "Демонстрационные правила FreeCAD Checker (не нормативный документ)" },
+      "clause": "D.1",
+      "title": "Толщина наружной стены (демо)",
+      "requirement": "Демонстрационное правило: толщина наружной стены не менее 0,3 м. В реальном проекте толщина определяется расчётом (несущая способность, теплозащита), а не фиксированным числом.",
+      "parameter": "wall.thickness",
+      "operator": ">=",
+      "value": 0.3,
+      "unit": "m",
+      "applicability": {
+        "elementType": "wall",
+        "description": "Наружные стены",
+        "conditions": [
+          { "parameter": "element.category", "operator": "==", "value": "exterior" }
+        ]
+      },
+      "source": { "title": "Составлено для учебного примера", "url": null },
+      "verification": { "status": "demo", "note": "Значение не взято из нормативного документа." }
+    },
+    {
+      "id": "DEMO-DOOR-WIDTH",
+      "document": { "id": "DEMO", "title": "Демонстрационные правила FreeCAD Checker (не нормативный документ)" },
+      "clause": "D.2",
+      "title": "Ширина входной двери (демо)",
+      "requirement": "Демонстрационное правило: ширина проёма входной двери не менее 0,8 м.",
+      "parameter": "door.width",
+      "operator": ">=",
+      "value": 800,
+      "unit": "mm",
+      "applicability": {
+        "elementType": "door",
+        "description": "Входные двери",
+        "conditions": [
+          { "parameter": "element.category", "operator": "==", "value": "entrance" }
+        ]
+      },
+      "source": { "title": "Составлено для учебного примера", "url": null },
+      "verification": { "status": "demo", "note": "Значение не взято из нормативного документа. Порог задан в мм, чтобы показать перевод единиц." }
+    },
+    {
+      "id": "DEMO-DOOR-HEIGHT",
+      "document": { "id": "DEMO", "title": "Демонстрационные правила FreeCAD Checker (не нормативный документ)" },
+      "clause": "D.3",
+      "title": "Высота дверного проёма (демо)",
+      "requirement": "Демонстрационное правило: высота дверного проёма не менее 2,0 м.",
+      "parameter": "door.height",
+      "operator": ">=",
+      "value": 2.0,
+      "unit": "m",
+      "applicability": {
+        "elementType": "door",
+        "description": "Все двери",
+        "conditions": []
+      },
+      "source": { "title": "Составлено для учебного примера", "url": null },
+      "verification": { "status": "demo", "note": "Значение не взято из нормативного документа." }
+    },
+    {
+      "id": "DEMO-ROOF-SLOPE",
+      "document": { "id": "DEMO", "title": "Демонстрационные правила FreeCAD Checker (не нормативный документ)" },
+      "clause": "D.4",
+      "title": "Уклон двускатной крыши (демо)",
+      "requirement": "Демонстрационное правило: уклон двускатной крыши в диапазоне 15–45°. Реальные допустимые уклоны зависят от типа кровельного покрытия и задаются нормами на кровли.",
+      "parameter": "roof.slope",
+      "operator": "between",
+      "value": [15, 45],
+      "unit": "deg",
+      "applicability": {
+        "elementType": "roof",
+        "description": "Двускатные крыши",
+        "conditions": [
+          { "parameter": "roof.type", "operator": "==", "value": "gable" }
+        ]
+      },
+      "source": { "title": "Составлено для учебного примера", "url": null },
+      "verification": { "status": "demo", "note": "Значение не взято из нормативного документа." }
+    }
+  ]
+}

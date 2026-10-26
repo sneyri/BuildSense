@@ -1,0 +1,233 @@
+:root {
+  --bg: #eef1f4;
+  --panel: #ffffff;
+  --panel-2: #f6f8fa;
+  --line: #d8dee5;
+  --text: #1d2733;
+  --muted: #637083;
+  --accent: #1f6feb;
+  --accent-soft: #e3edfd;
+  --pass: #1a7f37;
+  --pass-bg: #dcf3e2;
+  --fail: #c62828;
+  --fail-bg: #fde3e3;
+  --nv: #8a5a00;
+  --nv-bg: #fff1cc;
+  --radius: 8px;
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --mono: Consolas, "Cascadia Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 var(--font);
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  overflow: hidden;
+}
+
+button, input, select { font: inherit; color: inherit; }
+
+button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+button:hover { border-color: #b5c0cc; background: var(--panel-2); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary:hover { background: #1a5fcc; }
+button.danger { color: var(--fail); }
+button.danger:hover { background: var(--fail-bg); border-color: #f0b4b4; }
+
+/* ---------- Верхняя панель ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand h1 { margin: 0; font-size: 15px; }
+.brand p { margin: 0; color: var(--muted); font-size: 11px; }
+.logo {
+  display: grid; place-items: center;
+  width: 32px; height: 32px; border-radius: 7px;
+  background: linear-gradient(135deg, #1f6feb, #6b3fd6);
+  color: #fff; font-weight: 700; letter-spacing: .5px;
+}
+.project-name { display: flex; align-items: center; gap: 8px; flex: 1; max-width: 420px; }
+.project-name span { color: var(--muted); }
+.project-name input {
+  flex: 1; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel-2);
+}
+.toolbar { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; align-items: center; }
+.tool-link { color: var(--accent); font-size: 12px; padding: 0 4px; }
+
+/* ---------- Раскладка из трёх областей ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 290px 1fr 360px;
+  min-height: 0;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.panel-left { border-right: 1px solid var(--line); }
+.panel-right { border-left: 1px solid var(--line); }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.card-grow { flex: 1 0 auto; }
+.count { background: var(--panel-2); border-radius: 10px; padding: 0 7px; font-weight: 600; }
+.hint { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+.empty { color: var(--muted); font-style: italic; margin: 4px 0; }
+
+/* ---------- Формы ---------- */
+.form { display: grid; gap: 6px; }
+.field {
+  display: grid;
+  grid-template-columns: 1fr 96px;
+  align-items: center;
+  gap: 8px;
+}
+.field > span { color: var(--text); }
+.field small { color: var(--muted); }
+.field input, .field select {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #fff;
+}
+.field input:focus, .field select:focus, .project-name input:focus {
+  outline: 2px solid var(--accent-soft); border-color: var(--accent);
+}
+.field.select { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+.field.wide { grid-template-columns: 1fr; }
+.field.wide select { width: 100%; }
+.field .unit-wrap { position: relative; }
+.field .unit-wrap input { padding-right: 26px; }
+.field .unit-wrap em {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  font-style: normal; color: var(--muted); font-size: 11px; pointer-events: none;
+}
+.field input:invalid { border-color: var(--fail); }
+.form-sep { border: 0; border-top: 1px dashed var(--line); margin: 4px 0; }
+.form-note { color: var(--muted); font-size: 12px; margin: 2px 0 0; }
+.form-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.readonly { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+.add-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+
+/* ---------- Список элементов ---------- */
+.element-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.element-list li {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 6px; border-radius: 5px; cursor: pointer;
+}
+.element-list li:hover { background: var(--panel-2); }
+.element-list li.selected { background: var(--accent-soft); }
+.element-list .swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; border: 1px solid rgba(0,0,0,.15); }
+.element-list .el-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.element-list .el-id { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.element-list .child { padding-left: 22px; }
+
+/* ---------- 3D-область ---------- */
+.viewport { position: relative; min-width: 0; min-height: 0; background: #dfe7ee; }
+.viewport canvas { display: block; width: 100%; height: 100%; }
+.view-tools {
+  position: absolute; top: 10px; left: 10px; display: flex; gap: 4px; z-index: 2;
+}
+.view-tools button { background: rgba(255,255,255,.92); padding: 4px 9px; }
+.view-hint {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,.85); border-radius: 12px; padding: 3px 12px;
+  color: var(--muted); font-size: 12px; pointer-events: none; white-space: nowrap;
+}
+.view-error {
+  position: absolute; inset: 40% 15% auto; padding: 14px 16px; z-index: 3;
+  background: #fff; border: 1px solid #f0b4b4; border-radius: var(--radius); color: var(--fail);
+}
+
+/* ---------- Проверка норм ---------- */
+.check-summary { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 11px; white-space: nowrap;
+}
+.badge.pass { background: var(--pass-bg); color: var(--pass); }
+.badge.fail { background: var(--fail-bg); color: var(--fail); }
+.badge.nv { background: var(--nv-bg); color: var(--nv); }
+.badge.na { background: var(--panel-2); color: var(--muted); }
+
+.check-results { display: grid; gap: 6px; }
+.result {
+  border: 1px solid var(--line); border-left-width: 4px; border-radius: 6px;
+  padding: 7px 9px; background: #fff;
+}
+.result.pass { border-left-color: var(--pass); }
+.result.fail { border-left-color: var(--fail); }
+.result.nv { border-left-color: #e0a800; }
+.result header { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+.result header .r-title { flex: 1; font-weight: 600; }
+.result .r-meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.result .r-values { font-family: var(--mono); font-size: 12px; margin-top: 4px; }
+.result .r-details { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); font-size: 12px; display: grid; gap: 4px; }
+.result .r-details p { margin: 0; }
+.result .r-details a { color: var(--accent); word-break: break-all; }
+.result .r-el { color: var(--accent); cursor: pointer; text-decoration: underline dotted; }
+.result.dim { opacity: .6; }
+.rule-warnings { color: var(--fail); font-size: 12px; margin: 0 0 8px; }
+details.na-list { margin-top: 8px; color: var(--muted); }
+details.na-list summary { cursor: pointer; }
+details.na-list ul { margin: 6px 0 0; padding-left: 18px; }
+
+/* ---------- Строка состояния ---------- */
+.statusbar {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 4px 12px; background: var(--panel); border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 12px;
+}
+.statusbar .error { color: var(--fail); }
+
+/* ---------- Узкие экраны ---------- */
+@media (max-width: 1100px) {
+  body { height: auto; overflow: auto; }
+  .layout { grid-template-columns: 1fr; }
+  .viewport { height: 60vh; order: -1; }
+  .panel-left, .panel-right { border: 0; overflow: visible; }
+  .topbar { flex-wrap: wrap; }
+}

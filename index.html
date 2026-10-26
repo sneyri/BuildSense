@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FreeCAD Checker — редактор дома</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Three.js подключается с CDN без сборки и npm-зависимостей -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">FC</span>
+      <div>
+        <h1>FreeCAD Checker</h1>
+        <p>учебный прототип редактора дома</p>
+      </div>
+    </div>
+    <label class="project-name">
+      <span>Проект</span>
+      <input id="project-name" type="text" maxlength="80" autocomplete="off">
+    </label>
+    <nav class="toolbar">
+      <button type="button" id="btn-new" title="Создать базовый дом с параметрами по умолчанию">Новый дом</button>
+      <button type="button" id="btn-open" title="Загрузить проект из JSON-файла">Открыть…</button>
+      <button type="button" id="btn-save" title="Сохранить проект в JSON-файл">Сохранить JSON</button>
+      <button type="button" id="btn-export" class="primary" title="Скачать JSON для макроса import_house.FCMacro">Экспорт в FreeCAD</button>
+      <a class="tool-link" href="freecad/import_house.FCMacro" download title="Скачать макрос импорта для FreeCAD">макрос .FCMacro</a>
+      <input type="file" id="file-input" accept=".json,application/json" hidden>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <aside class="panel panel-left">
+      <section class="card">
+        <h2>Параметры дома</h2>
+        <form id="house-form" class="form" autocomplete="off"></form>
+      </section>
+      <section class="card">
+        <h2>Добавить элемент</h2>
+        <div class="add-grid" id="add-buttons">
+          <button type="button" data-add="wall">Стена</button>
+          <button type="button" data-add="floor">Пол</button>
+          <button type="button" data-add="roof">Крыша</button>
+          <button type="button" data-add="window">Окно</button>
+          <button type="button" data-add="door">Дверь</button>
+        </div>
+        <p class="hint">Окна и двери добавляются в выбранную стену (или в первую наружную).</p>
+      </section>
+      <section class="card card-grow">
+        <h2>Элементы модели <span class="count" id="element-count"></span></h2>
+        <ul class="element-list" id="element-list"></ul>
+      </section>
+    </aside>
+
+    <section class="viewport" id="viewport">
+      <div class="view-tools">
+        <button type="button" data-view="iso" title="Изометрия">Изо</button>
+        <button type="button" data-view="top" title="Вид сверху">Сверху</button>
+        <button type="button" data-view="front" title="Вид спереди (с юга)">Спереди</button>
+        <button type="button" data-view="fit" title="Вписать модель в экран">Вписать</button>
+        <button type="button" id="btn-roof-toggle" title="Скрыть или показать крыши, чтобы увидеть внутренние элементы">Скрыть крышу</button>
+      </div>
+      <div class="view-hint">ЛКМ — вращать · колесо — масштаб · ПКМ — сдвиг · клик — выбрать элемент</div>
+      <div class="view-error" id="view-error" hidden></div>
+    </section>
+
+    <aside class="panel panel-right">
+      <section class="card" id="properties-card">
+        <h2>Свойства элемента</h2>
+        <div id="properties"></div>
+      </section>
+      <section class="card card-grow">
+        <h2>Проверка норм</h2>
+        <div id="check-summary" class="check-summary"></div>
+        <div id="check-results" class="check-results"></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span id="status-text">Загрузка…</span>
+    <span id="status-dims"></span>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
