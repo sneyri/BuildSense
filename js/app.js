@@ -13,6 +13,7 @@
     selectedIds: new Set(),
     levelId: "L1",
     activeTool: "select",
+    activeNode: null,
     validation: null,
     sim: { scenario: "remove_support", params: { threshold: 0.5, intensity: 1, direction: 0 }, result: null, step: -1, ghost: false },
     flags: { simulated: false, exported: false },
@@ -48,6 +49,8 @@
         else if (kind === "rect") el = P.addRect(state.project, type, a.a, a.b, { levelId: state.levelId });
         else if (kind === "point") el = P.placeAt(state.project, type, a.point, { levelId: state.levelId, rotation: a.rotation });
         else if (kind === "opening") el = P.placeOpening(state.project, type, a.wallId, a.offset);
+        const node = state.activeNode && BS.modules.get(state.activeNode);
+        if (node && node.base === type) BS.modules.apply(state.project, el.id, node.id);
         state.selectedIds = new Set([el.id]);
         return `Создано: ${el.name}`;
       }),
@@ -109,7 +112,7 @@
   function renderPanels() {
     $("project-name").value = state.project.name;
     BS.ui.palette.render($("palette"), $("levels"), state, {
-      onTool: setTool, onAction: action, onLevel: (id) => { state.levelId = id; renderPanels(); setStatus(`Активный этаж: ${P.level(state.project, id).name}`); },
+      onTool: setTool, onNode: setNode, onAction: action, onLevel: (id) => { state.levelId = id; renderPanels(); setStatus(`Активный этаж: ${P.level(state.project, id).name}`); },
       onAddLevel: () => action("add-level"),
     });
     BS.ui.tree.render($("visibility"), $("tree"), { ...state, issues: state.issueMap }, {
@@ -166,7 +169,16 @@
     setStatus(`${issue.title}${issue.description ? " — " + issue.description : ""}`, issue.severity === "error" ? "error" : null);
   }
 
+  function setNode(nodeId) {
+    const node = BS.modules.get(nodeId);
+    setTool(node.base);
+    state.activeNode = nodeId;
+    renderPanels();
+    setStatus(`${node.label} (${node.standard}): постройте как «${BS.types.label(node.base)}». ${BS.modules.NOT_VERIFIED}`);
+  }
+
   function setTool(type) {
+    state.activeNode = null;
     state.activeTool = type;
     if (tools) tools.setTool(type);
     document.querySelectorAll("[data-tool]").forEach((b) => b.classList.toggle("active", b.dataset.tool === type));
@@ -336,7 +348,7 @@
     if (kind === "starter") p = P.createStarterProject("Мой дом");
     else if (kind === "empty") p = P.createProject("Новый проект");
     else {
-      const key = kind === "example-two" ? "twoStorey" : "issues";
+      const key = { "example-two": "twoStorey", "example-issues": "issues", "example-section": "section" }[kind] || "issues";
       if (!BS.examples || !BS.examples[key]) return setStatus("Пример не найден (examples/examples.js)", "error");
       p = IO.fromData(JSON.parse(JSON.stringify(BS.examples[key]))).project;
     }
@@ -561,13 +573,14 @@
   if (tools) tools.setTool("select");
   refresh(restored ? "Восстановлен последний проект (автосохранение браузера)" : "Готово: открыт стартовый дом. Мастер справа поможет построить свой.", { refit: true });
 
-  // Ссылки вида index.html#example=twoStorey&wizard=0&roof=hidden&view=top — для демонстрации и скриншотов
+  // Ссылки вида index.html#example=twoStorey&wizard=0&roof=hidden&view=top&select=wall-1 — для демонстрации и скриншотов
   const hash = new URLSearchParams(location.hash.slice(1));
-  if (hash.get("example")) newProject({ starter: "starter", twoStorey: "example-two", issues: "example-issues" }[hash.get("example")] || "starter");
+  if (hash.get("example")) newProject({ starter: "starter", twoStorey: "example-two", issues: "example-issues", section: "example-section" }[hash.get("example")] || "starter");
   if (hash.get("wizard") === "0") { state.wizardOpen = false; renderWizard(); }
   if (hash.get("roof") === "hidden" && view) { state.hiddenGroups.add("roof"); view.setGroupVisible("roof", false); renderPanels(); }
   if (hash.get("view") && view) view.setView(hash.get("view"));
   if (hash.get("tab")) switchTab("right", hash.get("tab"));
+  if (hash.get("select") && P.find(state.project, hash.get("select"))) select([hash.get("select")]);
 
   // Для отладки и ручных тестов из консоли браузера
   BS.app = { state, edit, refresh, action, select, newProject, history, get view() { return view; }, get tools() { return tools; }, get player() { return player; } };

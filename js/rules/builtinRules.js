@@ -1,4 +1,4 @@
-// Встроенная копия правил из data/rules/*.json (нужна для работы без сервера, по file://).
+// СГЕНЕРИРОВАНО tools/build-rules.js из data/rules/*.json — не редактируйте вручную.
 (function (BS) {
   "use strict";
   BS.builtinRules = {

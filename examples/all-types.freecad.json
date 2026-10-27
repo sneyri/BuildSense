@@ -1,0 +1,2103 @@
+{
+  "format": "buildsense-freecad-export",
+  "schemaVersion": 2,
+  "units": "mm",
+  "generator": "BuildSense 1.0.0",
+  "exportedAt": "2026-10-27T12:00:00.000Z",
+  "axes": "Z вверх; placement — точка привязки элемента (угол бруса, центр основания цилиндра, начало оси трубы) и поворот вокруг Z в градусах",
+  "project": {
+    "name": "Все типы объектов",
+    "climateRegion": "2V",
+    "housingFund": "private",
+    "bim": {
+      "object": "ЖК01",
+      "section": "С1"
+    }
+  },
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Этаж 1",
+      "elevation": 0,
+      "height": 2800
+    }
+  ],
+  "elements": [
+    {
+      "id": "slab_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФПЛ-001",
+      "type": "slab_foundation",
+      "typeLabel": "Плитный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Фундаментная плита",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": -400,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 400
+      }
+    },
+    {
+      "id": "wall-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-001",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-1",
+          "window-1"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-2",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-002",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-4"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 0,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-3",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-003",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-2",
+          "window-3"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 0,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-4",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-004",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-5"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 0,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "slab-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПЛТ-001",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Пол первого этажа",
+      "category": "ground",
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 400,
+        "y": 400,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 9200,
+        "width": 7200,
+        "height": 200
+      }
+    },
+    {
+      "id": "wall-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРГ-001",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Перегородка",
+      "category": "partition",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-2"
+        ],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 6060,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 120,
+        "height": 2600
+      }
+    },
+    {
+      "id": "door-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-001",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 1",
+      "category": "entrance",
+      "levelId": "L1",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "hostId": "wall-1",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 3000,
+        "elevation": 0
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 3000,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 3000,
+          "y": -50,
+          "z": -50,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 900,
+          "width": 500,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 3000,
+          "y": 175,
+          "z": 0,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "window-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-001",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "hostId": "wall-1",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 900,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-002",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "hostId": "wall-3",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-3",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-003",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "hostId": "wall-3",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-4",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-004",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-2",
+        "hosted": [],
+        "supports": [
+          "wall-2"
+        ]
+      },
+      "hostId": "wall-2",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 900,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-5",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-005",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-4",
+        "hosted": [],
+        "supports": [
+          "wall-4"
+        ]
+      },
+      "hostId": "wall-4",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 900,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "door-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-002",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 2",
+      "category": "interior",
+      "levelId": "L1",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-5",
+        "hosted": [],
+        "supports": [
+          "wall-5"
+        ]
+      },
+      "hostId": "wall-5",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 1000,
+        "elevation": 0
+      },
+      "hostThickness": 120,
+      "placement": {
+        "x": 6060,
+        "y": 1400,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 6110,
+          "y": 1400,
+          "z": 150,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 220,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6025,
+          "y": 1400,
+          "z": 200,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "lintel-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-001",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Дверь 1»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-1"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "placement": {
+        "x": 2750,
+        "y": 0,
+        "z": 2100,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 1400,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-2",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-002",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 1»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-1"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "placement": {
+        "x": 6500,
+        "y": 0,
+        "z": 2300,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-3",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-003",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 4»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-2"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-2",
+        "hosted": [],
+        "supports": [
+          "wall-2"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 3200,
+        "z": 2300,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-4",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-004",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 2»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-3"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "placement": {
+        "x": 8350,
+        "y": 8000,
+        "z": 2300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-005",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 3»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-3"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "placement": {
+        "x": 3050,
+        "y": 8000,
+        "z": 2300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-6",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-006",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 5»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-4"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-4",
+        "hosted": [],
+        "supports": [
+          "wall-4"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 5000,
+        "z": 2300,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "roof-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-001",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-1",
+          "wall-2",
+          "wall-3",
+          "wall-4",
+          "wall-5"
+        ]
+      },
+      "placement": {
+        "x": -400,
+        "y": -400,
+        "z": 2800,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10800,
+        "width": 8800,
+        "rise": 2540.34
+      }
+    },
+    {
+      "id": "room-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-001",
+      "type": "room",
+      "typeLabel": "Комната (зона)",
+      "shape": "zone",
+      "ifcType": "Space",
+      "name": "Гостиная",
+      "category": null,
+      "levelId": "L1",
+      "material": "zone",
+      "materialLabel": "Зона (без материала)",
+      "color": "#4cc9f0",
+      "density": 0,
+      "params": {
+        "roomName": "Гостиная",
+        "roomType": "common"
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 400,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 5540,
+        "width": 7200,
+        "height": 2600
+      }
+    },
+    {
+      "id": "room-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-002",
+      "type": "room",
+      "typeLabel": "Комната (зона)",
+      "shape": "zone",
+      "ifcType": "Space",
+      "name": "Спальня",
+      "category": null,
+      "levelId": "L1",
+      "material": "zone",
+      "materialLabel": "Зона (без материала)",
+      "color": "#4cc9f0",
+      "density": 0,
+      "params": {
+        "roomName": "Спальня",
+        "roomType": "bedroom"
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 6060,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 3540,
+        "width": 7200,
+        "height": 2600
+      }
+    },
+    {
+      "id": "strip_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-001",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Ленточный фундамент 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 14079,
+        "y": -237,
+        "z": -1200,
+        "rotationZ": 18.435
+      },
+      "size": {
+        "length": 3162,
+        "width": 500,
+        "height": 1200
+      }
+    },
+    {
+      "id": "pad_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФСТ-001",
+      "type": "pad_foundation",
+      "typeLabel": "Столбчатая опора",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Столбчатая опора 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 18390,
+        "y": 390,
+        "z": -1200,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 600,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "round_pad-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФКР-001",
+      "type": "round_pad",
+      "typeLabel": "Круглая опора",
+      "shape": "cylinder",
+      "ifcType": "Footing",
+      "name": "Круглая опора 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 22000,
+        "y": 800,
+        "z": -1500,
+        "rotationZ": 30
+      },
+      "size": {
+        "diameter": 400,
+        "height": 1500
+      }
+    },
+    {
+      "id": "pile-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СВ-001",
+      "type": "pile",
+      "typeLabel": "Свая",
+      "shape": "cylinder",
+      "ifcType": "Pile",
+      "name": "Свая 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 25500,
+        "y": 800,
+        "z": -3000,
+        "rotationZ": 30
+      },
+      "size": {
+        "diameter": 300,
+        "height": 3000
+      }
+    },
+    {
+      "id": "column-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КЛН-001",
+      "type": "column",
+      "typeLabel": "Колонна",
+      "shape": "box",
+      "ifcType": "Column",
+      "name": "Колонна 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 28945,
+        "y": 595,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 300,
+        "width": 300,
+        "height": 2800
+      }
+    },
+    {
+      "id": "round_column-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КЛН-002",
+      "type": "round_column",
+      "typeLabel": "Круглая колонна",
+      "shape": "cylinder",
+      "ifcType": "Column",
+      "name": "Круглая колонна 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 32500,
+        "y": 800,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "diameter": 300,
+        "height": 2800
+      }
+    },
+    {
+      "id": "beam-1",
+      "bimCode": "ЖК01-С1-Э01-КР-БЛК-001",
+      "type": "beam",
+      "typeLabel": "Балка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Балка 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "timber",
+      "materialLabel": "Дерево (брус)",
+      "color": "#c49a6c",
+      "density": 500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 35024,
+        "y": -71,
+        "z": 2550,
+        "rotationZ": 18.435
+      },
+      "size": {
+        "length": 3162,
+        "width": 150,
+        "height": 250
+      }
+    },
+    {
+      "id": "truss-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФРМ-001",
+      "type": "truss",
+      "typeLabel": "Ферма",
+      "shape": "truss",
+      "ifcType": "Member",
+      "name": "Ферма 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "timber",
+      "materialLabel": "Дерево (брус)",
+      "color": "#c49a6c",
+      "density": 500,
+      "params": {
+        "panels": 4
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 38516,
+        "y": -47,
+        "z": 1300,
+        "rotationZ": 18.435
+      },
+      "size": {
+        "length": 3162,
+        "width": 100,
+        "height": 1500
+      }
+    },
+    {
+      "id": "stairs-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ЛМ-001",
+      "type": "stairs",
+      "typeLabel": "Лестница",
+      "shape": "stairs",
+      "ifcType": "Stair",
+      "name": "Лестница 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "steps": 17
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 41431,
+        "y": -683,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 4250,
+        "width": 1000,
+        "height": 3000
+      }
+    },
+    {
+      "id": "landing-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ЛП-001",
+      "type": "landing",
+      "typeLabel": "Площадка",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Площадка 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 45500,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 1500,
+        "height": 200
+      }
+    },
+    {
+      "id": "balcony-1",
+      "bimCode": "ЖК01-С1-Э01-АР-БЛН-001",
+      "type": "balcony",
+      "typeLabel": "Балкон",
+      "shape": "balcony",
+      "ifcType": "Slab",
+      "name": "Балкон 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 49001,
+        "y": -470,
+        "z": -150,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 3000,
+        "width": 1200,
+        "height": 150
+      }
+    },
+    {
+      "id": "terrace-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ТРС-001",
+      "type": "terrace",
+      "typeLabel": "Терраса",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Терраса 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "timber",
+      "materialLabel": "Дерево (брус)",
+      "color": "#c49a6c",
+      "density": 500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 52500,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 1500,
+        "height": 150
+      }
+    },
+    {
+      "id": "railing-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ОГР-001",
+      "type": "railing",
+      "typeLabel": "Перила",
+      "shape": "railing",
+      "ifcType": "Railing",
+      "name": "Перила 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "steel",
+      "materialLabel": "Сталь",
+      "color": "#7d8791",
+      "density": 7850,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 56008,
+        "y": -24,
+        "z": 0,
+        "rotationZ": 18.435
+      },
+      "size": {
+        "length": 3162,
+        "width": 50,
+        "height": 1000
+      }
+    },
+    {
+      "id": "chimney-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ДМХ-001",
+      "type": "chimney",
+      "typeLabel": "Дымоход",
+      "shape": "box",
+      "ifcType": "Chimney",
+      "name": "Дымоход 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 60390,
+        "y": 390,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 600,
+        "width": 600,
+        "height": 1500
+      }
+    },
+    {
+      "id": "decor-1",
+      "bimCode": "ЖК01-С1-Э01-АР-КРН-001",
+      "type": "decor",
+      "typeLabel": "Декор (карниз)",
+      "shape": "box",
+      "ifcType": "BuildingElementProxy",
+      "name": "Декор (карниз) 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 63024,
+        "y": -71,
+        "z": 2650,
+        "rotationZ": 18.435
+      },
+      "size": {
+        "length": 3162,
+        "width": 150,
+        "height": 150
+      }
+    },
+    {
+      "id": "pipe-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-ТРБ-001",
+      "type": "pipe",
+      "typeLabel": "Труба",
+      "shape": "pipe",
+      "ifcType": "Pipe",
+      "name": "Труба 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "steel",
+      "materialLabel": "Сталь",
+      "color": "#7d8791",
+      "density": 7850,
+      "params": {
+        "vertical": false
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 66500,
+        "y": 0,
+        "z": 500,
+        "rotationZ": 18.435
+      },
+      "size": {
+        "length": 3162,
+        "diameter": 50
+      }
+    },
+    {
+      "id": "toilet-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-УНТ-001",
+      "type": "toilet",
+      "typeLabel": "Унитаз",
+      "shape": "fixture",
+      "ifcType": "SanitaryTerminal",
+      "name": "Унитаз 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "ceramic",
+      "materialLabel": "Керамика",
+      "color": "#f5f6f7",
+      "density": 2300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 71002,
+        "y": 397,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 400,
+        "width": 700,
+        "height": 800
+      }
+    },
+    {
+      "id": "sink-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-РКВ-001",
+      "type": "sink",
+      "typeLabel": "Раковина",
+      "shape": "fixture",
+      "ifcType": "SanitaryTerminal",
+      "name": "Раковина 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "ceramic",
+      "materialLabel": "Керамика",
+      "color": "#f5f6f7",
+      "density": 2300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 74353,
+        "y": 455,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 600,
+        "width": 450,
+        "height": 850
+      }
+    },
+    {
+      "id": "bathtub-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-ЭЛМ-001",
+      "type": "bathtub",
+      "typeLabel": "Ванна",
+      "shape": "fixture",
+      "ifcType": "SanitaryTerminal",
+      "name": "Ванна 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "ceramic",
+      "materialLabel": "Керамика",
+      "color": "#f5f6f7",
+      "density": 2300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 77451,
+        "y": 50,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 1700,
+        "width": 750,
+        "height": 600
+      }
+    },
+    {
+      "id": "light-1",
+      "bimCode": "ЖК01-С1-Э01-ЭО-СВТ-001",
+      "type": "light",
+      "typeLabel": "Светильник",
+      "shape": "fixture",
+      "ifcType": "LightFixture",
+      "name": "Светильник 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "plastic",
+      "materialLabel": "Пластик",
+      "color": "#e9ecef",
+      "density": 1200,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 81427,
+        "y": 527,
+        "z": 2650,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 400,
+        "width": 400,
+        "height": 150
+      }
+    },
+    {
+      "id": "socket-1",
+      "bimCode": "ЖК01-С1-Э01-ЭО-РЗТ-001",
+      "type": "socket",
+      "typeLabel": "Розетка",
+      "shape": "fixture",
+      "ifcType": "Outlet",
+      "name": "Розетка 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "plastic",
+      "materialLabel": "Пластик",
+      "color": "#e9ecef",
+      "density": 1200,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 84973,
+        "y": 767,
+        "z": 300,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 80,
+        "width": 30,
+        "height": 80
+      }
+    },
+    {
+      "id": "switch-1",
+      "bimCode": "ЖК01-С1-Э01-ЭО-ВКЛ-001",
+      "type": "switch",
+      "typeLabel": "Выключатель",
+      "shape": "fixture",
+      "ifcType": "SwitchingDevice",
+      "name": "Выключатель 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "plastic",
+      "materialLabel": "Пластик",
+      "color": "#e9ecef",
+      "density": 1200,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 88473,
+        "y": 767,
+        "z": 900,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 80,
+        "width": 30,
+        "height": 80
+      }
+    },
+    {
+      "id": "bed-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-001",
+      "type": "bed",
+      "typeLabel": "Кровать",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Кровать 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 91534,
+        "y": -393,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 2000,
+        "width": 1600,
+        "height": 500
+      }
+    },
+    {
+      "id": "table-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-002",
+      "type": "table",
+      "typeLabel": "Стол",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Стол 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 95094,
+        "y": 104,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 1400,
+        "width": 800,
+        "height": 750
+      }
+    },
+    {
+      "id": "chair-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-003",
+      "type": "chair",
+      "typeLabel": "Стул",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Стул 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 98918,
+        "y": 493,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 450,
+        "width": 450,
+        "height": 900
+      }
+    },
+    {
+      "id": "sofa-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-004",
+      "type": "sofa",
+      "typeLabel": "Диван",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Диван 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 101859,
+        "y": -90,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 2000,
+        "width": 900,
+        "height": 850
+      }
+    },
+    {
+      "id": "wardrobe-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-005",
+      "type": "wardrobe",
+      "typeLabel": "Шкаф",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Шкаф 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 105630,
+        "y": 240,
+        "z": 0,
+        "rotationZ": 30
+      },
+      "size": {
+        "length": 1200,
+        "width": 600,
+        "height": 2100
+      }
+    },
+    {
+      "id": "roof-2",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-002",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша flat",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "flat",
+        "slope": 25,
+        "thickness": 0.25
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 14000,
+        "y": 6000,
+        "z": 0,
+        "rotationZ": 15
+      },
+      "size": {
+        "length": 6000,
+        "width": 4000,
+        "rise": 250
+      }
+    },
+    {
+      "id": "roof-3",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-003",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша shed",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "shed",
+        "slope": 25,
+        "thickness": 0.25
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 21000,
+        "y": 6000,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 6000,
+        "width": 4000,
+        "rise": 1865.23
+      }
+    },
+    {
+      "id": "roof-4",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-004",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша hip",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "hip",
+        "slope": 25,
+        "thickness": 0.25
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 28000,
+        "y": 6000,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 6000,
+        "width": 4000,
+        "rise": 932.62
+      }
+    }
+  ],
+  "envelope": {
+    "wallGross": 96.32,
+    "windows": 10.5,
+    "doors": 1.89,
+    "wallNet": 83.93,
+    "glazingFacade": 0.109,
+    "roof": 186.7,
+    "footprint": 80,
+    "height": 2.8,
+    "volume": 224,
+    "envelope": 256.32,
+    "compactness": 1.144,
+    "counts": {
+      "walls": 4,
+      "windows": 5,
+      "doors": 1
+    }
+  }
+}

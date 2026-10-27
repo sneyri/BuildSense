@@ -18,6 +18,7 @@
     const warnings = [];
     const elements = [];
     const graph = BS.loadGraph ? BS.loadGraph.build(project) : null;
+    const codes = BS.bimCode ? BS.bimCode.all(project) : new Map();
     for (const el of project.elements) {
       const t = BS.types.get(el.type);
       if (!t) { warnings.push(`${el.id}: неизвестный тип ${el.type} — пропущен`); continue; }
@@ -25,10 +26,11 @@
       if (!sizeOk) { warnings.push(`${el.id}: некорректные размеры — пропущен`); continue; }
       const mat = BS.materials.get(el.material);
       const base = {
-        id: el.id, type: el.type, typeLabel: t.label, shape: t.shape, ifcType: t.ifc || null,
+        id: el.id, bimCode: codes.get(el.id) || null, type: el.type, typeLabel: t.label, shape: t.shape, ifcType: t.ifc || null,
         name: el.name, category: el.category || null, levelId: el.levelId,
         material: el.material, materialLabel: mat.label, color: mat.color, density: mat.density,
         params: U.clone(el.params || {}),
+        node: nodeInfo(el),
         relations: {
           hostId: el.hostId || (el.params && el.params.hostWallId) || null,
           hosted: project.elements.filter((o) => o.hostId === el.id).map((o) => o.id),
@@ -53,12 +55,19 @@
       generator: `BuildSense ${BS.version}`,
       exportedAt: U.nowIso(),
       axes: "Z вверх; placement — точка привязки элемента (угол бруса, центр основания цилиндра, начало оси трубы) и поворот вокруг Z в градусах",
-      project: { name: project.name, climateRegion: project.settings.climateRegion, housingFund: project.settings.housingFund },
+      project: { name: project.name, climateRegion: project.settings.climateRegion, housingFund: project.settings.housingFund, bim: U.clone(project.settings.bim || {}) },
       levels: project.levels.map((l) => ({ id: l.id, name: l.name, elevation: mm(l.elevation), height: mm(l.height) })),
       elements,
     };
+    if (BS.envelope) data.envelope = BS.envelope.compute(project);
     if (extra.summary) data.validationSummary = extra.summary;
     return { data, warnings };
+  }
+
+  /** Модульный узел элемента: идентификатор, название и стандарт на изделие (или null). */
+  function nodeInfo(el) {
+    const n = BS.modules && BS.modules.ofElement(el);
+    return n ? { id: n.id, label: n.label, standard: n.standard, verified: false } : null;
   }
 
   function openingGeometry(el, host) {

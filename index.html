@@ -107,12 +107,13 @@
     <button type="button" data-new="empty">Пустой проект</button>
     <button type="button" data-new="example-two">Пример: двухэтажный дом</button>
     <button type="button" data-new="example-issues">Пример: дом с ошибками</button>
+    <button type="button" data-new="example-section">Пример: жилая секция (5 этажей, узлы по ГОСТ)</button>
   </div>
 
   <!-- Библиотеки (локально, работают без интернета) -->
   <script src="vendor/three/three.min.js"></script>
   <script src="vendor/three/OrbitControls.js"></script>
-  <!-- Ядро: модули без DOM -->
+  <!-- Ядро: без DOM, тестируется в Node.js (tests/loader.js) -->
   <script src="js/core/namespace.js"></script>
   <script src="js/core/geometry.js"></script>
   <script src="js/materials/materials.js"></script>
@@ -121,11 +122,14 @@
   <script src="js/objects/support.js"></script>
   <script src="js/objects/snapping.js"></script>
   <script src="js/objects/project.js"></script>
+  <script src="js/objects/bimCode.js"></script>
+  <script src="js/objects/modules.js"></script>
   <script src="js/rules/builtinRules.js"></script>
   <script src="js/rules/ruleRegistry.js"></script>
   <script src="js/rules/checker.js"></script>
   <script src="js/validation/metrics.js"></script>
   <script src="js/validation/validationEngine.js"></script>
+  <script src="js/validation/envelope.js"></script>
   <script src="js/simulation/loadGraph.js"></script>
   <script src="js/simulation/simulation.js"></script>
   <script src="js/calculations/calculations.js"></script>
