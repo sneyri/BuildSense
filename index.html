@@ -3,94 +3,153 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FreeCAD Checker — редактор дома</title>
-  <link rel="stylesheet" href="css/style.css">
-  <!-- Three.js подключается с CDN без сборки и npm-зависимостей -->
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
+  <title>BuildSense — редактор дома</title>
+  <link rel="stylesheet" href="css/app.css">
 </head>
+<!-- Открывается двойным щелчком (file://): все скрипты обычные, Three.js лежит в vendor/. -->
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="logo" aria-hidden="true">FC</span>
-      <div>
-        <h1>FreeCAD Checker</h1>
-        <p>учебный прототип редактора дома</p>
-      </div>
+      <span class="logo" aria-hidden="true">BS</span>
+      <div><h1>BuildSense</h1><p>учебный редактор дома</p></div>
     </div>
-    <label class="project-name">
-      <span>Проект</span>
-      <input id="project-name" type="text" maxlength="80" autocomplete="off">
-    </label>
-    <nav class="toolbar">
-      <button type="button" id="btn-new" title="Создать базовый дом с параметрами по умолчанию">Новый дом</button>
-      <button type="button" id="btn-open" title="Загрузить проект из JSON-файла">Открыть…</button>
-      <button type="button" id="btn-save" title="Сохранить проект в JSON-файл">Сохранить JSON</button>
-      <button type="button" id="btn-export" class="primary" title="Скачать JSON для макроса import_house.FCMacro">Экспорт в FreeCAD</button>
-      <a class="tool-link" href="freecad/import_house.FCMacro" download title="Скачать макрос импорта для FreeCAD">макрос .FCMacro</a>
-      <input type="file" id="file-input" accept=".json,application/json" hidden>
-    </nav>
+    <input id="project-name" class="project-name" type="text" maxlength="80" title="Название проекта" autocomplete="off">
+    <div class="tb-group">
+      <button type="button" data-action="new-menu" data-icon="file" title="Новый проект">Новый</button>
+      <button type="button" data-action="open" data-icon="open" title="Открыть проект (JSON)">Открыть</button>
+      <button type="button" data-action="save" data-icon="save" title="Сохранить проект в JSON (Ctrl+S)">Сохранить</button>
+    </div>
+    <div class="tb-group">
+      <button type="button" data-action="undo" data-icon="undo" title="Отменить (Ctrl+Z)" class="icon-only"></button>
+      <button type="button" data-action="redo" data-icon="redo" title="Повторить (Ctrl+Y)" class="icon-only"></button>
+    </div>
+    <div class="tb-group tb-right">
+      <button type="button" data-action="wizard" data-icon="wizard" title="Пошаговый мастер создания дома">Мастер</button>
+      <button type="button" data-action="export" data-icon="export" class="primary" title="Экспорт JSON для макроса FreeCAD">Экспорт в FreeCAD</button>
+      <button type="button" data-action="macro" data-icon="code" title="Скачать макрос import_house.FCMacro: во FreeCAD — Макрос → Макросы… → Выполнить">Скачать макрос</button>
+      <button type="button" data-action="theme" data-icon="theme" title="Светлая / тёмная тема" class="icon-only"></button>
+    </div>
+    <input type="file" id="file-input" accept=".json,application/json" hidden>
+    <input type="file" id="rules-input" accept=".json,application/json" hidden>
   </header>
 
   <main class="layout">
-    <aside class="panel panel-left">
-      <section class="card">
-        <h2>Параметры дома</h2>
-        <form id="house-form" class="form" autocomplete="off"></form>
+    <aside class="side side-left">
+      <nav class="tabs" data-tabs="left">
+        <button type="button" data-tab="palette" class="active">Объекты</button>
+        <button type="button" data-tab="tree">Дерево</button>
+      </nav>
+      <section class="tab-pane active" data-pane="palette">
+        <div class="levels" id="levels"></div>
+        <div id="palette" class="palette"></div>
       </section>
-      <section class="card">
-        <h2>Добавить элемент</h2>
-        <div class="add-grid" id="add-buttons">
-          <button type="button" data-add="wall">Стена</button>
-          <button type="button" data-add="floor">Пол</button>
-          <button type="button" data-add="roof">Крыша</button>
-          <button type="button" data-add="window">Окно</button>
-          <button type="button" data-add="door">Дверь</button>
-        </div>
-        <p class="hint">Окна и двери добавляются в выбранную стену (или в первую наружную).</p>
-      </section>
-      <section class="card card-grow">
-        <h2>Элементы модели <span class="count" id="element-count"></span></h2>
-        <ul class="element-list" id="element-list"></ul>
+      <section class="tab-pane" data-pane="tree">
+        <div id="visibility" class="visibility"></div>
+        <div id="tree" class="tree"></div>
       </section>
     </aside>
 
     <section class="viewport" id="viewport">
-      <div class="view-tools">
-        <button type="button" data-view="iso" title="Изометрия">Изо</button>
-        <button type="button" data-view="top" title="Вид сверху">Сверху</button>
-        <button type="button" data-view="front" title="Вид спереди (с юга)">Спереди</button>
-        <button type="button" data-view="fit" title="Вписать модель в экран">Вписать</button>
-        <button type="button" id="btn-roof-toggle" title="Скрыть или показать крыши, чтобы увидеть внутренние элементы">Скрыть крышу</button>
+      <div class="vp-toolbar">
+        <div class="seg" id="tools">
+          <button type="button" data-tool="select" data-icon="cursor" title="Выбор и перетаскивание (V)">Выбор</button>
+        </div>
+        <div class="seg">
+          <button type="button" data-view="iso" data-icon="cube" title="Изометрия">Изо</button>
+          <button type="button" data-view="top" data-icon="plan" title="План сверху (ортографический)">План</button>
+          <button type="button" data-view="front" data-icon="front" title="Вид спереди">Фасад</button>
+          <button type="button" data-view="fit" data-icon="fit" title="Вписать модель (F)">Вписать</button>
+          <button type="button" data-toggle="ortho" data-icon="ortho" title="Перспектива / ортография">Орто</button>
+        </div>
+        <div class="seg">
+          <button type="button" data-toggle="dims" data-icon="ruler" title="Показать габариты">Габариты</button>
+          <button type="button" data-toggle="isolate" data-icon="isolate" title="Изолировать выбранный объект (I)">Изоляция</button>
+          <button type="button" data-toggle="snap" data-icon="magnet" title="Привязка к сетке и объектам" class="on">Магнит</button>
+          <select id="grid-step" title="Шаг строительной сетки">
+            <option value="0.05">5 см</option>
+            <option value="0.1" selected>10 см</option>
+            <option value="0.25">25 см</option>
+            <option value="0.5">50 см</option>
+            <option value="1">1 м</option>
+          </select>
+        </div>
       </div>
-      <div class="view-hint">ЛКМ — вращать · колесо — масштаб · ПКМ — сдвиг · клик — выбрать элемент</div>
+      <div class="tool-hint" id="tool-hint"></div>
+      <div class="sim-banner" id="sim-banner" hidden></div>
+      <div class="wizard" id="wizard" hidden></div>
       <div class="view-error" id="view-error" hidden></div>
+      <div class="vp-legend">ЛКМ — вращать · колесо — масштаб · ПКМ — сдвиг · Esc — отмена · Del — удалить</div>
     </section>
 
-    <aside class="panel panel-right">
-      <section class="card" id="properties-card">
-        <h2>Свойства элемента</h2>
-        <div id="properties"></div>
-      </section>
-      <section class="card card-grow">
-        <h2>Проверка норм</h2>
-        <div id="check-summary" class="check-summary"></div>
-        <div id="check-results" class="check-results"></div>
-      </section>
+    <aside class="side side-right">
+      <nav class="tabs" data-tabs="right">
+        <button type="button" data-tab="props" class="active">Свойства</button>
+        <button type="button" data-tab="problems">Проблемы <span class="count" id="problems-count"></span></button>
+        <button type="button" data-tab="sim">Симуляция</button>
+        <button type="button" data-tab="rules">Правила</button>
+        <button type="button" data-tab="settings">Проект</button>
+      </nav>
+      <section class="tab-pane active" data-pane="props"><div id="props"></div></section>
+      <section class="tab-pane" data-pane="problems"><div id="problems"></div></section>
+      <section class="tab-pane" data-pane="sim"><div id="sim"></div></section>
+      <section class="tab-pane" data-pane="rules"><div id="rules"></div></section>
+      <section class="tab-pane" data-pane="settings"><div id="settings"></div></section>
     </aside>
   </main>
 
   <footer class="statusbar">
     <span id="status-text">Загрузка…</span>
-    <span id="status-dims"></span>
+    <span id="status-info"></span>
   </footer>
 
-  <script type="module" src="js/main.js"></script>
+  <div class="menu" id="new-menu" hidden>
+    <button type="button" data-new="starter">Стартовый дом (можно менять)</button>
+    <button type="button" data-new="empty">Пустой проект</button>
+    <button type="button" data-new="example-two">Пример: двухэтажный дом</button>
+    <button type="button" data-new="example-issues">Пример: дом с ошибками</button>
+  </div>
+
+  <!-- Библиотеки (локально, работают без интернета) -->
+  <script src="vendor/three/three.min.js"></script>
+  <script src="vendor/three/OrbitControls.js"></script>
+  <!-- Ядро: модули без DOM -->
+  <script src="js/core/namespace.js"></script>
+  <script src="js/core/geometry.js"></script>
+  <script src="js/materials/materials.js"></script>
+  <script src="js/objects/types.js"></script>
+  <script src="js/objects/shapes.js"></script>
+  <script src="js/objects/support.js"></script>
+  <script src="js/objects/snapping.js"></script>
+  <script src="js/objects/project.js"></script>
+  <script src="js/rules/builtinRules.js"></script>
+  <script src="js/rules/ruleRegistry.js"></script>
+  <script src="js/rules/checker.js"></script>
+  <script src="js/validation/metrics.js"></script>
+  <script src="js/validation/validationEngine.js"></script>
+  <script src="js/simulation/loadGraph.js"></script>
+  <script src="js/simulation/simulation.js"></script>
+  <script src="js/calculations/calculations.js"></script>
+  <script src="js/io/projectIO.js"></script>
+  <script src="js/io/freecadExport.js"></script>
+  <script src="js/io/macroSource.js"></script>
+  <script src="js/editor/history.js"></script>
+  <script src="examples/examples.js"></script>
+  <!-- 3D и интерфейс -->
+  <script src="js/scene/meshBuilder.js"></script>
+  <script src="js/scene/sceneView.js"></script>
+  <script src="js/scene/dimensions.js"></script>
+  <script src="js/simulation/simPlayer.js"></script>
+  <script src="js/editor/tools.js"></script>
+  <script src="js/ui/icons.js"></script>
+  <script src="js/ui/dom.js"></script>
+  <script src="js/ui/palette.js"></script>
+  <script src="js/ui/tree.js"></script>
+  <script src="js/ui/properties.js"></script>
+  <script src="js/ui/problems.js"></script>
+  <script src="js/ui/simulationPanel.js"></script>
+  <script src="js/ui/rulesPanel.js"></script>
+  <script src="js/ui/settingsPanel.js"></script>
+  <script src="js/ui/wizard.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
