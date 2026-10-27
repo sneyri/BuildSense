@@ -90,7 +90,32 @@ for (const lv of section.levels) {
 P.addRoofOverBuilding(section);
 section.settings.climateRegion = "2V";
 
-const examples = { starter, twoStorey: two, issues: bad, section };
+// 6. Готовые варианты домов разных форм (контур из прямых стен по точкам)
+function polygonHouse(name, pts, { storeys = 1, roof = true } = {}) {
+  const p = P.createProject(name);
+  const xs = pts.map((q) => q.x), ys = pts.map((q) => q.y);
+  const fnd = P.addRect(p, "slab_foundation", { x: Math.min(...xs) - 0.3, y: Math.min(...ys) - 0.3 }, { x: Math.max(...xs) + 0.3, y: Math.max(...ys) + 0.3 });
+  fnd.name = "Фундаментная плита";
+  for (let i = 0; i < pts.length; i++) P.addWallByPoints(p, pts[i], pts[(i + 1) % pts.length], { category: "exterior", levelId: "L1" });
+  try { P.slabInsideWalls(p, "L1"); } catch { /* пол не обязателен для сложного контура */ }
+  try { P.autoOpenings(p, "L1"); } catch { /* на коротких гранях окна не помещаются */ }
+  for (let i = 1; i < storeys; i++) P.addLevel(p, { copyWalls: true });
+  if (roof) P.addRoofOverBuilding(p);
+  return p;
+}
+const ring = (n, r, r2 = r, phase = 0) => Array.from({ length: n }, (_, i) => {
+  const a = phase + (i * 2 * Math.PI) / n, rr = i % 2 ? r2 : r;
+  return { x: +(rr * Math.cos(a)).toFixed(3), y: +(rr * Math.sin(a)).toFixed(3) };
+});
+const lshape = polygonHouse("Г-образный дом", [{ x: 0, y: 0 }, { x: 12, y: 0 }, { x: 12, y: 5 }, { x: 5, y: 5 }, { x: 5, y: 10 }, { x: 0, y: 10 }]);
+const round = polygonHouse("Круглый дом (12 граней), 2 этажа", ring(12, 6), { storeys: 2 });
+const star = polygonHouse("Дом-звезда (5 лучей)", ring(10, 8, 4, Math.PI / 2), { roof: false }); // крыша строится только над прямоугольником
+const tall = P.createStarterProject("Трёхэтажный дом");
+tall.elements = tall.elements.filter((e) => e.type !== "roof");
+for (let i = 0; i < 2; i++) P.addLevel(tall, { copyWalls: true });
+P.addRoofOverBuilding(tall);
+
+const examples = { starter, twoStorey: two, issues: bad, section, lshape, round, star, tall };
 for (const p of Object.values(examples)) p.createdAt = p.updatedAt = FIXED;
 writeFileSync(out("starter-house.buildsense.json"), BS.projectIO.serialize(starter) + "\n");
 writeFileSync(out("two-storey.buildsense.json"), BS.projectIO.serialize(two) + "\n");
