@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """import_house.FCMacro — импорт модели BuildSense в FreeCAD.
 
-Запуск в FreeCAD (проверено на FreeCAD 1.1.4 для Windows):
+Запуск в FreeCAD (проверено на FreeCAD 1.1.4 для Windows, см. docs/TESTS.md):
   1. В BuildSense нажмите «Экспорт в FreeCAD» — скачается файл *.freecad.json.
-  2. FreeCAD → Макрос → Макросы… → укажите папку с макросом → import_house → Выполнить.
+  2. FreeCAD → Макрос → Макросы… → укажите папку freecad/ проекта → import_house → Выполнить.
   3. Выберите *.freecad.json. После импорта макрос предложит сохранить модель в .FCStd.
 
 Без интерфейса (консольный FreeCAD):
