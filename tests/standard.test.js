@@ -69,7 +69,7 @@ test("экспорт для FreeCAD: BIM-код, узел и оболочка", 
   assert.deepEqual(plain(data.project.bim), { object: "ЖК01", section: "С1" });
 });
 
-test("жилая секция: 5 этажей, геометрия без ошибок, СП 55 честно не применим (FAIL области применения)", () => {
+test("жилая секция: 5 этажей, геометрия без ошибок, СП 55 вне области применения", () => {
   const p = fresh("section");
   assert.equal(p.levels.length, 5);
   const t0 = Date.now();
@@ -78,6 +78,6 @@ test("жилая секция: 5 этажей, геометрия без оши�
   assert.ok(ms < 2000, `проверка заняла ${ms} мс`);
   assert.equal(r.issues.filter((i) => i.severity === "error" && i.category === "geometry").length, 0, "нет геометрических ошибок");
   const storeys = r.norms.results.find((n) => n.ruleId === "SP55-1.1-STOREYS");
-  assert.equal(storeys.status, "FAIL");
+  assert.equal(storeys.status, "OUT OF SCOPE");
   assert.equal(storeys.actual, 5);
 });

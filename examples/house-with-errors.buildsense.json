@@ -607,6 +607,26 @@
       },
       "params": {},
       "hostId": "wall-3"
+    },
+    {
+      "id": "slab-2",
+      "type": "slab",
+      "name": "Чердачное перекрытие",
+      "category": "attic",
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 2.8
+      },
+      "rotation": 0,
+      "size": {
+        "length": 10,
+        "width": 8,
+        "height": 0.2
+      },
+      "params": {}
     }
   ],
   "customRules": []

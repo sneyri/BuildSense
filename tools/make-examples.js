@@ -53,6 +53,8 @@ extra.position.offset = w.position.offset + 0.5;                             // 
 const roof = bad.elements.find((e) => e.type === "roof");
 roof.position.z = 3.2;                                                       // крыша висит над стенами
 bad.settings.climateRegion = "1A";                                           // FAIL по п. 6.2 (2,6 м < 2,7 м)
+P.addElement(bad, "slab", { name: "Чердачное перекрытие", category: "attic",      // плоский потолок: высота однозначна
+  position: { x: 0, y: 0, z: 2.8 }, size: { length: 10, width: 8, height: 0.2 } });
 
 // 4. Все типы объектов (для проверки макроса FreeCAD): по одному каждого вида на отдельной площадке
 const all = P.createStarterProject("Все типы объектов");

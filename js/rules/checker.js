@@ -2,10 +2,13 @@
 // PASS/FAIL выдаются только для правил со статусом "verified" (сверено с текстом документа)
 // и "user" (пользовательское учебное ограничение — с пометкой, что это не норма).
 // Для "unverified" и "demo" результат всегда NOT VERIFIED, а сравнение показывается справочно.
+// Правила с role: "scope" — область применения документа: если хотя бы одно не выполнено, документ к объекту
+// не применяется (OUT OF SCOPE), а остальные его правила попадают в «неприменимо», а не в PASS/FAIL.
+// undecidable — условия, при которых нарушение нельзя утверждать: вместо FAIL — NEEDS REVIEW с причиной.
 (function (BS) {
   "use strict";
 
-  const STATUS = Object.freeze({ PASS: "PASS", FAIL: "FAIL", NOT_VERIFIED: "NOT VERIFIED" });
+  const STATUS = Object.freeze({ PASS: "PASS", FAIL: "FAIL", NOT_VERIFIED: "NOT VERIFIED", NEEDS_REVIEW: "NEEDS REVIEW", OUT_OF_SCOPE: "OUT OF SCOPE" });
 
   const VERIFICATION_STATUSES = Object.freeze({
     verified: "Сверено с текстом документа",
@@ -51,6 +54,12 @@
     need(rule.source && rule.source.title, "нет источника source.title");
     need(rule.verification && Object.prototype.hasOwnProperty.call(VERIFICATION_STATUSES, rule.verification.status),
       "verification.status должен быть verified, unverified, demo или user");
+    need(rule.role === undefined || rule.role === "scope", 'role может быть только "scope"');
+    need(rule.undecidable === undefined || Array.isArray(rule.undecidable), "undecidable должен быть массивом условий");
+    for (const c of rule.undecidable || []) {
+      need(c && typeof c.parameter === "string" && Object.prototype.hasOwnProperty.call(OPERATORS, c.operator) && typeof c.reason === "string",
+        "условие undecidable: нужны parameter, operator и reason");
+    }
     return errors;
   }
 
@@ -93,11 +102,30 @@
     return missing ? null : true;
   }
 
-  /** Проверка правил: { results, notApplicable, summary }. */
+  /** Проверка правил: { results, notApplicable, outOfScope, summary }. */
   function checkModel(parameters, rules) {
     const results = [];
     const notApplicable = [];
+    // 1. Область применения документов
+    const outOfScope = new Map(); // id документа → причины
+    const scopeRules = rules.filter((r) => r.role === "scope");
+    for (const rule of scopeRules) {
+      const r = evaluateRule(rule, { ...parameters.building }, null, parameters.units, false);
+      if (r.status === STATUS.FAIL) {
+        const docId = rule.document.id;
+        const reason = `${rule.title || rule.id}: ${fmtValue(r.actual)} ${OPERATORS[rule.operator]} ${fmtValue(r.expected)} не выполняется`;
+        outOfScope.set(docId, [...(outOfScope.get(docId) || []), reason]);
+        results.push({ ...r, status: STATUS.OUT_OF_SCOPE, reason: `Документ ${docId} к объекту не применяется (п. ${rule.clause})` });
+      } else results.push(r);
+    }
+    // 2. Остальные правила
     for (const rule of rules) {
+      if (rule.role === "scope") continue;
+      const docId = rule.document && rule.document.id;
+      if (outOfScope.has(docId)) {
+        notApplicable.push({ rule, reason: `вне области применения ${docId}: ${outOfScope.get(docId).join("; ")}`, outOfScope: true });
+        continue;
+      }
       const elementType = (rule.applicability && rule.applicability.elementType) || null;
       const targets = elementType ? parameters.elements.filter((e) => e.type === elementType) : [null];
       if (elementType && !targets.length) {
@@ -114,15 +142,20 @@
       }
       if (!applicable) notApplicable.push({ rule, reason: rule.applicability.description || "условия применимости не выполнены" });
     }
-    const summary = { [STATUS.PASS]: 0, [STATUS.FAIL]: 0, [STATUS.NOT_VERIFIED]: 0, notApplicable: notApplicable.length };
+    const summary = { [STATUS.PASS]: 0, [STATUS.FAIL]: 0, [STATUS.NOT_VERIFIED]: 0, [STATUS.NEEDS_REVIEW]: 0, [STATUS.OUT_OF_SCOPE]: 0, notApplicable: notApplicable.length };
     for (const r of results) summary[r.status]++;
     summary.total = results.length;
-    return { results, notApplicable, summary };
+    return { results, notApplicable, outOfScope: [...outOfScope.entries()].map(([document, reasons]) => ({ document, reasons })), summary };
+  }
+
+  function fmtValue(v) {
+    return typeof v === "number" ? String(Math.round(v * 1000) / 1000).replace(".", ",") : String(v);
   }
 
   function evaluateRule(rule, ctx, target, units, conditionDataMissing) {
     const base = {
       ruleId: rule.id, rule, elementId: target ? target.id : null, elementName: target ? target.name : null,
+      elementIds: target ? (target.memberIds || [target.id]) : [],
       parameter: rule.parameter, unit: units[rule.parameter] ?? rule.unit ?? null,
       actual: ctx[rule.parameter] ?? null, expected: null, demoOutcome: null,
       official: rule.verification.status !== "user",
@@ -138,6 +171,10 @@
     const outcome = ok ? STATUS.PASS : STATUS.FAIL;
     if (rule.verification.status === "unverified" || rule.verification.status === "demo") {
       return { ...base, expected, status: STATUS.NOT_VERIFIED, demoOutcome: outcome, reason: VERIFICATION_STATUSES[rule.verification.status] };
+    }
+    if (outcome === STATUS.FAIL) {
+      const doubt = (rule.undecidable || []).find((c) => compare(ctx[c.parameter], c.operator, c.value) === true);
+      if (doubt) return { ...base, expected, status: STATUS.NEEDS_REVIEW, demoOutcome: outcome, reason: doubt.reason };
     }
     return { ...base, expected, status: outcome, reason: null };
   }

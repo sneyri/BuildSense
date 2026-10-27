@@ -6,6 +6,8 @@
 //               «потенциальная проблема» / «требуется инженерная проверка», а не как доказанное нарушение;
 //   norms     — нормативные и пользовательские правила из реестра (см. rules/).
 // Уровни: error (красный), warning (оранжевый), info (синий), pass (зелёный).
+// applies(ctx) — есть ли в модели что проверять. Если нет, проверка попадает в «неприменимо»,
+// а не в «пройдено»: отсутствие балок не означает, что балки опираются правильно.
 (function (BS) {
   "use strict";
   const G = BS.geometry;
@@ -24,6 +26,7 @@
   const CHECKS = [
     {
       id: "GEO-SIZE", category: "geometry", title: "Размеры элементов", pass: "Все размеры положительные",
+      applies: (ctx) => ctx.els.length > 0,
       explanation: "Размер элемента должен быть положительным числом. Проверьте значения в панели свойств или в JSON-файле.",
       run(ctx, add) {
         for (const el of ctx.els) {
@@ -38,6 +41,7 @@
     },
     {
       id: "GEO-COORD", category: "geometry", title: "Координаты", pass: "Координаты корректны",
+      applies: (ctx) => ctx.els.length > 0,
       explanation: "Координаты должны быть числами в разумных пределах (не дальше 1 км от начала координат).",
       run(ctx, add) {
         for (const el of ctx.els) {
@@ -52,6 +56,7 @@
     },
     {
       id: "GEO-SITE", category: "geometry", title: "Границы участка", pass: "Все элементы в пределах участка",
+      applies: (ctx) => Boolean(ctx.project.settings.site) && ctx.solid.length > 0,
       explanation: "Участок задан в настройках проекта (начало, длина, ширина, предельная высота). Перенесите элемент внутрь или измените границы.",
       run(ctx, add) {
         const s = ctx.project.settings.site;
@@ -67,6 +72,7 @@
     },
     {
       id: "GEO-OVERLAP", category: "geometry", title: "Пересечения объектов", pass: "Недопустимых пересечений нет",
+      applies: (ctx) => ctx.solid.length > 1,
       explanation: "Допустимые пересечения не считаются ошибкой: стены на фундаменте, проёмы в стенах, перемычки и колонны в стенах, концы балок в опорах, плиты, заходящие в стены, лестница сквозь перекрытие. Остальные пересечения стоит устранить.",
       run(ctx, add) {
         const list = ctx.solid;
@@ -88,6 +94,7 @@
     },
     {
       id: "GEO-OPENINGS", category: "geometry", title: "Проёмы в стенах", pass: "Все проёмы внутри своих стен",
+      applies: (ctx) => ctx.els.some(isOpening),
       explanation: "Окно или дверь должны целиком помещаться в своей стене и не накладываться друг на друга.",
       run(ctx, add) {
         for (const o of ctx.els.filter(isOpening)) {
@@ -116,6 +123,7 @@
     },
     {
       id: "GEO-CONNECT", category: "geometry", title: "Стыковка с опорами и стенами", pass: "Элементы стыкуются без зазоров",
+      applies: (ctx) => ctx.gravity.length > 0 || ctx.solid.some((e) => e.type === "wall"),
       explanation: "Низ стены или колонны должен совпадать с верхом опоры, а торцы наружных стен — примыкать к соседним стенам. Кнопка «Исправить» опускает элемент на опору.",
       run(ctx, add) {
         for (const el of ctx.gravity.filter((e) => e.type !== "roof")) {
@@ -151,6 +159,7 @@
     },
     {
       id: "GEO-STAIRS", category: "geometry", title: "Лестницы", pass: "Лестницы доходят до следующего этажа",
+      applies: (ctx) => ctx.els.some((e) => e.type === "stairs"),
       explanation: "Верх лестницы должен совпадать с полом следующего этажа (его отметкой).",
       run(ctx, add) {
         for (const st of ctx.els.filter((e) => e.type === "stairs")) {
@@ -168,6 +177,7 @@
     },
     {
       id: "GEO-ROOF", category: "geometry", title: "Покрытие крышей", pass: "Крыша покрывает здание",
+      applies: (ctx) => ctx.solid.some((e) => e.type === "wall" && e.category === "exterior"),
       explanation: "Крыша должна перекрывать наружные стены верхнего этажа. Увеличьте её размеры или свесы.",
       run(ctx, add) {
         const top = BS.project.topLevel(ctx.project);
@@ -189,6 +199,7 @@
     // ---------------------------------------------------------------- конструкция
     {
       id: "STR-FOUNDATION", category: "structure", title: "Наличие фундамента", pass: "Фундамент есть",
+      applies: (ctx) => ctx.els.some((e) => e.type === "wall"),
       explanation: "Стены передают нагрузку на фундамент. Без фундамента модель не имеет опоры на грунт.",
       run(ctx, add) {
         if (ctx.els.some((e) => e.type === "wall") && !ctx.els.some((e) => BS.types.isFoundation(e))) {
@@ -200,6 +211,7 @@
     },
     {
       id: "STR-SUPPORT", category: "structure", title: "Опоры под элементами", pass: "Все элементы на опорах",
+      applies: (ctx) => ctx.gravity.some((e) => !["roof", "beam", "truss"].includes(e.type)),
       explanation: "Каждый опирающийся элемент должен стоять на фундаменте, перекрытии, стене или балке. Частичное опирание означает консольный свес.",
       run(ctx, add) {
         for (const el of ctx.gravity.filter((e) => !["roof", "beam", "truss"].includes(e.type))) {
@@ -216,6 +228,7 @@
     },
     {
       id: "STR-BEAMS", category: "structure", title: "Балки и фермы", pass: "Балки опираются обоими концами в пределах пролёта",
+      applies: (ctx) => ctx.els.some((e) => e.type === "beam" || e.type === "truss"),
       explanation: "Балка должна опираться обоими концами. Предельный пролёт и отношение пролёта к высоте сечения задаются в учебном профиле (настройки проекта).",
       run(ctx, add) {
         const pr = ctx.project.settings.profile;
@@ -238,6 +251,7 @@
     },
     {
       id: "STR-PROFILE", category: "structure", title: "Учебный профиль сечений", pass: "Сечения соответствуют учебному профилю",
+      applies: (ctx) => ctx.els.some((e) => ["wall", "column", "round_column", "slab"].includes(e.type)),
       explanation: "Минимальные размеры задаёт пользователь в учебном профиле. Это не нормы, а ориентиры для учебного проекта.",
       run(ctx, add) {
         const pr = ctx.project.settings.profile;
@@ -257,6 +271,7 @@
     },
     {
       id: "STR-SLABS", category: "structure", title: "Опирание перекрытий", pass: "Перекрытия опираются на стены или балки",
+      applies: (ctx) => ctx.els.some((e) => e.type === "slab" && e.category !== "ground"),
       explanation: "Междуэтажное перекрытие должно лежать минимум на двух несущих элементах. Предельный пролёт задаётся в учебном профиле.",
       run(ctx, add) {
         const pr = ctx.project.settings.profile;
@@ -277,6 +292,7 @@
     },
     {
       id: "STR-SLENDER", category: "structure", title: "Гибкость стен", pass: "Гибкость стен в пределах учебного профиля",
+      applies: (ctx) => ctx.solid.some((e) => e.type === "wall"),
       explanation: "Гибкость — отношение высоты стены к толщине (h/t). Отдельно стоящая стена без связей с другими менее устойчива.",
       run(ctx, add) {
         const pr = ctx.project.settings.profile;
@@ -298,6 +314,7 @@
     },
     {
       id: "STR-LOADPATH", category: "structure", title: "Цепочка передачи нагрузки", pass: "Нагрузка от всех несущих элементов доходит до фундамента",
+      applies: (ctx) => ctx.gravity.some((e) => BS.types.isBearing(e)),
       explanation: "Нагрузка должна передаваться по несущим элементам вниз до фундамента. Опора на ненесущий элемент (перегородку, террасу, мебель) — разрыв цепочки.",
       run(ctx, add) {
         const onPath = ctx.loadPath();
@@ -313,6 +330,7 @@
     },
     {
       id: "STR-LEVELS", category: "structure", title: "Связь между этажами", pass: "Этажи связаны перекрытиями",
+      applies: (ctx) => ctx.project.levels.length > 1,
       explanation: "Этаж выше первого должен опираться на перекрытие, лежащее на стенах нижнего этажа.",
       run(ctx, add) {
         const levels = ctx.project.levels.slice().sort((a, b) => a.elevation - b.elevation);
@@ -329,6 +347,7 @@
     },
     {
       id: "STR-ROOF", category: "structure", title: "Опирание крыши", pass: "Крыша лежит на стенах",
+      applies: (ctx) => ctx.els.some((e) => e.type === "roof"),
       explanation: "Низ крыши должен лежать на верхе наружных стен (или на балках/фермах).",
       run(ctx, add) {
         const top = BS.project.topLevel(ctx.project);
@@ -346,6 +365,7 @@
     },
     {
       id: "STR-ATTACHED", category: "structure", title: "Крепление навесных элементов", pass: "Навесные элементы прикреплены",
+      applies: (ctx) => ctx.els.some((e) => typeOf(e).support === "attached"),
       explanation: "Балкон, карниз, светильник, розетка и выключатель должны примыкать к стене или перекрытию.",
       run(ctx, add) {
         for (const el of ctx.els.filter((e) => typeOf(e).support === "attached")) {
@@ -358,6 +378,7 @@
     },
     {
       id: "STR-OPENINGS", category: "structure", title: "Простенки и перемычки", pass: "Простенки и перемычки в порядке",
+      applies: (ctx) => ctx.solid.some((w) => w.type === "wall" && BS.types.isBearing(w) && ctx.els.some((o) => o.hostId === w.id)),
       explanation: "Узкие простенки и большие проёмы ослабляют несущую стену; над проёмом в несущей стене нужна перемычка.",
       run(ctx, add) {
         for (const w of ctx.solid.filter((e) => e.type === "wall" && BS.types.isBearing(e))) {
@@ -475,13 +496,19 @@
 
   /**
    * Полная проверка проекта.
-   * @returns {{ issues: Array, summary: object, norms: object, ruleErrors: string[] }}
+   * @returns {{ issues: Array, summary: object, norms: object, ruleErrors: string[], notApplicable: Array }}
+   * notApplicable: проверки и правила, которым нечего проверять или которые вне области применения документа.
    * issue: { id, checkId, category, severity, title, description, explanation, elementIds, fix? }
    */
   function validate(project, options = {}) {
     const ctx = makeContext(project);
     const issues = [];
+    const notApplicable = [];
     for (const check of CHECKS) {
+      if (check.applies && !check.applies(ctx)) {
+        notApplicable.push({ checkId: check.id, category: check.category, title: check.title, reason: "в модели нет объектов этой проверки" });
+        continue;
+      }
       const found = [];
       try {
         check.run(ctx, (it) => found.push(it));
@@ -497,24 +524,36 @@
     // Нормативные и пользовательские правила
     const { rules, errors: ruleErrors } = options.rules ? { rules: options.rules, errors: [] } : BS.ruleRegistry.all(project);
     const norms = BS.checker.checkModel(BS.metrics.collect(project), rules);
+    const S_ = BS.checker.STATUS;
     norms.results.forEach((r, i) => {
       const official = r.rule.verification.status === "verified";
       const userRule = r.rule.verification.status === "user";
-      const severity = r.status === "PASS" ? "pass" : r.status === "FAIL" ? (official ? "error" : "warning") : "info";
-      const prefix = userRule ? "Учебное ограничение: " : "";
+      const severity = r.status === S_.PASS ? "pass"
+        : r.status === S_.FAIL ? (official ? "error" : "warning")
+        : r.status === S_.NEEDS_REVIEW ? (official ? "warning" : "info")
+        : "info";
+      const prefix = userRule ? "Учебное ограничение: " : r.status === S_.NEEDS_REVIEW ? "Требуется проверка: " : "";
+      const title = r.status === S_.OUT_OF_SCOPE
+        ? `${r.rule.document.id} не применяется: ${r.rule.title || r.rule.id} (${r.actual} ${BS.checker.OPERATORS[r.rule.operator]} ${r.expected} не выполняется)`
+        : `${prefix}${r.rule.title || r.rule.id}${r.elementName ? ` — ${r.elementName}` : ""}`;
       issues.push({
-        id: `NORM-${r.ruleId}#${i}`, checkId: `NORM-${r.ruleId}`, category: "norms", severity,
-        title: `${prefix}${r.rule.title || r.rule.id}${r.elementName ? ` — ${r.elementName}` : ""}`,
+        id: `NORM-${r.ruleId}#${i}`, checkId: `NORM-${r.ruleId}`, category: "norms", severity, title,
         description: `${r.rule.document.id}${r.rule.clause && r.rule.clause !== "—" ? `, п. ${r.rule.clause}` : ""}. ${r.reason ? r.reason + "." : ""}`,
-        explanation: r.rule.requirement,
-        elementIds: r.elementId ? [r.elementId] : [],
+        explanation: r.status === S_.OUT_OF_SCOPE
+          ? `${r.rule.requirement} Остальные правила этого документа к объекту не применяются и не проверяются.`
+          : r.rule.requirement,
+        elementIds: r.elementIds || (r.elementId ? [r.elementId] : []),
         norm: r,
       });
     });
+    for (const na of norms.notApplicable.filter((x) => x.outOfScope)) {
+      notApplicable.push({ checkId: `NORM-${na.rule.id}`, category: "norms", title: na.rule.title || na.rule.id, reason: na.reason });
+    }
 
     const summary = { error: 0, warning: 0, info: 0, pass: 0 };
     for (const it of issues) summary[it.severity]++;
-    return { issues, summary, norms, ruleErrors };
+    summary.notApplicable = notApplicable.length;
+    return { issues, summary, norms, ruleErrors, notApplicable };
   }
 
   /** Самая серьёзная проблема по каждому элементу — для подсветки в 3D. */

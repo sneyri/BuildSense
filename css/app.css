@@ -193,6 +193,7 @@ details.more > summary { cursor: pointer; color: var(--accent); margin: 8px 0 4p
 .issue.warning { border-left-color: var(--warn); }
 .issue.info { border-left-color: var(--info); }
 .issue.pass { border-left-color: var(--ok); }
+.issue.na { cursor: default; } .issue.na summary { cursor: pointer; font-weight: 600; } .issue.na ul { margin: 6px 0 0; padding-left: 18px; font-size: 12px; }
 .issue:hover { border-color: var(--accent); }
 .issue header { display: flex; gap: 8px; align-items: flex-start; }
 .issue header strong { flex: 1; font-weight: 600; }
