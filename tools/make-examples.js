@@ -72,12 +72,29 @@ for (const type of Object.keys(BS.types.TYPES)) {
   rotation: i === 0 ? 15 : 0, params: { roofType, slope: 25, thickness: 0.25 },
 }));
 
-const examples = { starter, twoStorey: two, issues: bad };
+// 5. Жилая секция: 5 этажей из модульных узлов библиотеки (газобетонные стены, многопустотные плиты)
+const section = P.createStarterProject("Жилая секция (5 этажей)");
+section.settings.bim = { object: "ЖК01", section: "С1" };
+section.elements = section.elements.filter((e) => e.type !== "roof");
+for (const wall of section.elements.filter((e) => e.type === "wall" && e.category === "exterior")) BS.modules.apply(section, wall.id, "aerated_wall");
+section.house.slabThickness = BS.modules.get("hollow_slab").size.height; // этажи ставятся с учётом толщины плиты узла
+for (let i = 0; i < 4; i++) P.addLevel(section, { copyWalls: true });
+for (const slab of section.elements.filter((e) => e.type === "slab" && e.category === "floor")) BS.modules.apply(section, slab.id, "hollow_slab");
+const sides = ["южная", "восточная", "северная", "западная"];
+for (const lv of section.levels) {
+  const walls = section.elements.filter((e) => e.type === "wall" && e.levelId === lv.id);
+  walls.forEach((w, i) => { w.name = `Стена ${sides[i] || i + 1}, газобетон (${lv.name.toLowerCase()})`; });
+}
+P.addRoofOverBuilding(section);
+section.settings.climateRegion = "2V";
+
+const examples = { starter, twoStorey: two, issues: bad, section };
 for (const p of Object.values(examples)) p.createdAt = p.updatedAt = FIXED;
 writeFileSync(out("starter-house.buildsense.json"), BS.projectIO.serialize(starter) + "\n");
 writeFileSync(out("two-storey.buildsense.json"), BS.projectIO.serialize(two) + "\n");
 writeFileSync(out("house-with-errors.buildsense.json"), BS.projectIO.serialize(bad) + "\n");
-for (const [file, p] of [["two-storey", two], ["starter-house", starter], ["all-types", all]]) {
+writeFileSync(out("residential-section.buildsense.json"), BS.projectIO.serialize(section) + "\n");
+for (const [file, p] of [["two-storey", two], ["starter-house", starter], ["all-types", all], ["residential-section", section]]) {
   const exp = BS.freecadExport.build(p).data;
   exp.exportedAt = FIXED;
   writeFileSync(out(`${file}.freecad.json`), JSON.stringify(exp, null, 2) + "\n");

@@ -23,7 +23,7 @@ import FreeCAD as App
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) if "__file__" in globals() else os.getcwd()
 MACRO = os.path.join(ROOT, "freecad", "import_house.FCMacro")
-FILES = ["starter-house", "two-storey", "all-types"]
+FILES = ["starter-house", "two-storey", "all-types", "residential-section"]
 TOL = 2.0
 TOL_OPENING = 60.0
 REPORT = []
@@ -33,10 +33,11 @@ def run_macro(json_path, out_path, mode):
     os.environ["BUILDSENSE_JSON"] = json_path
     os.environ["BUILDSENSE_OUT"] = out_path
     os.environ["BUILDSENSE_MODE"] = mode
+    os.environ["BUILDSENSE_IFC"] = os.path.splitext(out_path)[0] + ".ifc" if mode == "bim" else "0"
     try:
         return runpy.run_path(MACRO, run_name="__main__")
     finally:
-        for k in ("BUILDSENSE_JSON", "BUILDSENSE_OUT", "BUILDSENSE_MODE"):
+        for k in ("BUILDSENSE_JSON", "BUILDSENSE_OUT", "BUILDSENSE_MODE", "BUILDSENSE_IFC"):
             os.environ.pop(k, None)
 
 
@@ -117,9 +118,11 @@ def check_file(slug, mode, tmp):
         errors.append("{}/{}: ошибки импорта: {}".format(slug, mode, "; ".join(rep.errors[:5])))
     App.closeDocument(doc_r.Name)
 
+    ifc_info = check_ifc(slug, mode, out, data, errors)
+
     doc = App.openDocument(out)
     doc.recompute()
-    stats = {"bim": 0, "part": 0, "checked": 0}
+    stats = {"bim": 0, "part": 0, "checked": 0, "codes": 0}
     for el in data["elements"]:
         if el["type"] == "spaceship":
             continue
@@ -130,6 +133,11 @@ def check_file(slug, mode, tmp):
         if not hasattr(obj, "Shape") or obj.Shape.isNull():
             errors.append("{}/{}: {} — пустое тело".format(slug, mode, el["id"]))
             continue
+        if el.get("bimCode"):
+            if getattr(obj, "BuildSenseBimCode", None) != el["bimCode"]:
+                errors.append("{}/{}: {} — BIM-код {} не сохранён".format(slug, mode, el["id"], el["bimCode"]))
+            else:
+                stats["codes"] += 1
         if not obj.Shape.isValid():
             errors.append("{}/{}: {} — невалидное тело".format(slug, mode, el["id"]))
         is_bim = obj.TypeId.startswith("Part::FeaturePython") or "Arch" in str(getattr(obj, "Proxy", ""))
@@ -168,10 +176,36 @@ def check_file(slug, mode, tmp):
         vol = obj.Shape.Volume
         if holes and abs(vol - (full - holes)) > 0.03 * full:
             errors.append("{}/{}: {} объём {:.3f} м3, ожидалось {:.3f} м3 (проёмы не вырезаны?)".format(slug, mode, w["id"], vol / 1e9, (full - holes) / 1e9))
-    REPORT.append("{:14s} {:5s}: объектов в файле {:3d}; проверено габаритов {:3d}; BIM {:3d}, Part {:3d}; ошибок {}".format(
-        slug, mode, len(doc.Objects), stats["checked"], stats["bim"], stats["part"], len(errors)))
+    REPORT.append("{:14s} {:5s}: объектов в файле {:3d}; проверено габаритов {:3d}; BIM {:3d}, Part {:3d}; BIM-кодов {:3d}; ошибок {}{}".format(
+        slug, mode, len(doc.Objects), stats["checked"], stats["bim"], stats["part"], stats["codes"], len(errors), ifc_info))
     App.closeDocument(doc.Name)
     return errors
+
+
+def check_ifc(slug, mode, out, data, errors):
+    """BIM-режим: макрос сохраняет IFC рядом с .FCStd; проверяем, что файл читается и содержит стены, проёмы, плиты и этажи."""
+    ifc = os.path.splitext(out)[0] + ".ifc"
+    if mode != "bim":
+        if os.path.exists(ifc):
+            errors.append("{}/{}: IFC сохранён в режиме Part".format(slug, mode))
+        return ""
+    if not os.path.exists(ifc):
+        errors.append("{}/{}: IFC не сохранён".format(slug, mode))
+        return ""
+    import ifcopenshell
+    f = ifcopenshell.open(ifc)
+    count = lambda cls: len(f.by_type(cls))
+    walls = sum(1 for e in data["elements"] if e["type"] == "wall")
+    windows = sum(1 for e in data["elements"] if e["type"] == "window")
+    got = {"IfcWall": count("IfcWall"), "IfcWindow": count("IfcWindow"), "IfcDoor": count("IfcDoor"), "IfcSlab": count("IfcSlab"),
+           "IfcBuildingStorey": count("IfcBuildingStorey"), "всего IfcProduct": count("IfcProduct")}
+    if got["IfcWall"] < walls:
+        errors.append("{}/{}: в IFC стен {} из {}".format(slug, mode, got["IfcWall"], walls))
+    if got["IfcWindow"] < windows:
+        errors.append("{}/{}: в IFC окон {} из {}".format(slug, mode, got["IfcWindow"], windows))
+    if got["IfcBuildingStorey"] < len(data.get("levels", [])):
+        errors.append("{}/{}: в IFC этажей {} из {}".format(slug, mode, got["IfcBuildingStorey"], len(data["levels"])))
+    return "\n{:20s}IFC {} ({}): {}".format("", f.schema, os.path.basename(ifc), ", ".join("{} {}".format(k, v) for k, v in got.items()))
 
 
 def check_rejects_project(tmp):

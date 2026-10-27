@@ -1,0 +1,3359 @@
+{
+  "format": "buildsense-freecad-export",
+  "schemaVersion": 2,
+  "units": "mm",
+  "generator": "BuildSense 1.0.0",
+  "exportedAt": "2026-10-27T12:00:00.000Z",
+  "axes": "Z вверх; placement — точка привязки элемента (угол бруса, центр основания цилиндра, начало оси трубы) и поворот вокруг Z в градусах",
+  "project": {
+    "name": "Жилая секция (5 этажей)",
+    "climateRegion": "2V",
+    "housingFund": "private",
+    "bim": {
+      "object": "ЖК01",
+      "section": "С1"
+    }
+  },
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Этаж 1",
+      "elevation": 0,
+      "height": 2800
+    },
+    {
+      "id": "L2",
+      "name": "Этаж 2",
+      "elevation": 3020,
+      "height": 2800
+    },
+    {
+      "id": "L3",
+      "name": "Этаж 3",
+      "elevation": 6040,
+      "height": 2800
+    },
+    {
+      "id": "L4",
+      "name": "Этаж 4",
+      "elevation": 9060,
+      "height": 2800
+    },
+    {
+      "id": "L5",
+      "name": "Этаж 5",
+      "elevation": 12080,
+      "height": 2800
+    }
+  ],
+  "elements": [
+    {
+      "id": "slab_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФПЛ-001",
+      "type": "slab_foundation",
+      "typeLabel": "Плитный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Фундаментная плита",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": -400,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 400
+      }
+    },
+    {
+      "id": "wall-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-001",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная, газобетон (этаж 1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-1",
+          "window-1"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-2",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-002",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная, газобетон (этаж 1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-4"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 0,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-3",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-003",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная, газобетон (этаж 1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-2",
+          "window-3"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 0,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-4",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-004",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная, газобетон (этаж 1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-5"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 0,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "slab-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПЛТ-001",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Пол первого этажа",
+      "category": "ground",
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 400,
+        "y": 400,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 9200,
+        "width": 7200,
+        "height": 200
+      }
+    },
+    {
+      "id": "wall-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРГ-001",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 5, газобетон (этаж 1)",
+      "category": "partition",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-2"
+        ],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 6060,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 120,
+        "height": 2600
+      }
+    },
+    {
+      "id": "door-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-001",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 1",
+      "category": "entrance",
+      "levelId": "L1",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "hostId": "wall-1",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 3000,
+        "elevation": 0
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 3000,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 3000,
+          "y": -50,
+          "z": -50,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 900,
+          "width": 500,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 3000,
+          "y": 175,
+          "z": 0,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "window-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-001",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "hostId": "wall-1",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 900,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-002",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "hostId": "wall-3",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-3",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-003",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "hostId": "wall-3",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-4",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-004",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-2",
+        "hosted": [],
+        "supports": [
+          "wall-2"
+        ]
+      },
+      "hostId": "wall-2",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 900,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-5",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-005",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-4",
+        "hosted": [],
+        "supports": [
+          "wall-4"
+        ]
+      },
+      "hostId": "wall-4",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 900,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "door-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-002",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 2",
+      "category": "interior",
+      "levelId": "L1",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-5",
+        "hosted": [],
+        "supports": [
+          "wall-5"
+        ]
+      },
+      "hostId": "wall-5",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 1000,
+        "elevation": 0
+      },
+      "hostThickness": 120,
+      "placement": {
+        "x": 6060,
+        "y": 1400,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 6110,
+          "y": 1400,
+          "z": 150,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 220,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6025,
+          "y": 1400,
+          "z": 200,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "lintel-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-001",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Дверь 1»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-1"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "placement": {
+        "x": 2750,
+        "y": 0,
+        "z": 2100,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 1400,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-2",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-002",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 1»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-1"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "placement": {
+        "x": 6500,
+        "y": 0,
+        "z": 2300,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-3",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-003",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 4»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-2"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-2",
+        "hosted": [],
+        "supports": [
+          "wall-2"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 3200,
+        "z": 2300,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-4",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-004",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 2»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-3"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "placement": {
+        "x": 8350,
+        "y": 8000,
+        "z": 2300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-005",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 3»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-3"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "placement": {
+        "x": 3050,
+        "y": 8000,
+        "z": 2300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-6",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-006",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 5»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-4"
+      },
+      "node": null,
+      "relations": {
+        "hostId": "wall-4",
+        "hosted": [],
+        "supports": [
+          "wall-4"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 5000,
+        "z": 2300,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "room-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-001",
+      "type": "room",
+      "typeLabel": "Комната (зона)",
+      "shape": "zone",
+      "ifcType": "Space",
+      "name": "Гостиная",
+      "category": null,
+      "levelId": "L1",
+      "material": "zone",
+      "materialLabel": "Зона (без материала)",
+      "color": "#4cc9f0",
+      "density": 0,
+      "params": {
+        "roomName": "Гостиная",
+        "roomType": "common"
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 400,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 5540,
+        "width": 7200,
+        "height": 2600
+      }
+    },
+    {
+      "id": "room-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-002",
+      "type": "room",
+      "typeLabel": "Комната (зона)",
+      "shape": "zone",
+      "ifcType": "Space",
+      "name": "Спальня",
+      "category": null,
+      "levelId": "L1",
+      "material": "zone",
+      "materialLabel": "Зона (без материала)",
+      "color": "#4cc9f0",
+      "density": 0,
+      "params": {
+        "roomName": "Спальня",
+        "roomType": "bedroom"
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 6060,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 3540,
+        "width": 7200,
+        "height": 2600
+      }
+    },
+    {
+      "id": "slab-2",
+      "bimCode": "ЖК01-С1-Э02-КР-ПЛТ-002",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Плита многопустотная 2",
+      "category": "floor",
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "node": "hollow_slab"
+      },
+      "node": {
+        "id": "hollow_slab",
+        "label": "Плита многопустотная",
+        "standard": "ГОСТ 9561-2016",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-1",
+          "wall-2",
+          "wall-3",
+          "wall-4",
+          "wall-5"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 2800,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 220
+      }
+    },
+    {
+      "id": "wall-6",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-005",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная, газобетон (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-6"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 3020,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-6",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-006",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-6",
+        "hosted": [],
+        "supports": [
+          "wall-6"
+        ]
+      },
+      "hostId": "wall-6",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 3920,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 3920,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 3920,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-7",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-006",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная, газобетон (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-7"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 3020,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-7",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-007",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-7",
+        "hosted": [],
+        "supports": [
+          "wall-7"
+        ]
+      },
+      "hostId": "wall-7",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 3920,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 3920,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 3920,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-8",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-007",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная, газобетон (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-8",
+          "window-9"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 3020,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-8",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-008",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-8",
+        "hosted": [],
+        "supports": [
+          "wall-8"
+        ]
+      },
+      "hostId": "wall-8",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 3920,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 3920,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 3920,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-9",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-009",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-8",
+        "hosted": [],
+        "supports": [
+          "wall-8"
+        ]
+      },
+      "hostId": "wall-8",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 3920,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 3920,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 3920,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-9",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-008",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная, газобетон (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-10"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 3020,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-10",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-010",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-9",
+        "hosted": [],
+        "supports": [
+          "wall-9"
+        ]
+      },
+      "hostId": "wall-9",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 3920,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 3920,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 3920,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "slab-3",
+      "bimCode": "ЖК01-С1-Э03-КР-ПЛТ-003",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Плита многопустотная 3",
+      "category": "floor",
+      "levelId": "L3",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "node": "hollow_slab"
+      },
+      "node": {
+        "id": "hollow_slab",
+        "label": "Плита многопустотная",
+        "standard": "ГОСТ 9561-2016",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-6",
+          "wall-7",
+          "wall-8",
+          "wall-9"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 5820,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 220
+      }
+    },
+    {
+      "id": "wall-10",
+      "bimCode": "ЖК01-С1-Э03-КР-СТН-009",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная, газобетон (этаж 3)",
+      "category": "exterior",
+      "levelId": "L3",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-11"
+        ],
+        "supports": [
+          "slab-3"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 6040,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-11",
+      "bimCode": "ЖК01-С1-Э03-АР-ОК-011",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L3",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-10",
+        "hosted": [],
+        "supports": [
+          "wall-10"
+        ]
+      },
+      "hostId": "wall-10",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 6940,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 6940,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 6940,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-11",
+      "bimCode": "ЖК01-С1-Э03-КР-СТН-010",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная, газобетон (этаж 3)",
+      "category": "exterior",
+      "levelId": "L3",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-12"
+        ],
+        "supports": [
+          "slab-3"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 6040,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-12",
+      "bimCode": "ЖК01-С1-Э03-АР-ОК-012",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L3",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-11",
+        "hosted": [],
+        "supports": [
+          "wall-11"
+        ]
+      },
+      "hostId": "wall-11",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 6940,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 6940,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 6940,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-12",
+      "bimCode": "ЖК01-С1-Э03-КР-СТН-011",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная, газобетон (этаж 3)",
+      "category": "exterior",
+      "levelId": "L3",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-13",
+          "window-14"
+        ],
+        "supports": [
+          "slab-3"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 6040,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-13",
+      "bimCode": "ЖК01-С1-Э03-АР-ОК-013",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L3",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-12",
+        "hosted": [],
+        "supports": [
+          "wall-12"
+        ]
+      },
+      "hostId": "wall-12",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 6940,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 6940,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 6940,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-14",
+      "bimCode": "ЖК01-С1-Э03-АР-ОК-014",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L3",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-12",
+        "hosted": [],
+        "supports": [
+          "wall-12"
+        ]
+      },
+      "hostId": "wall-12",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 6940,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 6940,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 6940,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-13",
+      "bimCode": "ЖК01-С1-Э03-КР-СТН-012",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная, газобетон (этаж 3)",
+      "category": "exterior",
+      "levelId": "L3",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-15"
+        ],
+        "supports": [
+          "slab-3"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 6040,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-15",
+      "bimCode": "ЖК01-С1-Э03-АР-ОК-015",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L3",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-13",
+        "hosted": [],
+        "supports": [
+          "wall-13"
+        ]
+      },
+      "hostId": "wall-13",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 6940,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 6940,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 6940,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "slab-4",
+      "bimCode": "ЖК01-С1-Э04-КР-ПЛТ-004",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Плита многопустотная 4",
+      "category": "floor",
+      "levelId": "L4",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "node": "hollow_slab"
+      },
+      "node": {
+        "id": "hollow_slab",
+        "label": "Плита многопустотная",
+        "standard": "ГОСТ 9561-2016",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-10",
+          "wall-11",
+          "wall-12",
+          "wall-13"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 8840,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 220
+      }
+    },
+    {
+      "id": "wall-14",
+      "bimCode": "ЖК01-С1-Э04-КР-СТН-013",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная, газобетон (этаж 4)",
+      "category": "exterior",
+      "levelId": "L4",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-16"
+        ],
+        "supports": [
+          "slab-4"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 9060,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-16",
+      "bimCode": "ЖК01-С1-Э04-АР-ОК-016",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L4",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-14",
+        "hosted": [],
+        "supports": [
+          "wall-14"
+        ]
+      },
+      "hostId": "wall-14",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 9960,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 9960,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 9960,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-15",
+      "bimCode": "ЖК01-С1-Э04-КР-СТН-014",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная, газобетон (этаж 4)",
+      "category": "exterior",
+      "levelId": "L4",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-17"
+        ],
+        "supports": [
+          "slab-4"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 9060,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-17",
+      "bimCode": "ЖК01-С1-Э04-АР-ОК-017",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L4",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-15",
+        "hosted": [],
+        "supports": [
+          "wall-15"
+        ]
+      },
+      "hostId": "wall-15",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 9960,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 9960,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 9960,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-16",
+      "bimCode": "ЖК01-С1-Э04-КР-СТН-015",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная, газобетон (этаж 4)",
+      "category": "exterior",
+      "levelId": "L4",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-18",
+          "window-19"
+        ],
+        "supports": [
+          "slab-4"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 9060,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-18",
+      "bimCode": "ЖК01-С1-Э04-АР-ОК-018",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L4",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-16",
+        "hosted": [],
+        "supports": [
+          "wall-16"
+        ]
+      },
+      "hostId": "wall-16",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 9960,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 9960,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 9960,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-19",
+      "bimCode": "ЖК01-С1-Э04-АР-ОК-019",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L4",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-16",
+        "hosted": [],
+        "supports": [
+          "wall-16"
+        ]
+      },
+      "hostId": "wall-16",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 9960,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 9960,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 9960,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-17",
+      "bimCode": "ЖК01-С1-Э04-КР-СТН-016",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная, газобетон (этаж 4)",
+      "category": "exterior",
+      "levelId": "L4",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-20"
+        ],
+        "supports": [
+          "slab-4"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 9060,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-20",
+      "bimCode": "ЖК01-С1-Э04-АР-ОК-020",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L4",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-17",
+        "hosted": [],
+        "supports": [
+          "wall-17"
+        ]
+      },
+      "hostId": "wall-17",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 9960,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 9960,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 9960,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "slab-5",
+      "bimCode": "ЖК01-С1-Э05-КР-ПЛТ-005",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Плита многопустотная 5",
+      "category": "floor",
+      "levelId": "L5",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "node": "hollow_slab"
+      },
+      "node": {
+        "id": "hollow_slab",
+        "label": "Плита многопустотная",
+        "standard": "ГОСТ 9561-2016",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-14",
+          "wall-15",
+          "wall-16",
+          "wall-17"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 11860,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 220
+      }
+    },
+    {
+      "id": "wall-18",
+      "bimCode": "ЖК01-С1-Э05-КР-СТН-017",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная, газобетон (этаж 5)",
+      "category": "exterior",
+      "levelId": "L5",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-21"
+        ],
+        "supports": [
+          "slab-5"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 12080,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-21",
+      "bimCode": "ЖК01-С1-Э05-АР-ОК-021",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L5",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-18",
+        "hosted": [],
+        "supports": [
+          "wall-18"
+        ]
+      },
+      "hostId": "wall-18",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 12980,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 12980,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 12980,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-19",
+      "bimCode": "ЖК01-С1-Э05-КР-СТН-018",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная, газобетон (этаж 5)",
+      "category": "exterior",
+      "levelId": "L5",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-22"
+        ],
+        "supports": [
+          "slab-5"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 12080,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-22",
+      "bimCode": "ЖК01-С1-Э05-АР-ОК-022",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L5",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-19",
+        "hosted": [],
+        "supports": [
+          "wall-19"
+        ]
+      },
+      "hostId": "wall-19",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 12980,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 12980,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 12980,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-20",
+      "bimCode": "ЖК01-С1-Э05-КР-СТН-019",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная, газобетон (этаж 5)",
+      "category": "exterior",
+      "levelId": "L5",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-23",
+          "window-24"
+        ],
+        "supports": [
+          "slab-5"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 12080,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-23",
+      "bimCode": "ЖК01-С1-Э05-АР-ОК-023",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L5",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-20",
+        "hosted": [],
+        "supports": [
+          "wall-20"
+        ]
+      },
+      "hostId": "wall-20",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 12980,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 12980,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 12980,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-24",
+      "bimCode": "ЖК01-С1-Э05-АР-ОК-024",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L5",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-20",
+        "hosted": [],
+        "supports": [
+          "wall-20"
+        ]
+      },
+      "hostId": "wall-20",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 12980,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 12980,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 12980,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-21",
+      "bimCode": "ЖК01-С1-Э05-КР-СТН-020",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная, газобетон (этаж 5)",
+      "category": "exterior",
+      "levelId": "L5",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {
+        "node": "aerated_wall"
+      },
+      "node": {
+        "id": "aerated_wall",
+        "label": "Стена из газобетона",
+        "standard": "ГОСТ 31360-2024",
+        "verified": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-25"
+        ],
+        "supports": [
+          "slab-5"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 12080,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-25",
+      "bimCode": "ЖК01-С1-Э05-АР-ОК-025",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L5",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "node": null,
+      "relations": {
+        "hostId": "wall-21",
+        "hosted": [],
+        "supports": [
+          "wall-21"
+        ]
+      },
+      "hostId": "wall-21",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 12980,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 12980,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 12980,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "roof-1",
+      "bimCode": "ЖК01-С1-Э05-КР-КРШ-001",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша",
+      "category": null,
+      "levelId": "L5",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25
+      },
+      "node": null,
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-18",
+          "wall-19",
+          "wall-20",
+          "wall-21"
+        ]
+      },
+      "placement": {
+        "x": -400,
+        "y": -400,
+        "z": 14880,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10800,
+        "width": 8800,
+        "rise": 2540.34
+      }
+    }
+  ],
+  "envelope": {
+    "wallGross": 481.6,
+    "windows": 52.5,
+    "doors": 1.89,
+    "wallNet": 427.21,
+    "glazingFacade": 0.109,
+    "roof": 109.74,
+    "footprint": 80,
+    "height": 14.88,
+    "volume": 1190.4,
+    "envelope": 641.6,
+    "compactness": 0.539,
+    "counts": {
+      "walls": 20,
+      "windows": 25,
+      "doors": 1
+    }
+  }
+}

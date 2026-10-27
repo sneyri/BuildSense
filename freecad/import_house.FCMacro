@@ -119,10 +119,14 @@ def safe_name(text):
 def tag(obj, el, role):
     for prop, value in (("BuildSenseId", el["id"]), ("BuildSenseType", el["type"]), ("BuildSenseRole", role),
                         ("BuildSenseMaterial", el.get("materialLabel") or el.get("material", "")),
-                        ("BuildSenseLevel", el.get("levelId", "")), ("BuildSenseIfcHint", el.get("ifcType") or "")):
+                        ("BuildSenseLevel", el.get("levelId", "")), ("BuildSenseIfcHint", el.get("ifcType") or ""),
+                        ("BuildSenseBimCode", el.get("bimCode") or ""),
+                        ("BuildSenseNode", "{} ({})".format((el.get("node") or {}).get("label", ""), (el.get("node") or {}).get("standard", "")) if el.get("node") else "")):
         if prop not in obj.PropertiesList:
             obj.addProperty("App::PropertyString", prop, "BuildSense", "Данные из BuildSense")
         setattr(obj, prop, str(value))
+    if el.get("bimCode") and "Label2" in obj.PropertiesList:
+        obj.Label2 = el["bimCode"]  # описание объекта в дереве FreeCAD — BIM-код по правилу именования
 
 
 def style(obj, color, transparency=0):
@@ -590,6 +594,35 @@ def save_document(doc, json_path):
     return path
 
 
+def default_ifc(fcstd_path):
+    return os.path.splitext(fcstd_path)[0] + ".ifc"
+
+
+def export_ifc(doc, path):
+    """Сохраняет модель в IFC средствами FreeCAD (верстак BIM, ifcopenshell). Возвращает (путь, ошибка)."""
+    try:
+        try:
+            from importers import exportIFC
+        except ImportError:
+            import exportIFC
+        objs = [o for o in doc.Objects if not o.InList]  # корневые объекты: здание или группы этажей
+        exportIFC.export(objs, path)
+        return path, None
+    except Exception as exc:
+        return None, str(exc)
+
+
+def save_ifc(doc, fcstd_path, mode):
+    """IFC сохраняется рядом с .FCStd в режиме BIM. BUILDSENSE_IFC — явный путь, BUILDSENSE_IFC=0 — не сохранять."""
+    env = os.environ.get("BUILDSENSE_IFC")
+    if env == "0" or mode != "bim":
+        return None, None
+    path = env or (default_ifc(fcstd_path) if fcstd_path else None)
+    if not path:
+        return None, None
+    return export_ifc(doc, path)
+
+
 def show(title, text, error=False):
     (App.Console.PrintError if error else App.Console.PrintMessage)(text + "\n")
     if App.GuiUp:
@@ -613,7 +646,12 @@ def main():
         FreeCADGui.SendMsgToActiveView("ViewFit")
     text = report.text(mode)
     saved = save_document(doc, path)
+    ifc, ifc_err = save_ifc(doc, saved, mode)
     text += "\nМодель сохранена: {}".format(saved) if saved else "\nМодель не сохранена — Файл → Сохранить как… (.FCStd)."
+    if ifc:
+        text += "\nIFC сохранён: {}".format(ifc)
+    elif ifc_err:
+        text += "\nIFC не сохранён: {}".format(ifc_err)
     show("BuildSense — импорт завершён", text, error=bool(report.errors) and not App.GuiUp and False)
     return doc
 
