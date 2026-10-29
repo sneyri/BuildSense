@@ -1857,7 +1857,7 @@
       "typeLabel": "Крыша",
       "shape": "roof",
       "ifcType": "Roof",
-      "name": "Крыша",
+      "name": "Крыша — основной объём",
       "category": null,
       "levelId": "L2",
       "material": "clay_tile",
@@ -1870,31 +1870,76 @@
         "thickness": 0.25,
         "overhang": 0.4,
         "contourId": "C2",
-        "generatedBy": "contour-roof"
+        "generatedBy": "contour-roof",
+        "part": 0
       },
       "relations": {
         "hostId": null,
         "hosted": [],
         "supports": [
+          "wall-12",
           "wall-9",
-          "wall-7",
-          "wall-8",
           "wall-10",
-          "wall-11",
-          "wall-12"
+          "wall-7",
+          "wall-11"
         ],
         "contourId": "C2"
       },
       "placement": {
-        "x": -400,
+        "x": 7400,
+        "y": -400,
+        "z": 5800,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 10800,
+        "width": 7800,
+        "rise": 2251.67
+      }
+    },
+    {
+      "id": "roof-2",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша — крыло 1",
+      "category": null,
+      "levelId": "L2",
+      "material": "clay_tile",
+      "materialLabel": "Керамическая черепица",
+      "color": "#a8502e",
+      "density": 1900,
+      "params": {
+        "roofType": "hip",
+        "slope": 30,
+        "thickness": 0.25,
+        "overhang": 0.4,
+        "contourId": "C2",
+        "generatedBy": "contour-roof",
+        "part": 1
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-7",
+          "wall-9",
+          "wall-8",
+          "wall-10"
+        ],
+        "contourId": "C2"
+      },
+      "placement": {
+        "x": 3500,
         "y": -400,
         "z": 5800,
         "rotationZ": 0
       },
       "size": {
-        "length": 12800,
-        "width": 10800,
-        "rise": 3117.69
+        "length": 8900,
+        "width": 5800,
+        "rise": 1674.32
       }
     }
   ]

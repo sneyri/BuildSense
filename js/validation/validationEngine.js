@@ -554,6 +554,7 @@
     const isF = BS.types.isFoundation;
     if (isF(a) && isF(b)) return true;
     if (pair("wall", "wall")) return true; // стыки и наложения стен разбирает проверка GEO-WALLS
+    if (pair("roof", "roof")) return true; // части крыши Г-, Т-образного дома сходятся на коньке
     if (pair("lintel", "wall") || pair("column", "wall") || pair("round_column", "wall")) return true;
     if (pair("slab", "wall") || pair("stairs", "slab") || pair("stairs", "landing") || pair("chimney", "roof") || pair("chimney", "slab")) return true;
     for (const beam of ["beam", "truss"]) {

@@ -268,3 +268,29 @@ test("копия стены контура не связана с контуро
   assert.ok(P.find(p, copy.id), "копия на месте");
   assert.equal(C.linked(p, c.id, C.GEN.wall).length, 6);
 });
+
+test("крыша по контуру: Г, Т, П — основной объём и крылья до конька; косой контур — по габариту с пояснением", () => {
+  const T = [{ x: 0, y: 0 }, { x: 12, y: 0 }, { x: 12, y: 4 }, { x: 8, y: 4 }, { x: 8, y: 9 }, { x: 4, y: 9 }, { x: 4, y: 4 }, { x: 0, y: 4 }];
+  const PI = [{ x: 0, y: 0 }, { x: 12, y: 0 }, { x: 12, y: 9 }, { x: 8, y: 9 }, { x: 8, y: 4 }, { x: 4, y: 4 }, { x: 4, y: 9 }, { x: 0, y: 9 }];
+  for (const [pts, parts, notch] of [[L_SHAPE, 2, { x: 8, y: 6 }], [T, 2, { x: 2, y: 7 }], [PI, 3, { x: 6, y: 7 }]]) {
+    const { p, c } = house(pts);
+    assert.deepStrictEqual(plain(C.roofFromContour(p, c.id, { overhang: 0.4 }).notes), []);
+    const roofs = C.linked(p, c.id, C.GEN.roof);
+    assert.equal(roofs.length, parts);
+    assert.ok(!roofs.some((r) => G.pointInConvex(notch, S.footprint(r, p))), "над вырезом контура крыши нет");
+    for (const r of roofs) assert.equal(r.position.z, 2.8, "крыша на верхе стен");
+    assert.deepStrictEqual(plain(bad(run(p)).map((i) => i.title)), []);
+  }
+  // Т: крыло над ножкой заходит до конька основного объёма (y = 2) и не выходит за свесы
+  const { p, c } = house(T);
+  C.roofFromContour(p, c.id, { overhang: 0.4 });
+  const wing = C.linked(p, c.id, C.GEN.roof).find((r) => r.params.part === 1);
+  const fp = S.footprint(wing, p), b = G.bbox2(fp);
+  assert.ok(near(b.minY, 2, 1e-6) && near(b.maxY, 9.4, 1e-6) && near(b.minX, 3.6, 1e-6) && near(b.maxX, 8.4, 1e-6));
+  // перенос вершины перестраивает части крыши, число частей сохраняется
+  C.setPoints(p, c.id, c.points.map((q) => (q.y === 9 ? { ...q, y: 10 } : q)));
+  assert.ok(near(G.bbox2(S.footprint(wing, p)).maxY, 10.4, 1e-6));
+  const { p: q, c: o } = house(OBTUSE);
+  assert.match(C.roofFromContour(q, o.id, {}).notes.join(" "), /по габариту/);
+  assert.equal(C.linked(q, o.id, C.GEN.roof).length, 1);
+});

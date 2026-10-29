@@ -424,6 +424,123 @@
     return { created: [el], notes };
   }
 
+  // ---------------------------------------------------------------- раскладка крыши по контуру
+
+  const ROOF_MAX_PARTS = 6;
+
+  /**
+   * Делит контур из прямых углов на части крыши: основной объём и крылья.
+   * Возвращает [{ x, y, rotation, length, width }] (мировые координаты, конёк — вдоль length) или
+   * null, если в контуре есть косые рёбра или он слишком дробный — тогда крыша строится по габариту.
+   * Свес oh — только по наружным сторонам; крыло заходит в основной объём до его конька, и фронтон
+   * крыла прячется под скатом (обычное примыкание двускатных крыш Г-, Т-, П-образного дома).
+   */
+  function roofLayout(points, oh) {
+    const n = points.length;
+    let a = null;
+    for (let i = 0; i < n && a === null; i++) {
+      const p = points[i], q = points[(i + 1) % n];
+      if (Math.hypot(q.x - p.x, q.y - p.y) > EPS) a = Math.atan2(q.y - p.y, q.x - p.x);
+    }
+    if (a === null) return null;
+    const quarter = Math.PI / 2;
+    a -= quarter * Math.round(a / quarter); // ось кадра — ближайшая к оси X, в пределах ±45°
+    const d = { x: Math.cos(a), y: Math.sin(a) };
+    const nn = { x: -d.y, y: d.x };
+    const loc = points.map((p) => ({ x: p.x * d.x + p.y * d.y, y: p.x * nn.x + p.y * nn.y }));
+    for (let i = 0; i < n; i++) {
+      const p = loc[i], q = loc[(i + 1) % n];
+      if (Math.abs(q.x - p.x) > 1e-4 && Math.abs(q.y - p.y) > 1e-4) return null; // косое ребро
+    }
+    const uniq = (v) => [...new Set(v.map((x) => U.round(x, 4)))].sort((m, k) => m - k);
+    const xs = uniq(loc.map((p) => p.x)), ys = uniq(loc.map((p) => p.y));
+    if (xs.length > 12 || ys.length > 12) return null;
+    const NI = xs.length - 1, NJ = ys.length - 1;
+    const inside = (i, j) => i >= 0 && j >= 0 && i < NI && j < NJ &&
+      G.pointInPolygon({ x: (xs[i] + xs[i + 1]) / 2, y: (ys[j] + ys[j + 1]) / 2 }, loc);
+    const cell = [];
+    for (let i = 0; i < NI; i++) { cell.push([]); for (let j = 0; j < NJ; j++) cell[i].push(inside(i, j)); }
+    const used = cell.map((r) => r.map(() => false));
+    const free = (i, j) => cell[i][j] && !used[i][j];
+
+    // 1. Разбиение на прямоугольники без наложений: каждый раз — наибольший из свободных клеток
+    const rects = [];
+    for (;;) {
+      let best = null;
+      for (let i0 = 0; i0 < NI; i0++) for (let j0 = 0; j0 < NJ; j0++) {
+        for (let i1 = i0; i1 < NI && free(i1, j0); i1++) {
+          for (let j1 = j0; j1 < NJ; j1++) {
+            let ok = true;
+            for (let i = i0; i <= i1 && ok; i++) ok = free(i, j1);
+            if (!ok) break;
+            const area = (xs[i1 + 1] - xs[i0]) * (ys[j1 + 1] - ys[j0]);
+            if (!best || area > best.area + EPS) best = { i0, i1, j0, j1, area };
+          }
+        }
+      }
+      if (!best) break;
+      for (let i = best.i0; i <= best.i1; i++) for (let j = best.j0; j <= best.j1; j++) used[i][j] = true;
+      rects.push(best);
+      if (rects.length > ROOF_MAX_PARTS) return null;
+    }
+    if (!rects.length) return null;
+
+    // 2. Сторона, хоть частью лежащая на контуре, — наружная (со свесом); остальные — примыкания
+    const sideOuter = (r, side) => {
+      if (side === "x0" || side === "x1") {
+        const i = side === "x0" ? r.i0 - 1 : r.i1 + 1;
+        for (let j = r.j0; j <= r.j1; j++) if (!inside(i, j)) return true;
+      } else {
+        const j = side === "y0" ? r.j0 - 1 : r.j1 + 1;
+        for (let i = r.i0; i <= r.i1; i++) if (!inside(i, j)) return true;
+      }
+      return false;
+    };
+    const parts = rects.map((r) => ({
+      r, x0: xs[r.i0], x1: xs[r.i1 + 1], y0: ys[r.j0], y1: ys[r.j1 + 1], ridge: null,
+      ext: { x0: 0, x1: 0, y0: 0, y1: 0 },
+    }));
+    for (const pt of parts) for (const side of ["x0", "x1", "y0", "y1"]) if (sideOuter(pt.r, side)) pt.ext[side] = oh;
+
+    // 3. Конёк: у основного объёма — вдоль длинной стороны; у крыла — поперёк стороны примыкания
+    const e4 = 1e-4;
+    const touches = (pt, side, D) => {
+      if (side === "y0") return Math.abs(D.y1 - pt.y0) < e4 && D.x0 < pt.x1 - e4 && D.x1 > pt.x0 + e4;
+      if (side === "y1") return Math.abs(D.y0 - pt.y1) < e4 && D.x0 < pt.x1 - e4 && D.x1 > pt.x0 + e4;
+      if (side === "x0") return Math.abs(D.x1 - pt.x0) < e4 && D.y0 < pt.y1 - e4 && D.y1 > pt.y0 + e4;
+      return Math.abs(D.x0 - pt.x1) < e4 && D.y0 < pt.y1 - e4 && D.y1 > pt.y0 + e4;
+    };
+    parts.forEach((pt, k) => {
+      const dx = pt.x1 - pt.x0, dy = pt.y1 - pt.y0;
+      const own = dx >= dy ? "x" : "y";
+      if (k === 0) { pt.ridge = own; return; }
+      for (const side of ["y0", "y1", "x0", "x1"]) {
+        if (pt.ext[side] > 0) continue;
+        const axis = side[0]; // конёк крыла — поперёк стороны примыкания
+        const D = parts.slice(0, k).find((q) => q.ridge && q.ridge !== axis && touches(pt, side, q));
+        if (!D) continue;
+        const span = axis === "y" ? dx : dy, spanD = axis === "y" ? D.y1 - D.y0 : D.x1 - D.x0;
+        if (span > spanD + e4) continue; // крыло шире основного объёма — его фронтон не спрятать
+        pt.ridge = axis;
+        if (side === "y0") pt.ext.y0 = pt.y0 - (D.y0 + D.y1) / 2;
+        else if (side === "y1") pt.ext.y1 = (D.y0 + D.y1) / 2 - pt.y1;
+        else if (side === "x0") pt.ext.x0 = pt.x0 - (D.x0 + D.x1) / 2;
+        else pt.ext.x1 = (D.x0 + D.x1) / 2 - pt.x1;
+        return;
+      }
+      pt.ridge = own;
+    });
+
+    // 4. В мировые координаты: угол элемента и поворот (ось length — конёк)
+    const world = (u, v) => ({ x: u * d.x + v * nn.x, y: u * d.y + v * nn.y });
+    const deg = a / G.DEG;
+    return parts.map((pt) => {
+      const x0 = pt.x0 - pt.ext.x0, x1 = pt.x1 + pt.ext.x1, y0 = pt.y0 - pt.ext.y0, y1 = pt.y1 + pt.ext.y1;
+      if (pt.ridge === "x") return { ...world(x0, y0), rotation: deg, length: x1 - x0, width: y1 - y0 };
+      return { ...world(x1, y0), rotation: deg + 90, length: y1 - y0, width: x1 - x0 };
+    });
+  }
+
   // ---------------------------------------------------------------- перестройка
 
   /**
@@ -577,18 +694,41 @@
       Pm.normalize(project, s);
     }
 
-    // 5. Крыша — над стенами контура (или над перекрытием на них) со свесом
-    for (const r of linked(project, c.id, GEN.roof)) {
-      const src = walls.length ? walls.flatMap((w) => S.footprint(w, project)) : c.points;
-      const b = G.bbox2(src);
-      const oh = r.params.overhang ?? h.roofOverhang;
+    // 5. Крыша — над стенами контура (или над перекрытием на них) со свесом. Контур из прямых углов
+    //    (Г, Т, П, крест) — по частям, иначе — одна крыша по габариту стен.
+    const roofs = linked(project, c.id, GEN.roof).sort((m, k) => (m.params.part || 0) - (k.params.part || 0));
+    if (roofs.length) {
+      const first = roofs[0];
+      const oh = first.params.overhang ?? h.roofOverhang;
       const floors = linked(project, c.id, GEN.floor);
       const z = floors.length ? Math.max(...floors.map((f) => S.top(f, project))) : wallTop;
-      r.position = { x: U.round(b.minX - oh, 3), y: U.round(b.minY - oh, 3), z: U.round(z, 3) };
-      r.rotation = 0;
-      r.size.length = U.round(b.maxX - b.minX + 2 * oh, 3);
-      r.size.width = U.round(b.maxY - b.minY + 2 * oh, 3);
-      Pm.normalize(project, r);
+      let layout = first.params.roofType === "shed" ? null : roofLayout(c.points, oh);
+      if (layout && layout.length === 1) layout = null; // один прямоугольник — как раньше, по габариту стен
+      if (!layout) {
+        const src = walls.length ? walls.flatMap((w) => S.footprint(w, project)) : c.points;
+        const b = G.bbox2(src);
+        layout = [{ x: b.minX - oh, y: b.minY - oh, rotation: 0, length: b.maxX - b.minX + 2 * oh, width: b.maxY - b.minY + 2 * oh }];
+        if (G.polygonArea(c.points) < (b.maxX - b.minX) * (b.maxY - b.minY) - 0.01) {
+          notes.push(first.params.roofType === "shed"
+            ? "Односкатная крыша строится по габариту дома — над вогнутыми углами будут свесы"
+            : "В контуре есть косые углы — крыша построена по габариту дома");
+        }
+      }
+      Pm.removeElements(project, roofs.slice(layout.length).map((e) => e.id));
+      layout.forEach((q, k) => {
+        let r = roofs[k];
+        if (!r) {
+          r = Pm.addElement(project, "roof", { levelId: first.levelId, params: U.clone(first.params) });
+          r.material = first.material;
+        }
+        r.params.part = k;
+        r.name = layout.length > 1 ? (k === 0 ? "Крыша — основной объём" : `Крыша — крыло ${k}`) : "Крыша";
+        r.position = { x: U.round(q.x, 3), y: U.round(q.y, 3), z: U.round(z, 3) };
+        r.rotation = U.round(q.rotation, 3);
+        r.size.length = U.round(q.length, 3);
+        r.size.width = U.round(q.width, 3);
+        Pm.normalize(project, r);
+      });
     }
     Pm.touch(project);
     return { notes: [...new Set(notes)] };
@@ -723,6 +863,6 @@
   BS.contour = {
     GEN, ensurePlan, list, get, forLevel, addContour, setPoints, removeContour, rectangle, linked, problem, cleanPoints,
     edges, bandLayout, solveCorner, offsetPolygon, interiorAngle, joinWallCorners, findCorner,
-    foundationFromContour, wallsFromContour, slabFromContour, roofFromContour, rebuild, needsRebuild, applyElementPatch,
+    foundationFromContour, wallsFromContour, slabFromContour, roofFromContour, roofLayout, rebuild, needsRebuild, applyElementPatch,
   };
 })(globalThis.BuildSense);
