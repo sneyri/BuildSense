@@ -1,0 +1,51 @@
+/* 2D-план (js/plan/planEditor.js). Только токены из css/app.css; базовые кнопки, поля и .field — там же. */
+
+.plan-canvas { display: block; width: 100%; height: 100%; outline: none; cursor: crosshair; touch-action: none; }
+.plan-canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--accent-soft); }
+
+.plan-overlay { position: absolute; inset: 0; pointer-events: none; }
+.plan-overlay > * { pointer-events: auto; }
+.plan-overlay > .plan-empty { pointer-events: none; }
+.plan-empty .row-actions, .plan-empty button { pointer-events: auto; }
+.plan-empty { max-width: 460px; margin: auto; }
+.plan-empty strong { color: var(--text); font-size: 15px; }
+.plan-empty p { margin: 4px 0 10px; line-height: 1.45; }
+.plan-empty .row-actions { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+
+.plan-seg button { white-space: nowrap; }
+
+/* Всплывающая форма команды (Фундамент, Стены, Перекрытие, Крыша) */
+.plan-pop {
+  position: absolute; top: 8px; left: 8px; width: min(300px, calc(100% - 16px));
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 10px 12px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); z-index: 3;
+}
+.plan-pop h4 { margin: 0 0 4px; font-size: 13px; color: var(--text); }
+.plan-pop .note { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.plan-pop .row-actions { display: flex; gap: 6px; margin-top: 8px; }
+
+/* Таблица вершин активного контура */
+.plan-table {
+  position: absolute; top: 8px; right: 8px; width: 250px; max-height: calc(100% - 48px); overflow: auto;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 6px 8px; font-size: 12px; z-index: 2;
+}
+.plan-table header { display: flex; align-items: center; gap: 8px; }
+.plan-table header strong { color: var(--text); }
+.plan-table header button { margin-left: auto; min-height: 0; padding: 0 6px; }
+.plan-table table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+.plan-table th { text-align: left; color: var(--muted); font-weight: normal; padding: 2px; }
+.plan-table td { padding: 1px 2px; color: var(--text); }
+.plan-table td.len { color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+.plan-table tr.sel td { background: var(--accent-soft); }
+.plan-table input { width: 64px; min-height: 0; padding: 1px 4px; font-family: var(--mono); }
+.plan-table button.ghost { min-height: 0; padding: 0 5px; }
+.plan-table .note { color: var(--muted); margin: 6px 0 4px; }
+.plan-table .row-actions { display: flex; gap: 6px; }
+
+.plan-info:empty { display: none; }
+
+@media (max-width: 720px) {
+  .plan-table { width: 200px; }
+  .plan-table input { width: 52px; }
+}

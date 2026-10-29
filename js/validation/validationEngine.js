@@ -150,6 +150,88 @@
       },
     },
     {
+      id: "GEO-WALLS", category: "geometry", title: "Стыки стен", pass: "Стены стыкуются без щелей, выступов и взаимных пересечений",
+      explanation: "В углу одна стена доходит до угла, вторая упирается в её грань (стык допустим, в том числе с небольшим нахлёстом в непрямом углу). Ошибка — две стены друг в друге или пересекающие друг друга. Щель в углу или стена, выступающая за грань соседней, — признак неточного построения: перестройте стены по контуру плана.",
+      run(ctx, add) {
+        const walls = ctx.solid.filter((e) => e.type === "wall");
+        const C = BS.contour;
+        for (let i = 0; i < walls.length; i++) {
+          for (let j = i + 1; j < walls.length; j++) {
+            const a = walls[i], b = walls[j];
+            if (!sameStorey(ctx, a, b)) continue;
+            const fa = ctx.fp(a), fb = ctx.fp(b);
+            const corner = C ? C.findCorner(a, b) : null;
+            if (corner) {
+              const res = cornerCheck(ctx, a, b, corner);
+              if (res.gap > 0.002) {
+                add({ severity: "warning", title: `Щель в углу между «${a.name}» и «${b.name}»`, elementIds: [a.id, b.id],
+                  description: `Угол стен не заполнен: ≈ ${fmt(res.gap, 3)} м² на плане. Постройте стены по контуру плана или удлините одну из стен до угла.` });
+              }
+              for (const [w, d] of res.overhang) {
+                add({ severity: "warning", title: `${w.name}: выступает за угол на ${fmt(d)} м`, elementIds: [a.id, b.id],
+                  description: "Торец стены выходит за наружную грань соседней стены. Укоротите стену до угла." });
+              }
+              continue;
+            }
+            const area = G.overlapArea(fa, fb);
+            if (area < 0.0005) continue;
+            if (tJoint(a, b, ctx) || tJoint(b, a, ctx)) continue;
+            add({ severity: "error", title: `Стены «${a.name}» и «${b.name}» входят друг в друга`, elementIds: [a.id, b.id],
+              description: `Площадь наложения на плане ≈ ${fmt(area, 3)} м². Это не угловой и не Т-образный стык: удалите лишнюю стену или сдвиньте её.` });
+          }
+        }
+      },
+    },
+    {
+      id: "GEO-LEVELS", category: "geometry", title: "Совпадение отметок", pass: "Низ стен совпадает с верхом опор, перекрытия — с верхом стен",
+      explanation: "Низ стены должен совпадать с верхом фундамента или перекрытия под ней (а не уходить внутрь него), стена не должна выходить за край опоры, перекрытие над этажом должно лежать на верхе стен и совпадать с отметкой пола следующего этажа.",
+      run(ctx, add) {
+        const project = ctx.project;
+        const carriers = ctx.solid.filter((e) => BS.types.isFoundation(e) || e.type === "slab");
+        for (const w of ctx.solid.filter((e) => e.type === "wall")) {
+          const z = S.bottom(w, project);
+          const fw = ctx.fp(w);
+          const areaW = Math.abs(G.polygonArea(fw));
+          // Низ стены внутри фундамента или плиты
+          for (const c of carriers) {
+            const top = S.top(c, project), bot = S.bottom(c, project);
+            if (!(top > z + BS.support.LEVEL_TOL && bot < z - BS.support.LEVEL_TOL)) continue;
+            if (G.overlapArea(fw, ctx.fp(c)) < 0.3 * areaW) continue;
+            add({ severity: "warning", title: `${w.name}: низ на ${fmt(top - z)} м ниже верха «${c.name}»`, elementIds: [w.id, c.id],
+              description: `Низ стены ${fmt(z)} м, верх опоры ${fmt(top)} м. Стена должна стоять на верхе опоры.`,
+              fix: { label: "Поставить на верх опоры", action: { type: "set-z", elementId: w.id, z: top } } });
+            break;
+          }
+          // Стена выходит за край опоры, на которой стоит
+          // Опоры — все фундаменты и плиты с верхом на отметке низа стены (в углах стена лежит и на соседней ленте)
+          const sup = carriers.filter((x) => Math.abs(S.top(x, project) - z) <= BS.support.LEVEL_TOL && G.overlapArea(fw, ctx.fp(x)) > 1e-6);
+          if (!sup.length) continue;
+          const covered = coveredArea(fw, sup.map((x) => ctx.fp(x)));
+          const out = areaW - covered;
+          if (out > 0.01 && out > 0.02 * areaW) {
+            add({ severity: "warning", title: `${w.name}: выходит за край «${sup[0].name}»`, elementIds: [w.id, ...sup.map((x) => x.id)],
+              description: `Часть стены (≈ ${fmt(out, 2)} м² на плане, ${Math.round((out / areaW) * 100)} %) не опирается на ${BS.types.isFoundation(sup[0]) ? "фундамент" : "перекрытие"}. Сдвиньте стену внутрь или расширьте опору.` });
+          }
+        }
+        // Перекрытие над этажом: на верхе стен и на отметке следующего этажа
+        for (const slab of ctx.solid.filter((e) => e.type === "slab" && e.category !== "ground")) {
+          const zb = S.bottom(slab, project);
+          const sunk = ctx.solid.filter((w) => w.type === "wall" && w.category !== "partition" && S.top(w, project) > zb + 0.02 &&
+            S.bottom(w, project) < zb - 0.02 && G.overlapArea(ctx.fp(slab), ctx.fp(w)) > 0.3 * Math.abs(G.polygonArea(ctx.fp(w))));
+          for (const w of sunk) {
+            add({ severity: "warning", title: `${slab.name}: ниже верха стены «${w.name}» на ${fmt(S.top(w, project) - zb)} м`, elementIds: [slab.id, w.id],
+              description: `Низ перекрытия ${fmt(zb)} м, верх стены ${fmt(S.top(w, project))} м. Перекрытие должно лежать на верхе стен этажа.` });
+          }
+          const lv = BS.project.level(project, slab.levelId);
+          const top = S.top(slab, project);
+          if (lv && lv.elevation > 0.5 && Math.abs(top - lv.elevation) > 0.05 && Math.abs(lv.elevation - zb) > 0.05) {
+            add({ severity: "warning", title: `${slab.name}: верх ${fmt(top)} м, а пол «${lv.name}» — ${fmt(lv.elevation)} м`, elementIds: [slab.id],
+              description: "Отметка верха перекрытия не совпадает с отметкой этажа, к которому оно относится. Измените отметку этажа в настройках или толщину перекрытия." });
+          }
+        }
+      },
+    },
+    {
       id: "GEO-STAIRS", category: "geometry", title: "Лестницы", pass: "Лестницы доходят до следующего этажа",
       explanation: "Верх лестницы должен совпадать с полом следующего этажа (его отметкой).",
       run(ctx, add) {
@@ -397,6 +479,60 @@
     },
   ];
 
+  /** Площадь части многоугольника poly, покрытой хотя бы одним из covers (точно для двух слоёв). */
+  function coveredArea(poly, covers) {
+    let sum = 0;
+    for (const c of covers) sum += G.overlapArea(poly, c);
+    const parts = (q) => (G.isConvex(q) ? [q] : G.triangulate(q));
+    for (let i = 0; i < covers.length; i++) {
+      for (let j = i + 1; j < covers.length; j++) {
+        for (const pa of parts(covers[i])) {
+          for (const pb of parts(covers[j])) {
+            const both = G.clipPolygon(pa, pb);
+            if (both.length >= 3) sum -= G.overlapArea(poly, both);
+          }
+        }
+      }
+    }
+    return Math.min(sum, Math.abs(G.polygonArea(poly)));
+  }
+
+  /** Угол двух стен: незаполненная часть угла и выступы торцов за грань соседа. */
+  function cornerCheck(ctx, a, b, corner) {
+    const faces = (w) => {
+      const ax = G.axes(w);
+      const p = w.position, t = w.size.thickness;
+      return [0, t].map((v) => ({ p: { x: p.x + ax.vx * v, y: p.y + ax.vy * v }, d: { x: ax.ux, y: ax.uy } }));
+    };
+    const fa = faces(a), fb = faces(b);
+    const X = (f, g) => G.lineIntersection(f.p, { x: f.p.x + f.d.x, y: f.p.y + f.d.y }, g.p, { x: g.p.x + g.d.x, y: g.p.y + g.d.y });
+    const quad = [X(fa[0], fb[0]), X(fa[0], fb[1]), X(fa[1], fb[1]), X(fa[1], fb[0])];
+    if (G.polygonArea(quad) < 0) quad.reverse();
+    const pa = ctx.fp(a), pb = ctx.fp(b);
+    const both = G.clipPolygon(pa, pb);
+    const covered = G.overlapArea(quad, pa) + G.overlapArea(quad, pb) - (both.length >= 3 ? G.overlapArea(quad, both) : 0);
+    const gap = Math.max(0, Math.abs(G.polygonArea(quad)) - covered);
+    const overhang = [];
+    for (const [w, end] of [[a, corner.endA], [b, corner.endB]]) {
+      const us = quad.map((q) => G.worldToLocal(w, q.x, q.y).u);
+      const d = end === "end" ? w.size.length - Math.max(...us) : Math.min(...us);
+      if (d > 0.01) overhang.push([w, d]);
+    }
+    return { gap, overhang };
+  }
+
+  /** Т-стык: торец стены a упирается в стену b (заходит не глубже её толщины). */
+  function tJoint(a, b, ctx) {
+    const poly = G.clipPolygon(ctx.fp(a), ctx.fp(b));
+    if (poly.length < 3) return true;
+    const us = poly.map((p) => G.worldToLocal(a, p.x, p.y).u);
+    const u0 = Math.min(...us), u1 = Math.max(...us);
+    const atEnd = u0 <= 0.02 || u1 >= a.size.length - 0.02;
+    const ra = (a.rotation || 0) * G.DEG, rb = (b.rotation || 0) * G.DEG;
+    const cross = Math.abs(Math.sin(ra - rb));
+    return atEnd && cross > 0.3 && u1 - u0 <= b.size.thickness / Math.max(cross, 0.3) + 0.02;
+  }
+
   function sameStorey(ctx, a, b) {
     const z0 = Math.max(S.bottom(a, ctx.project), S.bottom(b, ctx.project));
     const z1 = Math.min(S.top(a, ctx.project), S.top(b, ctx.project));
@@ -417,6 +553,7 @@
     const pair = (x, y) => (a.type === x && b.type === y) || (a.type === y && b.type === x);
     const isF = BS.types.isFoundation;
     if (isF(a) && isF(b)) return true;
+    if (pair("wall", "wall")) return true; // стыки и наложения стен разбирает проверка GEO-WALLS
     if (pair("lintel", "wall") || pair("column", "wall") || pair("round_column", "wall")) return true;
     if (pair("slab", "wall") || pair("stairs", "slab") || pair("stairs", "landing") || pair("chimney", "roof") || pair("chimney", "slab")) return true;
     for (const beam of ["beam", "truss"]) {

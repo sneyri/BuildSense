@@ -4,7 +4,7 @@
   "use strict";
   const U = BS.util;
   const P = BS.project;
-  const AUTOSAVE_KEY = "buildsense.autosave.v2";
+  const AUTOSAVE_KEY = "buildsense.autosave.v2"; // ключ прежний: автосохранение схемы 2 мигрирует при чтении
 
   function serialize(project) {
     return JSON.stringify(project, null, 2);
@@ -32,6 +32,7 @@
       warnings.push("Проект прежней версии (FreeCAD Checker) преобразован в формат BuildSense 2");
     }
     if (data.format !== P.FORMAT) throw new Error(`Неизвестный формат файла: ожидалось "${P.FORMAT}"`);
+    if (data.schemaVersion === 2) data = migrateV2(data);
     if (typeof data.schemaVersion !== "number" || data.schemaVersion > P.SCHEMA_VERSION) {
       throw new Error(`Версия схемы ${data.schemaVersion} не поддерживается (поддерживается до ${P.SCHEMA_VERSION})`);
     }
@@ -50,6 +51,7 @@
       }));
     }
     project.customRules = Array.isArray(data.customRules) ? data.customRules : [];
+    project.plan = readPlan(data.plan, project, warnings);
 
     const ids = new Set();
     const levelIds = new Set(project.levels.map((l) => l.id));
@@ -78,6 +80,10 @@
       if (t.categories && !t.categories[el.category]) el.category = Object.keys(t.categories)[0];
       if (!levelIds.has(el.levelId)) el.levelId = project.levels[0].id;
       if (t.shape !== "opening" && typeof el.rotation !== "number") el.rotation = 0;
+      if (el.params.points !== undefined && !validPoints(el.params.points)) {
+        warnings.push(`${raw.id}: контур плиты (params.points) повреждён — элемент построен прямоугольником`);
+        delete el.params.points;
+      }
       project.elements.push(el);
     }
     // Размеры не «исправляются» молча: некорректные значения покажет проверка геометрии.
@@ -87,6 +93,30 @@
       }
     }
     return { project, warnings };
+  }
+
+  const validPoints = (pts) => Array.isArray(pts) && pts.length >= 3 && pts.every((q) => U.isObject(q) && Number.isFinite(q.x) && Number.isFinite(q.y));
+
+  /**
+   * Схема 2 → 3: появился 2D-план (project.plan.contours). Старые проекты получают пустой план;
+   * их элементы не связаны с контурами и работают как раньше.
+   */
+  function migrateV2(data) {
+    return { ...data, schemaVersion: 3, plan: { contours: [] } };
+  }
+
+  /** План из файла: повреждённые контуры пропускаются с замечанием. */
+  function readPlan(plan, project, warnings) {
+    const out = { contours: [] };
+    if (!U.isObject(plan) || !Array.isArray(plan.contours)) return out;
+    const levelIds = new Set(project.levels.map((l) => l.id));
+    for (const [i, c] of plan.contours.entries()) {
+      if (!U.isObject(c) || typeof c.id !== "string" || !validPoints(c.points)) { warnings.push(`Контур плана №${i + 1} повреждён — пропущен`); continue; }
+      if (out.contours.some((o) => o.id === c.id)) { warnings.push(`Повторяющийся контур ${c.id} — пропущен`); continue; }
+      const points = c.points.map((q, k) => ({ id: typeof q.id === "string" && q.id ? q.id : `p${k + 1}`, x: q.x, y: q.y }));
+      out.contours.push({ id: c.id, levelId: levelIds.has(c.levelId) ? c.levelId : project.levels[0].id, closed: c.closed !== false, points });
+    }
+    return out;
   }
 
   /** Преобразование проекта FreeCAD Checker (версия 1) в формат BuildSense 2. */
@@ -167,5 +197,5 @@
     }
   }
 
-  BS.projectIO = { serialize, parse, fromData, migrateV1, fileNameFor, download, readFile, autosave, loadAutosave, clearAutosave };
+  BS.projectIO = { serialize, parse, fromData, migrateV1, migrateV2, fileNameFor, download, readFile, autosave, loadAutosave, clearAutosave };
 })(globalThis.BuildSense);

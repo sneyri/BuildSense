@@ -63,7 +63,7 @@ test("экспорт FreeCAD: схема, миллиметры, этажи, св
   const { data, warnings } = BS.freecadExport.build(p);
   deepEqual(warnings, []);
   assert.equal(data.format, "buildsense-freecad-export");
-  assert.equal(data.schemaVersion, 2);
+  assert.equal(data.schemaVersion, 3); // версия 3: форма "prism" (плита по контуру плана)
   assert.equal(data.units, "mm");
   assert.equal(data.levels.length, 2);
   assert.equal(data.levels[1].elevation, 3000);

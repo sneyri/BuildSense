@@ -61,14 +61,93 @@
     return out;
   }
 
+  /** Выпуклый ли многоугольник (вершины в одном направлении обхода, допускаются коллинеарные). */
+  function isConvex(poly) {
+    if (poly.length < 4) return true;
+    let sign = 0;
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length], c = poly[(i + 2) % poly.length];
+      const cr = (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
+      if (Math.abs(cr) < 1e-12) continue;
+      const s = cr > 0 ? 1 : -1;
+      if (sign && s !== sign) return false;
+      sign = s;
+    }
+    return true;
+  }
+
+  /** Разбиение простого многоугольника на треугольники (отсечение «ушей»). */
+  function triangulate(poly) {
+    const pts = polygonArea(poly) >= 0 ? poly.slice() : poly.slice().reverse();
+    const idx = pts.map((_, i) => i);
+    const tris = [];
+    const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    let guard = 0;
+    while (idx.length > 3 && guard++ < 10000) {
+      let cut = false;
+      for (let k = 0; k < idx.length; k++) {
+        const ia = idx[(k + idx.length - 1) % idx.length], ib = idx[k], ic = idx[(k + 1) % idx.length];
+        const a = pts[ia], b = pts[ib], c = pts[ic];
+        const cr = cross(a, b, c);
+        if (cr < -1e-12) continue; // вогнутая вершина
+        if (Math.abs(cr) <= 1e-12) { idx.splice(k, 1); cut = true; break; } // коллинеарная — просто убрать
+        const tri = [a, b, c];
+        const blocked = idx.some((j) => j !== ia && j !== ib && j !== ic && pointInTriangle(pts[j], tri));
+        if (blocked) continue;
+        tris.push(tri);
+        idx.splice(k, 1);
+        cut = true;
+        break;
+      }
+      if (!cut) break; // вырожденный контур — остаток отдаётся как есть
+    }
+    if (idx.length === 3) tris.push(idx.map((i) => pts[i]));
+    return tris;
+  }
+
+  function pointInTriangle(p, [a, b, c]) {
+    const d1 = (p.x - b.x) * (a.y - b.y) - (a.x - b.x) * (p.y - b.y);
+    const d2 = (p.x - c.x) * (b.y - c.y) - (b.x - c.x) * (p.y - c.y);
+    const d3 = (p.x - a.x) * (c.y - a.y) - (c.x - a.x) * (p.y - a.y);
+    const neg = d1 < -1e-12 || d2 < -1e-12 || d3 < -1e-12;
+    const pos = d1 > 1e-12 || d2 > 1e-12 || d3 > 1e-12;
+    return !(neg && pos);
+  }
+
+  function convexParts(poly) {
+    return isConvex(poly) ? [poly] : triangulate(poly);
+  }
+
+  /** Площадь пересечения многоугольников (невыпуклые раскладываются на треугольники). */
   function overlapArea(a, b) {
     if (a.length < 3 || b.length < 3) return 0;
-    const out = clipPolygon(a, b);
-    return out.length >= 3 ? Math.abs(polygonArea(out)) : 0;
+    let sum = 0;
+    for (const pa of convexParts(a)) {
+      for (const pb of convexParts(b)) {
+        const out = clipPolygon(pa, pb);
+        if (out.length >= 3) sum += Math.abs(polygonArea(out));
+      }
+    }
+    return sum;
+  }
+
+  /** Точка внутри простого многоугольника; tol > 0 — с допуском наружу, tol < 0 — не ближе |tol| к границе. */
+  function pointInPolygon(p, poly, tol = 1e-9) {
+    if (poly.length < 3) return false;
+    let inside = false;
+    let dmin = Infinity;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], b = poly[j];
+      if ((a.y > p.y) !== (b.y > p.y) && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+      dmin = Math.min(dmin, pointSegmentDistance(p, a, b));
+    }
+    if (tol >= 0) return inside || dmin <= tol;
+    return inside && dmin >= -tol;
   }
 
   function pointInConvex(p, poly, tol = 1e-9) {
     if (poly.length < 3) return false;
+    if (!isConvex(poly)) return pointInPolygon(p, poly, tol);
     const sign = polygonArea(poly) >= 0 ? 1 : -1;
     for (let i = 0; i < poly.length; i++) {
       const c = poly[i], d = poly[(i + 1) % poly.length];
@@ -93,7 +172,7 @@
   /** Расстояние между выпуклыми многоугольниками (0 — касаются, пересекаются или вложены). */
   function polygonDistance(a, b) {
     if (overlapArea(a, b) > 1e-9) return 0;
-    if (a.some((p) => pointInConvex(p, b)) || b.some((p) => pointInConvex(p, a))) return 0;
+    if (a.some((p) => pointInPolygon(p, b)) || b.some((p) => pointInPolygon(p, a))) return 0;
     let best = Infinity;
     for (const [pts, poly] of [[a, b], [b, a]]) {
       for (const pt of pts) {
@@ -119,7 +198,8 @@
   }
 
   BS.geometry = {
-    DEG, axes, localToWorld, worldToLocal, polygonArea, clipPolygon, overlapArea, pointInConvex,
+    DEG, axes, localToWorld, worldToLocal, polygonArea, clipPolygon, overlapArea, pointInConvex, pointInPolygon,
+    isConvex, triangulate, lineIntersection,
     closestPointOnSegment, pointSegmentDistance, polygonDistance, bbox2, rectFootprint,
   };
 })(globalThis.BuildSense);

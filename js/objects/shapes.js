@@ -7,6 +7,29 @@
     return BS.types.get(el.type) || {};
   }
 
+  /**
+   * Многоугольная плита (фундамент или перекрытие по контуру плана): брусовый тип с params.points —
+   * вершинами контура в локальных осях элемента (u, v от position). Толщина — size.height,
+   * size.length/width — габариты контура (вычисляются автоматически).
+   */
+  function isPrism(el) {
+    const p = el && el.params;
+    return typeOf(el).shape === "box" && !!p && Array.isArray(p.points) && p.points.length >= 3;
+  }
+
+  /** Форма конкретного элемента: как у типа, но брус с контуром — "prism". */
+  function shapeOf(el) {
+    return isPrism(el) ? "prism" : typeOf(el).shape;
+  }
+
+  /** Контур многоугольной плиты в мировых координатах плана. */
+  function prismOutline(el) {
+    return el.params.points.map((q) => {
+      const w = G.localToWorld(el, q.x, q.y, 0);
+      return { x: w.x, y: w.y };
+    });
+  }
+
   function host(project, el) {
     return project ? project.elements.find((e) => e.id === el.hostId) || null : null;
   }
@@ -26,7 +49,7 @@
     const t = typeOf(el);
     if (t.shape === "wall") return [s.length, s.thickness];
     if (t.shape === "pipe") return [s.length, s.diameter];
-    if (t.shape === "cylinder" || t.shape === "opening") return null;
+    if (t.shape === "cylinder" || t.shape === "opening" || isPrism(el)) return null;
     return [s.length, s.width];
   }
 
@@ -43,6 +66,7 @@
       });
     }
     if (t.shape === "pipe") return G.rectFootprint(el, s.length, s.diameter, 0, -s.diameter / 2);
+    if (isPrism(el)) return prismOutline(el);
     if (t.shape === "opening") {
       const h = host(project, el);
       if (!h) return [];
@@ -96,6 +120,10 @@
     const t = typeOf(el);
     const s = el.size || {};
     const f = BS.util.fmt;
+    if (isPrism(el)) {
+      const area = Math.abs(G.polygonArea(el.params.points));
+      return { value: area * s.height, formula: `V = S·h = ${f(area)}·${f(s.height)} (плита по контуру)` };
+    }
     switch (t.shape) {
       case "box":
         return { value: s.length * s.width * s.height, formula: `V = a·b·h = ${f(s.length)}·${f(s.width)}·${f(s.height)}` };
@@ -142,5 +170,5 @@
     }
   }
 
-  BS.shapes = { roofRise, planSize, footprint, elementHeight, bottom, top, bounds, center, volume, host };
+  BS.shapes = { isPrism, shapeOf, prismOutline, roofRise, planSize, footprint, elementHeight, bottom, top, bounds, center, volume, host };
 })(globalThis.BuildSense);

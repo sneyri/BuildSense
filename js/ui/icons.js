@@ -1,4 +1,5 @@
-// Набор простых SVG-иконок (линейные, 24×24). Используются через data-icon="имя" или BS.icons.svg("имя").
+// Набор SVG-иконок в едином стиле: сетка 24×24, показ 16×16, линия 1,5 px на экране
+// (vector-effect: non-scaling-stroke), скруглённые концы. Используются через data-icon="имя" или BS.icons.svg("имя").
 (function (BS) {
   "use strict";
   const P = {
@@ -62,11 +63,35 @@
     calc: "M6 3h12v18H6z M9 7h6 M9 11h.01 M12 11h.01 M15 11h.01 M9 15h.01 M12 15h.01 M15 15h.01",
     check: "M4 12l5 5L20 6",
     code: "M8 7l-5 5 5 5 M16 7l5 5-5 5 M14 4l-4 16",
+    // режимы и рабочая область
+    "mode-arch": "M3 11l9-7 9 7 M5 9.5V20h14V9.5 M10 20v-6h4v6",
+    "mode-mech": "M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z M12 2v3 M12 19v3 M2 12h3 M19 12h3 M4.9 4.9l2.1 2.1 M17 17l2.1 2.1 M4.9 19.1L7 17 M17 7l2.1-2.1",
+    plan2d: "M3 4h18v16H3z M3 10h7v10 M10 4v3 M14 10h7 M14 10v4",
+    split: "M3 4h18v16H3z M12 4v16 M15 9l2.5-1.5L20 9v4l-2.5 1.5L15 13z",
+    view3d: "M12 2l9 5v10l-9 5-9-5V7z M12 12l9-5 M12 12L3 7 M12 12v10",
+    clean: "M3 8V3h5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5 M8 9h8v6H8z",
+    "panel-left": "M3 4h18v16H3z M9 4v16",
+    "panel-right": "M3 4h18v16H3z M15 4v16",
+    analysis: "M4 20V10 M10 20V4 M16 20v-7 M3 20h18",
+    sim: "M4 20h16 M7 20V9l5-5 5 5v11 M9 13l6 4",
+    rules: "M5 4h11l3 3v13H5z M8 10h8 M8 14h8 M8 18h5",
+    // план
+    grid: "M3 3h18v18H3z M9 3v18 M15 3v18 M3 9h18 M3 15h18",
+    "wall-line": "M4 18L18 4 M7 21L21 7 M4 18l3 3 M18 4l3 3",
+    rect: "M5 6h14v12H5z M5 6h.01 M19 18h.01",
+    dimension: "M4 7v10 M20 7v10 M4 12h16 M7 9l-3 3 3 3 M17 9l3 3-3 3",
+    // машиностроение: детали
+    bushing: "M12 4a8 3 0 1 0 0 .01 M4 4v14a8 3 0 0 0 16 0V4 M12 3a3 1.1 0 1 0 0 2.2 3 1.1 0 0 0 0-2.2z",
+    shaft: "M2 10h5v4H2z M7 8h10v8H7z M17 10h5v4h-5z M10 8v8 M14 8v8",
+    flange: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z M12 5h.01 M12 19h.01 M5 12h.01 M19 12h.01",
+    part: "M4 7l8-4 8 4v10l-8 4-8-4z M4 7l8 4 8-4 M12 11v10",
+    sketch: "M4 20l4-1 11-11-3-3L5 16z M14 7l3 3",
+    import: "M12 15V3 M7 8l5-5 5 5 M4 19h16",
   };
 
   function svg(name) {
     const d = P[name] || P.cube;
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" focusable="false"><path d="${d}" vector-effect="non-scaling-stroke"/></svg>`;
   }
 
   /** Вставляет иконки во все элементы с data-icon. */
@@ -77,5 +102,5 @@
     });
   }
 
-  BS.icons = { svg, apply };
+  BS.icons = { svg, apply, has: (name) => Object.prototype.hasOwnProperty.call(P, name), names: () => Object.keys(P) };
 })(globalThis.BuildSense);

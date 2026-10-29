@@ -1,0 +1,95 @@
+{
+  "format": "buildsense-mech",
+  "schemaVersion": 1,
+  "units": "mm",
+  "name": "Демо: втулка, вал, фланец",
+  "parts": [
+    {
+      "id": "p1",
+      "type": "bushing",
+      "name": "Втулка 40×25×30",
+      "params": {
+        "D": 40,
+        "d": 25,
+        "L": 30,
+        "c": 1,
+        "ci": 0.5
+      },
+      "placement": {
+        "x": -120,
+        "y": 0,
+        "z": 0,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "bronze"
+    },
+    {
+      "id": "p2",
+      "type": "shaft",
+      "name": "Вал ступенчатый",
+      "params": {
+        "c1": 1,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 30,
+            "L": 40
+          },
+          {
+            "d": 40,
+            "L": 60
+          },
+          {
+            "d": 35,
+            "L": 50
+          },
+          {
+            "d": 25,
+            "L": 30
+          }
+        ]
+      },
+      "placement": {
+        "x": -90,
+        "y": 120,
+        "z": 25,
+        "rotation": {
+          "x": 0,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p3",
+      "type": "flange",
+      "name": "Фланец ⌀140",
+      "params": {
+        "D": 140,
+        "T": 14,
+        "d": 40,
+        "hubD": 70,
+        "hubH": 16,
+        "n": 6,
+        "pcd": 110,
+        "holeD": 14
+      },
+      "placement": {
+        "x": 80,
+        "y": 0,
+        "z": 0,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    }
+  ]
+}

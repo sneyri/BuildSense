@@ -2,14 +2,14 @@
 
 Все форматы — JSON в кодировке UTF-8. Схемы версионируются полем `schemaVersion`.
 
-## 1. Проект — `*.buildsense.json` (`format: "buildsense-project"`, `schemaVersion: 2`)
+## 1. Проект — `*.buildsense.json` (`format: "buildsense-project"`, `schemaVersion: 3`)
 
 Единицы — **метры и градусы**, ось Z направлена вверх (как во FreeCAD).
 
 ```json
 {
   "format": "buildsense-project",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "name": "Мой дом",
   "units": "m",
   "createdAt": "2026-10-27T12:00:00.000Z",
@@ -42,6 +42,22 @@
 | `house` | параметры для мастера (габариты, толщины, крыша) |
 | `levels[]` | этажи: `elevation` — отметка, с которой начинаются стены этажа; `height` — высота стен этажа |
 | `customRules[]` | пользовательские правила проекта (формат как у правил, см. раздел 3) |
+| `plan.contours[]` | 2D-план (схема 3): контуры дома `{ id, levelId, closed, points: [{ id, x, y }] }` — метры, мировые XY, обход против часовой стрелки |
+
+### 2D-план и элементы по контуру (схема 3)
+
+Контур — произвольный простой многоугольник (Г-, Т-, П-образный дом и др.). Элементы, построенные по нему,
+помечены в `params`: `contourId` — контур, `generatedBy` — роль (`contour-foundation`, `contour-strip`,
+`contour-wall`, `contour-slab` — пол внутри стен, `contour-floor` — перекрытие на верхе стен, `contour-roof`),
+у стен и лент — `edgeFrom` (id начальной вершины ребра) и `edgeStart` (начало элемента вдоль ребра, м).
+По этим меткам элементы перестраиваются при изменении контура или толщины/высоты стен; проёмы остаются на месте.
+
+Многоугольная плита — брусовый тип (`slab_foundation`, `slab`) с `params.points` — вершинами контура в
+локальных осях от `position` (угол габарита); `size.height` — толщина, `size.length/width` — габариты
+(вычисляются). Прямоугольный по осям контур хранится обычным брусом без `points`.
+
+**Миграция.** Файлы схемы 2 открываются без изменений смысла: получают пустой план (`plan.contours = []`),
+элементы остаются несвязанными. Повреждённые контуры и `params.points` пропускаются с замечанием.
 
 ### Элемент
 
@@ -92,16 +108,16 @@
 
 **Загрузка.** Неизвестные типы пропускаются с предупреждением; нечисловые размеры — ошибка загрузки;
 нулевые/отрицательные размеры **не исправляются молча**: их показывает проверка `GEO-SIZE`.
-Проекты прежнего формата `freecad-checker-project` (версия 1) автоматически преобразуются.
+Проекты прежнего формата `freecad-checker-project` (версия 1) автоматически преобразуются (1 → 2 → 3).
 
-## 2. Экспорт для FreeCAD — `*.freecad.json` (`format: "buildsense-freecad-export"`, `schemaVersion: 2`)
+## 2. Экспорт для FreeCAD — `*.freecad.json` (`format: "buildsense-freecad-export"`, `schemaVersion: 3`)
 
 Все длины — **в миллиметрах**, координаты мировые.
 
 ```json
 {
   "format": "buildsense-freecad-export",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "units": "mm",
   "generator": "BuildSense 1.0.0",
   "project": { "name": "…", "climateRegion": "2V", "housingFund": "private" },
@@ -124,6 +140,10 @@
 - У проёмов дополнительно: `hostId`, `position` (`offset`, `elevation`, мм), `hostThickness`, `placement` (угол проёма на наружной грани),
   `void` — вырез в стене (выходит за грани на 50 мм), `panel` — условное заполнение.
 - У крыши `size.rise` — высота подъёма.
+- Версия 3: форма `prism` — многоугольная плита (фундамент или перекрытие по контуру): `outline` — вершины
+  контура в мировых мм, тело выдавливается вверх на `size.height` от `placement.z`; `relations.contourId`;
+  `plan.contours` — контуры плана в мм. Макрос `freecad/import_house.FCMacro` понимает версии 2 и 3
+  (в режиме BIM плита — Arch Structure на основе контура, в режиме Part — Part::Feature).
 - Элементы с некорректными размерами не экспортируются и перечисляются в предупреждениях.
 
 ## 3. Правила — `data/rules/*.json`

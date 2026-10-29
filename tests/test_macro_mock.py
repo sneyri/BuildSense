@@ -17,7 +17,7 @@ import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MACRO = os.path.join(ROOT, "freecad", "import_house.FCMacro")
-EXPORTS = ["starter-house", "two-storey", "all-types"]
+EXPORTS = ["starter-house", "two-storey", "all-types", "l-house", "t-house-strip"]
 
 
 class Vector:
@@ -72,6 +72,9 @@ class Shape:
 
     def translate(self, *a):
         return self
+
+    def extrude(self, *a):
+        return Shape()
 
 
 class DocObject:

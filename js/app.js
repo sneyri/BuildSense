@@ -65,6 +65,31 @@
     showError(`Не удалось запустить 3D-сцену (WebGL): ${err.message}. Попробуйте другой браузер; редактирование через панели остаётся доступным.`);
   }
 
+  // ---------------------------------------------------------------- 2D-план
+
+  let plan = null;
+  if (BS.PlanEditor && $("plan-view")) {
+    try {
+      plan = new BS.PlanEditor($("plan-view"), $("plan-tools"), {
+        getProject: () => state.project,
+        getLevelId: () => state.levelId,
+        getSelected: () => [...state.selectedIds],
+        edit: (label, fn) => edit(label, fn),
+        select: (ids, additive) => select(ids, additive),
+        setStatus: (text, kind) => setStatus(text, kind),
+      });
+    } catch (err) {
+      console.warn("2D-план не запущен:", err);
+    }
+  }
+  const syncCleanView = () => { if (view && view.setCleanView) view.setCleanView(document.body.classList.contains("clean-view")); };
+  BS.events.on("layout", () => {
+    if (plan) plan.resize();
+    if (view) view.resize();
+    syncCleanView();
+  });
+  BS.events.on("archview", () => { if (plan) plan.resize(); });
+
   // ---------------------------------------------------------------- изменение модели
 
   /** Выполнить изменение с записью в историю. fn возвращает текст для строки состояния. */
@@ -122,6 +147,7 @@
     BS.ui.rulesPanel.render($("rules"), state.project, state.validation, rulesHandlers);
     BS.ui.settingsPanel.render($("settings"), state.project, settingsHandlers);
     renderWizard();
+    if (plan) plan.render();
     const s = state.validation.summary;
     const cnt = $("problems-count");
     cnt.textContent = s.error ? String(s.error) : s.warning ? String(s.warning) : "✓";
@@ -178,6 +204,9 @@
   const propHandlers = {
     onChange: (id, patch) => edit("Изменение свойств", () => {
       const notes = P.updateElement(state.project, id, patch);
+      // Элемент, построенный по контуру плана: соседние стены, пол, фундамент и крыша перестраиваются
+      const changed = P.find(state.project, id);
+      if (BS.contour && BS.contour.needsRebuild(changed, patch)) notes.push(...BS.contour.applyElementPatch(state.project, changed, patch));
       return notes.length ? `Скорректировано: ${notes.join("; ")}` : `Изменено: ${P.find(state.project, id).name}`;
     }),
     onMove: (id, dx, dy, dz) => edit("Сдвиг", () => { P.moveElement(state.project, id, dx, dy, dz, { reseat: false }); return "Сдвинуто"; }),
@@ -282,9 +311,11 @@
       case "new-menu": return toggleMenu();
       case "wiz-foundation": return edit("Фундамент", () => {
         const h = p.house;
-        const el = P.addRect(p, "slab_foundation", { x: 0, y: 0 }, { x: h.length, y: h.width });
-        el.name = "Фундаментная плита";
-        return `Фундамент ${fmt(h.length)} × ${fmt(h.width)} м`;
+        const C = BS.contour;
+        // Контур этажа с плана; если его нет — прямоугольник по размерам дома из мастера
+        const c = C.forLevel(p, state.levelId)[0] || C.addContour(p, C.rectangle(0, 0, h.length, h.width), { levelId: state.levelId });
+        C.foundationFromContour(p, c.id, { type: "slab", thickness: h.foundationThickness });
+        return `Фундамент по контуру ${c.id}`;
       }) && view && view.setView("iso");
       case "wiz-walls": return edit("Стены по контуру", () => {
         p.levels[0].height = p.house.wallHeight;
@@ -299,7 +330,11 @@
         return `Проёмов: ${created.length}, перемычек: ${lintels}`;
       });
       case "roof-over": return edit("Крыша", () => {
-        const r = P.addRoofOverBuilding(p, { roofType: p.house.roofType, slope: p.house.roofSlope, overhang: p.house.roofOverhang });
+        const C = BS.contour;
+        const top = P.topLevel(p);
+        const c = C.forLevel(p, top.id).find((x) => C.linked(p, x.id, C.GEN.wall).length);
+        const opts = { roofType: p.house.roofType, slope: p.house.roofSlope, overhang: p.house.roofOverhang };
+        const r = c ? C.roofFromContour(p, c.id, opts).created[0] : P.addRoofOverBuilding(p, opts);
         state.selectedIds = new Set([r.id]);
         return "Крыша построена над домом";
       });
@@ -318,6 +353,11 @@
         }
         return `Добавлено перемычек: ${n}`;
       });
+      case "clean-view":
+        // Кнопку обрабатывает shell (скрывает панели); сцена убирает сетку, рёбра и подсветки
+        syncCleanView();
+        if (plan) plan.render();
+        return null;
       default:
         return null;
     }
@@ -336,7 +376,7 @@
     if (kind === "starter") p = P.createStarterProject("Мой дом");
     else if (kind === "empty") p = P.createProject("Новый проект");
     else {
-      const key = kind === "example-two" ? "twoStorey" : "issues";
+      const key = kind === "example-two" ? "twoStorey" : kind === "example-l" ? "lHouse" : "issues";
       if (!BS.examples || !BS.examples[key]) return setStatus("Пример не найден (examples/examples.js)", "error");
       p = IO.fromData(JSON.parse(JSON.stringify(BS.examples[key]))).project;
     }
@@ -527,6 +567,7 @@
   window.addEventListener("drop", async (e) => { e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) await openFile(f); });
 
   document.addEventListener("keydown", (e) => {
+    if (document.body.dataset.mode === "mech") return; // горячие клавиши дома не действуют в режиме машиностроения
     const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement && document.activeElement.tagName);
     const ctrl = e.ctrlKey || e.metaKey;
     if (ctrl && e.code === "KeyZ" && !typing) { e.preventDefault(); return undoRedo(!e.shiftKey); }
@@ -559,16 +600,18 @@
   $("grid-step").value = String(state.project.settings.grid || 0.1);
   setToggle("snap", state.project.settings.snap !== false);
   if (tools) tools.setTool("select");
-  refresh(restored ? "Восстановлен последний проект (автосохранение браузера)" : "Готово: открыт стартовый дом. Мастер справа поможет построить свой.", { refit: true });
+  refresh(restored ? "Восстановлен последний проект (автосохранение браузера)" : "Готово: открыт стартовый дом. Свой дом: на плане нарисуйте контур → «Фундамент» → «Стены» → «Перекрытие» → «Крыша».", { refit: true });
 
   // Ссылки вида index.html#example=twoStorey&wizard=0&roof=hidden&view=top — для демонстрации и скриншотов
   const hash = new URLSearchParams(location.hash.slice(1));
-  if (hash.get("example")) newProject({ starter: "starter", twoStorey: "example-two", issues: "example-issues" }[hash.get("example")] || "starter");
+  if (hash.get("example")) newProject({ starter: "starter", twoStorey: "example-two", issues: "example-issues", lHouse: "example-l" }[hash.get("example")] || "starter");
   if (hash.get("wizard") === "0") { state.wizardOpen = false; renderWizard(); }
   if (hash.get("roof") === "hidden" && view) { state.hiddenGroups.add("roof"); view.setGroupVisible("roof", false); renderPanels(); }
   if (hash.get("view") && view) view.setView(hash.get("view"));
   if (hash.get("tab")) switchTab("right", hash.get("tab"));
 
+  syncCleanView();
+
   // Для отладки и ручных тестов из консоли браузера
-  BS.app = { state, edit, refresh, action, select, newProject, history, get view() { return view; }, get tools() { return tools; }, get player() { return player; } };
+  BS.app = { state, edit, refresh, action, select, newProject, history, get view() { return view; }, get tools() { return tools; }, get plan() { return plan; }, get player() { return player; } };
 })(globalThis.BuildSense);

@@ -7,8 +7,20 @@
    * state: { project, selectedIds:Set, issues: Map(id→severity), hiddenGroups:Set }
    * handlers: onSelect(id, additive), onFocus(id), onToggleGroup(group, visible)
    */
+  // Сценарий «план → фундамент → стены → перекрытие → крыша» использует только эти категории.
+  // Инженерия и мебель не входят в цели проекта: их переключатели видны, только если такие объекты
+  // уже есть в проекте (старые файлы) или категория скрыта — чтобы её можно было снова показать.
+  const CORE_GROUPS = new Set(["foundation", "structure", "roof", "architecture"]);
+
+  function visibleGroups(state) {
+    const present = new Set(state.project.elements.map((e) => (BS.types.get(e.type) || {}).group));
+    return Object.entries(BS.types.GROUPS)
+      .filter(([gid]) => CORE_GROUPS.has(gid) || present.has(gid) || state.hiddenGroups.has(gid))
+      .sort((a, b) => (a[1].order || 0) - (b[1].order || 0));
+  }
+
   function render(visNode, treeNode, state, handlers) {
-    visNode.replaceChildren(...Object.entries(BS.types.GROUPS).map(([gid, g]) => {
+    visNode.replaceChildren(...visibleGroups(state).map(([gid, g]) => {
       const input = el("input", { type: "checkbox", checked: !state.hiddenGroups.has(gid), onchange: () => handlers.onToggleGroup(gid, input.checked) });
       return el("label", { title: `Показать / скрыть: ${g.label}` }, input, g.label);
     }));
@@ -53,7 +65,7 @@
     }
     const orphans = project.elements.filter((e) => e.hostId && !project.elements.some((w) => w.id === e.hostId));
     if (orphans.length) ul.append(el("li", {}, el("div", { class: "grp" }, "Без стены-основы"), el("ul", {}, orphans.map((o) => el("li", {}, row(o))))));
-    treeNode.replaceChildren(project.elements.length ? ul : el("p", { class: "empty" }, "Проект пуст. Начните с фундамента или откройте мастер."));
+    treeNode.replaceChildren(project.elements.length ? ul : el("p", { class: "empty" }, "Проект пуст. Начертите контур на 2D-плане или поставьте фундамент; мастер проведёт по шагам."));
   }
 
   BS.ui = BS.ui || {};

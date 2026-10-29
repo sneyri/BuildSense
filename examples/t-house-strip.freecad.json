@@ -1,0 +1,792 @@
+{
+  "format": "buildsense-freecad-export",
+  "schemaVersion": 3,
+  "units": "mm",
+  "generator": "BuildSense 1.0.0",
+  "exportedAt": "2026-10-27T12:00:00.000Z",
+  "axes": "Z вверх; placement — точка привязки элемента (угол бруса, центр основания цилиндра, начало оси трубы) и поворот вокруг Z в градусах",
+  "project": {
+    "name": "Т-образный дом на ленте",
+    "climateRegion": "2V",
+    "housingFund": "private"
+  },
+  "plan": {
+    "contours": [
+      {
+        "id": "C1",
+        "levelId": "L1",
+        "points": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 12000,
+            "y": 0
+          },
+          {
+            "x": 12000,
+            "y": 4000
+          },
+          {
+            "x": 8000,
+            "y": 4000
+          },
+          {
+            "x": 8000,
+            "y": 9000
+          },
+          {
+            "x": 4000,
+            "y": 9000
+          },
+          {
+            "x": 4000,
+            "y": 4000
+          },
+          {
+            "x": 0,
+            "y": 4000
+          }
+        ]
+      }
+    ]
+  },
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Этаж 1",
+      "elevation": 0,
+      "height": 2800
+    }
+  ],
+  "elements": [
+    {
+      "id": "wall-1",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 1 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p1",
+        "edgeStart": 0
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-1"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 12000,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-2",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 2 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p2",
+        "edgeStart": 0.38
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-2"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 12000,
+        "y": 380,
+        "z": 0,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 3620,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-3",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 3 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p3",
+        "edgeStart": 0.38
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-3"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 11620,
+        "y": 4000,
+        "z": 0,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 4000,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-4",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 4 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p4",
+        "edgeStart": 0
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-4"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 8000,
+        "y": 4000,
+        "z": 0,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 5000,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-5",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 5 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p5",
+        "edgeStart": 0.38
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-5"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 7620,
+        "y": 9000,
+        "z": 0,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 3620,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-6",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 6 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p6",
+        "edgeStart": 0.38
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-6"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 4000,
+        "y": 8620,
+        "z": 0,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 5000,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-7",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 7 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p7",
+        "edgeStart": 0
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-7"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 4000,
+        "y": 4000,
+        "z": 0,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 4000,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "wall-8",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена 8 (контур C1)",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p8",
+        "edgeStart": 0.38
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "strip_foundation-8"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 0,
+        "y": 3620,
+        "z": 0,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 3240,
+        "thickness": 380,
+        "height": 2700
+      }
+    },
+    {
+      "id": "strip_foundation-1",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p1",
+        "edgeStart": -0.11
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": -110,
+        "y": -110,
+        "z": -1200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 12220,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-2",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 2",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p2",
+        "edgeStart": 0.49
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 12110,
+        "y": 490,
+        "z": -1200,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 3620,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-3",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 3",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p3",
+        "edgeStart": 0.49
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 11510,
+        "y": 4110,
+        "z": -1200,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 4000,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-4",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 4",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p4",
+        "edgeStart": 0.11
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 8110,
+        "y": 4110,
+        "z": -1200,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 5000,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-5",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 5",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p5",
+        "edgeStart": 0.49
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 7510,
+        "y": 9110,
+        "z": -1200,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 3620,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-6",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 6",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p6",
+        "edgeStart": 0.49
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 3890,
+        "y": 8510,
+        "z": -1200,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 5000,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-7",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 7",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p7",
+        "edgeStart": 0.11
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 3890,
+        "y": 4110,
+        "z": -1200,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 4000,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "strip_foundation-8",
+      "type": "strip_foundation",
+      "typeLabel": "Ленточный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Лента 8",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-strip",
+        "edgeFrom": "p8",
+        "edgeStart": 0.49
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": -110,
+        "y": 3510,
+        "z": -1200,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 3020,
+        "width": 600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "slab-1",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "prism",
+      "ifcType": "Slab",
+      "name": "Перекрытие над «Этаж 1»",
+      "category": "attic",
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-floor"
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-1",
+          "wall-2",
+          "wall-3",
+          "wall-4",
+          "wall-5",
+          "wall-6",
+          "wall-7",
+          "wall-8"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 2700,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 12000,
+        "width": 9000,
+        "height": 220
+      },
+      "outline": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 12000,
+          "y": 0
+        },
+        {
+          "x": 12000,
+          "y": 4000
+        },
+        {
+          "x": 8000,
+          "y": 4000
+        },
+        {
+          "x": 8000,
+          "y": 9000
+        },
+        {
+          "x": 4000,
+          "y": 9000
+        },
+        {
+          "x": 4000,
+          "y": 4000
+        },
+        {
+          "x": 0,
+          "y": 4000
+        }
+      ]
+    },
+    {
+      "id": "roof-1",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25,
+        "overhang": 0.5,
+        "contourId": "C1",
+        "generatedBy": "contour-roof"
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": -500,
+        "y": -500,
+        "z": 2920,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 13000,
+        "width": 10000,
+        "rise": 2886.75
+      }
+    }
+  ]
+}

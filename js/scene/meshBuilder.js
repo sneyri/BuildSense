@@ -11,6 +11,150 @@
     return new T.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0.02, ...extra });
   }
 
+  // ---------------------------------------------------------------- материалы и процедурные текстуры
+
+  const textureCache = new Map();
+
+  /**
+   * Процедурная текстура (CanvasTexture 256 x 256), рисуется кодом и кешируется по виду и цвету.
+   * Повторяется каждые look.tile метров (UV задаются в метрах, см. worldUV).
+   */
+  function proceduralTexture(kind, color) {
+    const key = kind + "|" + color;
+    if (textureCache.has(key)) return textureCache.get(key);
+    if (typeof document === "undefined") return null;
+    const N = 256;
+    const cv = document.createElement("canvas");
+    cv.width = cv.height = N;
+    const g = cv.getContext("2d");
+    const base = new T.Color(color);
+    const css = (k, j = 0) => {
+      const c = base.clone().multiplyScalar(k);
+      c.r = Math.min(1, c.r + j); c.g = Math.min(1, c.g + j); c.b = Math.min(1, c.b + j);
+      return "#" + c.getHexString();
+    };
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    g.fillStyle = css(1);
+    g.fillRect(0, 0, N, N);
+    if (kind === "brick" || kind === "block") {
+      // Кирпич 250 x 65 мм со швом 10 мм (на 1 м: 4 по длине, 13 рядов); газоблок 625 x 250 мм
+      const rows = kind === "brick" ? 13 : 5, cols = kind === "brick" ? 4 : 2;
+      const rh = N / rows, cw = N / cols, joint = kind === "brick" ? 2 : 1.5;
+      g.fillStyle = kind === "brick" ? "#d9d2c5" : css(0.82);
+      g.fillRect(0, 0, N, N);
+      for (let r = 0; r < rows; r++) {
+        const off = r % 2 ? cw / 2 : 0;
+        for (let c = -1; c <= cols; c++) {
+          g.fillStyle = css(0.86 + rnd() * 0.24);
+          g.fillRect(c * cw + off + joint / 2, r * rh + joint / 2, cw - joint, rh - joint);
+        }
+      }
+    } else if (kind === "wood") {
+      const boards = 6, bh = N / boards;
+      for (let b = 0; b < boards; b++) {
+        g.fillStyle = css(0.88 + rnd() * 0.2);
+        g.fillRect(0, b * bh, N, bh - 1.5);
+        g.strokeStyle = css(0.72);
+        g.lineWidth = 1;
+        for (let k = 0; k < 5; k++) {
+          const y = b * bh + rnd() * bh;
+          g.beginPath();
+          g.moveTo(0, y);
+          for (let x = 0; x <= N; x += 16) g.lineTo(x, y + Math.sin(x / 23 + k) * 1.6);
+          g.stroke();
+        }
+        g.fillStyle = css(0.6);
+        g.fillRect(0, (b + 1) * bh - 1.5, N, 1.5);
+      }
+    } else if (kind === "tile") {
+      const rows = 8, cols = 6, rh = N / rows, cw = N / cols;
+      for (let r = 0; r < rows; r++) {
+        const off = r % 2 ? cw / 2 : 0;
+        for (let c = -1; c <= cols; c++) {
+          const x = c * cw + off, y = r * rh;
+          const grd = g.createLinearGradient(0, y, 0, y + rh);
+          const k = 0.9 + rnd() * 0.15;
+          grd.addColorStop(0, css(k * 1.08));
+          grd.addColorStop(1, css(k * 0.7));
+          g.fillStyle = grd;
+          g.beginPath();
+          g.moveTo(x + 1, y);
+          g.lineTo(x + cw - 1, y);
+          g.lineTo(x + cw - 1, y + rh * 0.75);
+          g.quadraticCurveTo(x + cw / 2, y + rh + 2, x + 1, y + rh * 0.75);
+          g.closePath();
+          g.fill();
+        }
+      }
+    } else if (kind === "metal") {
+      for (let x = 0; x < N; x += 32) {
+        const grd = g.createLinearGradient(x, 0, x + 32, 0);
+        grd.addColorStop(0, css(0.8)); grd.addColorStop(0.5, css(1.12)); grd.addColorStop(1, css(0.8));
+        g.fillStyle = grd;
+        g.fillRect(x, 0, 32, N);
+      }
+    } else {
+      // Бетон: мелкий шум и следы щитов опалубки
+      for (let i = 0; i < 2600; i++) {
+        g.fillStyle = css(0.8 + rnd() * 0.35);
+        g.fillRect(rnd() * N, rnd() * N, 1 + rnd() * 2, 1 + rnd() * 2);
+      }
+      g.strokeStyle = css(0.85);
+      g.lineWidth = 1;
+      g.strokeRect(0.5, 0.5, N - 1, N - 1);
+    }
+    const tex = new T.CanvasTexture(cv);
+    tex.wrapS = tex.wrapT = T.RepeatWrapping;
+    if (T.sRGBEncoding) tex.encoding = T.sRGBEncoding;
+    tex.anisotropy = 4;
+    tex.userData.shared = true; // не освобождается при перестройке сцены (кеш)
+    textureCache.set(key, tex);
+    return tex;
+  }
+
+  /** Материал по id материала проекта: цвет, шероховатость, металличность, процедурная текстура. */
+  function lookMat(materialId, extra = {}) {
+    const lk = BS.materials.look(materialId);
+    const params = { color: lk.color, roughness: lk.roughness, metalness: lk.metalness, ...extra };
+    const tex = lk.texture ? proceduralTexture(lk.texture, lk.color) : null;
+    if (tex) {
+      params.map = tex;
+      params.color = 0xffffff;
+    }
+    const m = new T.MeshStandardMaterial(params);
+    m.userData.tile = lk.tile;
+    return m;
+  }
+
+  /**
+   * UV в метрах по доминирующей нормали (кубическая проекция): кладка и доски не растягиваются
+   * по граням разного размера. Вызывать после всех преобразований геометрии в осях элемента.
+   */
+  function worldUV(geo, tile = 1) {
+    const pos = geo.attributes.position;
+    if (!geo.attributes.normal) geo.computeVertexNormals();
+    const nor = geo.attributes.normal;
+    const uv = new Float32Array(pos.count * 2);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      const ax = Math.abs(nor.getX(i)), ay = Math.abs(nor.getY(i)), az = Math.abs(nor.getZ(i));
+      let u, v;
+      if (az >= ax && az >= ay) { u = x; v = y; } else if (ax >= ay) { u = y; v = z; } else { u = x; v = z; }
+      uv[i * 2] = u / tile;
+      uv[i * 2 + 1] = v / tile;
+    }
+    geo.setAttribute("uv", new T.BufferAttribute(uv, 2));
+    return geo;
+  }
+
+  /** Тело элемента из его материала (с текстурой и UV в метрах). */
+  function addSolid(group, geometry, el, extra = {}, opts = {}) {
+    const m = lookMat(el.material, extra);
+    if (m.map) worldUV(geometry, m.userData.tile);
+    return add(group, geometry, m, opts);
+  }
+
   function shade(hex, k) {
     const c = new T.Color(hex);
     c.multiplyScalar(k);
@@ -76,7 +220,8 @@
     const s = el.size;
     switch (t.shape) {
       case "box":
-        add(g, box(s.length, s.width, s.height), mat(color));
+        if (BS.shapes.isPrism(el)) buildPrism(g, el);
+        else addSolid(g, box(s.length, s.width, s.height), el);
         place(g, el);
         break;
       case "wall":
@@ -85,7 +230,7 @@
         break;
       case "cylinder": {
         const geo = new T.CylinderGeometry(s.diameter / 2, s.diameter / 2, s.height, 28).rotateX(Math.PI / 2).translate(0, 0, s.height / 2);
-        add(g, geo, mat(color));
+        addSolid(g, geo, el);
         g.position.set(el.position.x, el.position.y, el.position.z);
         break;
       }
@@ -151,7 +296,18 @@
     const geo = new T.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false });
     geo.rotateX(Math.PI / 2); // (u, w, z) → (u, −z, w)
     geo.translate(0, t, 0);
-    add(g, geo, mat(color));
+    addSolid(g, geo, el);
+  }
+
+  /** Многоугольная плита (фундамент/перекрытие по контуру): контур params.points, выдавливание на size.height. */
+  function buildPrism(g, el) {
+    const pts = el.params.points;
+    const shape = new T.Shape();
+    shape.moveTo(pts[0].x, pts[0].y);
+    for (const q of pts.slice(1)) shape.lineTo(q.x, q.y);
+    shape.closePath();
+    const geo = new T.ExtrudeGeometry(shape, { depth: el.size.height, bevelEnabled: false });
+    addSolid(g, geo, el);
   }
 
   function mergeRects(rects) {
@@ -210,14 +366,15 @@
   function buildRoof(g, el, color) {
     const { length: L, width: W } = el.size;
     const p = el.params;
-    const m = mat(color, { side: T.DoubleSide });
+    const m = lookMat(el.material, { side: T.DoubleSide });
+    const uvRoof = (geo) => (m.map ? worldUV(geo, m.userData.tile) : geo);
     const rise = BS.shapes.roofRise(el);
     if (p.roofType === "flat") {
-      add(g, box(L, W, p.thickness), m);
+      add(g, uvRoof(box(L, W, p.thickness)), m);
       return;
     }
     if (p.roofType === "hip") {
-      add(g, hipGeometry(L, W, rise), m);
+      add(g, uvRoof(hipGeometry(L, W, rise)), m);
       return;
     }
     // Профиль поперёк ската в плоскости (v, w), выдавливается вдоль u
@@ -229,7 +386,8 @@
     tri.closePath();
     const geo = new T.ExtrudeGeometry(tri, { depth: L, bevelEnabled: false });
     geo.applyMatrix4(new T.Matrix4().set(0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1)); // x→y, y→z, z→x
-    add(g, geo, m);
+    geo.computeVertexNormals();
+    add(g, uvRoof(geo), m);
   }
 
   /** Вальмовая крыша: прямоугольное основание a × b, конёк вдоль длинной стороны. */
@@ -258,8 +416,12 @@
     const { length: L, width: W, height: H } = el.size;
     const n = Math.max(1, Math.round(el.params.steps || 1));
     const run = L / n, rise = H / n;
-    const m = mat(color);
-    for (let i = 0; i < n; i++) add(g, box(run, W, rise * (i + 1), i * run, 0, 0), m, { edges: i % 2 === 0 });
+    const m = lookMat(el.material);
+    for (let i = 0; i < n; i++) {
+      const geo = box(run, W, rise * (i + 1), i * run, 0, 0);
+      if (m.map) worldUV(geo, m.userData.tile);
+      add(g, geo, m, { edges: i % 2 === 0 });
+    }
   }
 
   function member(g, p, q, b, m, v) {
@@ -410,5 +572,5 @@
     }
   }
 
-  BS.meshBuilder = { buildAll, build };
+  BS.meshBuilder = { buildAll, build, proceduralTexture, lookMat, worldUV };
 })(globalThis.BuildSense);

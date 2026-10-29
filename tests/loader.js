@@ -17,6 +17,7 @@ export const CORE_FILES = [
   "js/objects/support.js",
   "js/objects/snapping.js",
   "js/objects/project.js",
+  "js/objects/contour.js",
   "js/rules/builtinRules.js",
   "js/rules/ruleRegistry.js",
   "js/rules/checker.js",

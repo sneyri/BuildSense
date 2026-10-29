@@ -21,8 +21,10 @@
     structure: { label: "Несущие конструкции", order: 2 },
     roof: { label: "Крыша", order: 3 },
     architecture: { label: "Архитектура", order: 4 },
-    engineering: { label: "Инженерия", order: 5 },
-    furniture: { label: "Мебель", order: 6 },
+    // Скрытые группы: типы остаются (старые файлы открываются и экспортируются), но в палитре,
+    // мастере и автодействиях не предлагаются — BuildSense сосредоточен на конструкции дома.
+    engineering: { label: "Инженерия", order: 5, hidden: true },
+    furniture: { label: "Мебель", order: 6, hidden: true },
   };
 
   const BOX_FIELDS = (l, w, h) => ({ "size.length": l, "size.width": w, "size.height": h });
@@ -70,7 +72,7 @@
       group: "structure", label: "Стена", icon: "wall", shape: "wall", support: "gravity", bearing: true,
       hint: "Рисуется по двум точкам. Наружная стена строится по наружной грани, перегородка — по оси.",
       categories: { exterior: "Наружная несущая", interior: "Внутренняя несущая", partition: "Перегородка" },
-      materials: ["brick", "aerated", "timber", "concrete"], size: { length: 4, thickness: 0.4, height: 2.8 },
+      materials: ["brick", "aerated", "timber", "concrete", "ceramic_block", "silicate_brick", "log"], size: { length: 4, thickness: 0.4, height: 2.8 },
       fields: { "size.length": L("Длина", 0.2, 60), "size.thickness": L("Толщина", 0.05, 1.2, 0.01), "size.height": L("Высота", 0.5, 10) },
       ifc: "Wall",
     },
@@ -134,7 +136,7 @@
     roof: {
       group: "roof", label: "Крыша", icon: "roof", shape: "roof", support: "gravity", bearing: true,
       hint: "Плоская, односкатная, двускатная или вальмовая. Низ крыши ложится на верх стен.",
-      materials: ["metal_tile", "soft_tile", "membrane"], size: { length: 10.8, width: 8.8 },
+      materials: ["metal_tile", "soft_tile", "membrane", "clay_tile", "profiled_sheet"], size: { length: 10.8, width: 8.8 },
       params: { roofType: "gable", slope: 30, thickness: 0.25 },
       fields: {
         "size.length": L("Длина", 0.5, 70), "size.width": L("Ширина (пролёт)", 0.5, 70),
@@ -252,6 +254,10 @@
     },
     label(id) {
       return (TYPES[id] || {}).label || id;
+    },
+    /** Группы, видимые в палитре (без скрытых). */
+    visibleGroups() {
+      return Object.fromEntries(Object.entries(GROUPS).filter(([, g]) => !g.hidden));
     },
     byGroup() {
       const out = {};

@@ -27,6 +27,7 @@
       this.issues = new Map();
       this.simStates = new Map();
       this.frameCallbacks = new Set();
+      this.cleanView = false;
 
       this.renderer = new T.WebGLRenderer({ antialias: true });
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -95,6 +96,7 @@
       this.setSite({ x: -10, y: -10, length: 40, width: 40 });
       const axes = new T.AxesHelper(1.2);
       axes.position.z = 0.01;
+      this.axes = axes;
       this.scene.add(axes);
     }
 
@@ -108,6 +110,7 @@
       grid.material.transparent = true;
       grid.material.opacity = 0.45;
       this.grid = grid;
+      grid.visible = !this.cleanView;
       this.scene.add(grid);
       this.ground.scale.set(site.length, site.width, 1);
       this.ground.position.set(site.x + site.length / 2, site.y + site.width / 2, -0.005);
@@ -223,6 +226,19 @@
       this._applyColors();
     }
 
+    /**
+     * Чистый просмотр дома: без сетки, осей, рёбер, комнат-зон, подсветки ошибок и выделения
+     * (подсветка симуляции остаётся — её показывает пользователь сам).
+     */
+    setCleanView(on) {
+      this.cleanView = Boolean(on);
+      if (this.grid) this.grid.visible = !this.cleanView;
+      if (this.axes) this.axes.visible = !this.cleanView;
+      this.overlay.visible = !this.cleanView;
+      this._applyVisibility();
+      this._applyColors();
+    }
+
     _applyColors() {
       this.modelGroup.traverse((o) => {
         if (!o.isMesh || !o.material || !o.material.emissive) return;
@@ -232,6 +248,7 @@
         let c = null, k = 0;
         const sim = this.simStates.get(id);
         if (sim) { c = COLORS[sim]; k = sim === "impact" ? 0.6 : 0.55; }
+        else if (this.cleanView) { c = null; }
         else if (this.selectedIds.has(id)) { c = COLORS.selected; k = 0.5; }
         else if (this.issues.get(id)) { c = COLORS[this.issues.get(id)]; k = 0.4; }
         if (o.userData.baseEmissive === undefined) {
@@ -259,7 +276,9 @@
         let v = !this.hiddenGroups.has(o.userData.group);
         if (o.userData.elementType === "roof" && this.hiddenGroups.has("roof")) v = false;
         if (this.isolateIds) v = this.isolateIds.has(o.userData.elementId);
+        if (this.cleanView && o.userData.elementType === "room") v = false;
         o.visible = v;
+        o.traverse((ch) => { if (ch.userData.isEdge) ch.visible = !this.cleanView; });
       }
     }
 
@@ -342,7 +361,7 @@
       if (o.geometry) o.geometry.dispose();
       const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
       for (const m of mats) {
-        if (m.map) m.map.dispose();
+        if (m.map && !(m.map.userData && m.map.userData.shared)) m.map.dispose();
         m.dispose();
       }
     });

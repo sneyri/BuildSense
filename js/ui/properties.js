@@ -48,12 +48,18 @@
       parts.push(checkField({ label, value: e[g][k], onChange: (v) => h.onChange(e.id, { [g]: { [k]: v } }) }));
     }
     parts.push(el("hr", { class: "sep" }), el("h3", {}, "Размеры"));
+    const prism = BS.shapes.isPrism(e);
     for (const [path, f] of Object.entries(t.fields)) {
       const [g, k] = path.split(".");
+      if (prism && g === "size" && (k === "length" || k === "width")) continue; // габариты задаёт контур
       if (e.type === "roof" && k === "thickness" && e.params.roofType !== "flat") continue;
       if (e.type === "roof" && k === "slope" && e.params.roofType === "flat") continue;
       parts.push(numberField({ label: f.label, unit: f.unit, step: f.step, min: f.min, max: f.max, value: e[g][k],
         title: `Допустимо: ${fmt(f.min)}–${fmt(f.max)} ${f.unit}`, onChange: (v) => h.onChange(e.id, { [g]: { [k]: v } }) }));
+    }
+    if (prism) {
+      parts.push(readonly("Контур", `${e.params.points.length} вершин, ${fmt(Math.abs(BS.geometry.polygonArea(e.params.points)), 2)} м²`));
+      parts.push(readonly("Габариты", `${fmt(e.size.length)} × ${fmt(e.size.width)} м`));
     }
     if (e.type === "roof") parts.push(readonly("Высота подъёма", `${fmt(BS.shapes.roofRise(e))} м`));
     if (e.type === "room") parts.push(readonly("Площадь", `${fmt(e.size.length * e.size.width, 2)} м²`));
@@ -68,7 +74,9 @@
         iconButton("rotate", "−90°", () => h.onRotate(e.id, -90)), iconButton("rotate", "+90°", () => h.onRotate(e.id, 90))));
       parts.push(readonly("Низ / верх", `${fmt(BS.shapes.bottom(e, project))} / ${fmt(BS.shapes.top(e, project))} м`));
     }
-    if (e.shell) parts.push(el("p", { class: "note" }, "Элемент стартового дома: параметры дома в мастере перестраивают его."));
+    if (e.params && e.params.contourId) {
+      parts.push(el("p", { class: "note" }, `Построено по контуру плана ${e.params.contourId}. Толщина и высота применяются ко всему контуру: соседние стены, пол и крыша перестраиваются. Форму меняйте на 2D-плане.`));
+    } else if (e.shell) parts.push(el("p", { class: "note" }, "Элемент стартового дома."));
 
     parts.push(el("hr", { class: "sep" }), actionsRow(project, [e.id], h));
     if (e.type === "wall") {
@@ -147,7 +155,7 @@
     return el("div", { class: "form" },
       el("h3", {}, "Проект"),
       el("p", { class: "note" }, "Объект не выбран. Щёлкните элемент в 3D-сцене или в дереве."),
-      ...Object.entries(BS.types.GROUPS).map(([g, d]) => readonly(d.label, count(g))),
+      ...Object.entries(BS.types.GROUPS).filter(([g, d]) => !d.hidden || count(g)).map(([g, d]) => readonly(d.label, count(g))),
       readonly("Этажей", project.levels.length),
       el("hr", { class: "sep" }),
       el("h3", {}, "Как читать проверки"),

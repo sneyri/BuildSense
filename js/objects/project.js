@@ -8,7 +8,7 @@
   const S = BS.shapes;
 
   const FORMAT = "buildsense-project";
-  const SCHEMA_VERSION = 2;
+  const SCHEMA_VERSION = 3;
 
   const DEFAULT_SETTINGS = {
     climateRegion: "2V",
@@ -46,6 +46,7 @@
       levels: [{ id: "L1", name: "Этаж 1", elevation: 0, height: DEFAULT_HOUSE.wallHeight }],
       elements: [],
       customRules: [],
+      plan: { contours: [] },
     };
   }
 
@@ -115,8 +116,10 @@
     const notes = [];
     const t = BS.types.get(el.type);
     if (!t) return notes;
+    const prism = S.isPrism(el);
     for (const [path, f] of Object.entries(t.fields || {})) {
       const [group, key] = path.split(".");
+      if (prism && group === "size" && (key === "length" || key === "width")) continue; // габариты контура
       const obj = el[group];
       if (!obj) continue;
       let max = f.max;
@@ -149,6 +152,11 @@
       el.rotation = U.round(((el.rotation % 360) + 360) % 360, 3);
     }
     if (t.shape === "roof" && !["flat", "shed", "gable", "hip"].includes(el.params.roofType)) el.params.roofType = "gable";
+    if (prism) {
+      const b = G.bbox2(el.params.points);
+      el.size.length = U.round(b.maxX - b.minX, 3);
+      el.size.width = U.round(b.maxY - b.minY, 3);
+    }
     return notes;
   }
 
@@ -232,7 +240,9 @@
     if (spec.size.length < 0.2) throw new Error("Стена слишком короткая — отметьте вторую точку дальше");
     const el = addElement(project, "wall", spec);
     el.name = `${spec.category === "partition" ? "Перегородка" : "Стена"} ${el.id.split("-")[1]}`;
-    trimToNeighbours(project, el);
+    // Г-стыки в углах (без выступа и щели), затем Т-стыки: торец, зашедший в соседнюю стену, — до её грани
+    const joined = BS.contour ? BS.contour.joinWallCorners(project, el) : { start: false, end: false };
+    trimToNeighbours(project, el, ["wall"], joined);
     normalize(project, el);
     return el;
   }
@@ -370,7 +380,7 @@
   }
 
   /** Стыковка встык: торец новой линейной детали, зашедший в соседнюю, укорачивается до её грани. */
-  function trimToNeighbours(project, el, types = ["wall"]) {
+  function trimToNeighbours(project, el, types = ["wall"], skip = {}) {
     for (const other of project.elements) {
       if (!types.includes(other.type) || other.id === el.id) continue;
       const zOverlap = Math.min(S.top(el, project), S.top(other, project)) - Math.max(S.bottom(el, project), S.bottom(other, project));
@@ -381,12 +391,12 @@
       const u0 = Math.min(...us), u1 = Math.max(...us);
       const L = el.size.length;
       if (u1 - u0 < 0.001) continue;
-      if (u0 <= 0.01 && u1 < L - 0.2) {
+      if (u0 <= 0.01 && u1 < L - 0.2 && !skip.start) {
         const r = el.rotation * G.DEG;
         el.position.x = U.round(el.position.x + Math.cos(r) * u1, 3);
         el.position.y = U.round(el.position.y + Math.sin(r) * u1, 3);
         el.size.length = U.round(L - u1, 3);
-      } else if (u1 >= L - 0.01 && u0 > 0.2) {
+      } else if (u1 >= L - 0.01 && u0 > 0.2 && !skip.end) {
         el.size.length = U.round(u0, 3);
       }
     }
@@ -425,7 +435,7 @@
   }
 
   /** Копии элементов (вместе с проёмами стен) со сдвигом. Возвращает новые элементы. */
-  function duplicate(project, ids, offset = { x: 1, y: 1, z: 0 }, levelId = null) {
+  function duplicate(project, ids, offset = { x: 1, y: 1, z: 0 }, levelId = null, { keepLinks = false } = {}) {
     const created = [];
     const idMap = new Map();
     const sources = ids.map((id) => find(project, id)).filter(Boolean).filter((e) => !e.hostId || !ids.includes(e.hostId));
@@ -443,6 +453,10 @@
       copy.position.z = U.round(copy.position.z + (offset.z || 0), 3);
       if (levelId) copy.levelId = levelId;
       delete copy.shell;
+      if (!keepLinks && copy.params) {
+        // Копия не связана с контуром плана: иначе перестройка контура сочла бы её лишней стеной
+        for (const k of ["contourId", "generatedBy", "edgeFrom", "edgeStart"]) delete copy.params[k];
+      }
       project.elements.push(copy);
       idMap.set(src.id, copy.id);
       created.push(copy);
@@ -471,8 +485,34 @@
     const lv = { id, name: `Этаж ${project.levels.length + 1}`, elevation: U.round(top + slabT, 3), height: prev.height };
     project.levels.push(lv);
     const valid = (e) => Object.values(e.size).every((v) => Number.isFinite(v) && v > 0);
-    const ext = project.elements.filter((e) => e.type === "wall" && e.category === "exterior" && e.levelId === prev.id && valid(e));
     const created = [];
+    // Контуры плана нижнего этажа: перекрытие по контуру, копия контура и стен на новом этаже
+    const C = BS.contour;
+    const handled = new Set();
+    for (const c of C ? C.forLevel(project, prev.id) : []) {
+      const walls = C.linked(project, c.id, C.GEN.wall);
+      if (!walls.length) continue;
+      walls.forEach((w) => handled.add(w.id));
+      if (!C.linked(project, c.id, C.GEN.floor).length) {
+        const slab = C.slabFromContour(project, c.id, { kind: "floor", thickness: slabT }).created[0];
+        slab.name = `Перекрытие (${prev.name} / ${lv.name})`;
+        created.push(slab);
+      }
+      const nc = { id: `C${C.list(project).length + 1}`, levelId: id, closed: true, points: U.clone(c.points) };
+      while (C.get(project, nc.id)) nc.id = `${nc.id}_`;
+      C.list(project).push(nc);
+      if (copyWalls) {
+        const copies = duplicate(project, walls.map((w) => w.id), { x: 0, y: 0, z: lv.elevation - prev.elevation }, id, { keepLinks: true });
+        for (const cp of copies) {
+          if (cp.type === "door") { removeElements(project, [cp.id]); continue; }
+          if (cp.type === "wall") { cp.params.contourId = nc.id; cp.name = cp.name.replace(" (копия)", ` (${lv.name.toLowerCase()})`); }
+          created.push(cp);
+        }
+        for (const r of C.linked(project, c.id, C.GEN.roof)) { r.params.contourId = nc.id; r.levelId = id; }
+        C.rebuild(project, nc.id);
+      }
+    }
+    const ext = project.elements.filter((e) => e.type === "wall" && e.category === "exterior" && e.levelId === prev.id && valid(e) && !handled.has(e.id));
     if (ext.length) {
       const b = G.bbox2(ext.flatMap((w) => S.footprint(w, project)));
       created.push(addElement(project, "slab", {
@@ -540,10 +580,28 @@
 
   // ---------------------------------------------------------------- автоматическое размещение (мастер)
 
-  /** Наружные стены по контуру фундамента (габариты всех фундаментов этажа 1). */
+  /**
+   * Наружные стены по контуру фундамента. Фундамент, построенный по контуру плана, — стены по этому
+   * контуру; одна плита (прямоугольная или многоугольная) — по её контуру (он добавляется в план);
+   * иначе — по габариту всех фундаментов (как раньше).
+   */
   function wallsAroundFoundation(project, opts = {}) {
     const found = project.elements.filter((e) => BS.types.isFoundation(e));
     if (!found.length) throw new Error("Сначала создайте фундамент — стены строятся по его контуру");
+    const C = BS.contour;
+    if (C) {
+      const linkedF = found.find((f) => f.params && f.params.contourId && C.get(project, f.params.contourId));
+      let contourId = linkedF ? linkedF.params.contourId : null;
+      const slabs = found.filter((f) => f.type === "slab_foundation");
+      if (!contourId && slabs.length === 1 && found.length === 1) {
+        const f = slabs[0];
+        const c = C.addContour(project, S.footprint(f, project), { levelId: opts.levelId || project.levels[0].id });
+        f.params.contourId = c.id;
+        f.params.generatedBy = C.GEN.foundation;
+        contourId = c.id;
+      }
+      if (contourId) return C.wallsFromContour(project, contourId, { thickness: opts.thickness }).created;
+    }
     const b = G.bbox2(found.flatMap((f) => S.footprint(f, project)));
     const pts = [{ x: b.minX, y: b.minY }, { x: b.maxX, y: b.minY }, { x: b.maxX, y: b.maxY }, { x: b.minX, y: b.maxY }, { x: b.minX, y: b.minY }];
     const created = [];
@@ -553,11 +611,18 @@
     return created;
   }
 
-  /** Пол (плита) внутри наружных стен этажа. */
+  /** Пол (плита) внутри наружных стен этажа; для стен по контуру — многоугольный пол по контуру. */
   function slabInsideWalls(project, levelId) {
     const lv = level(project, levelId);
     const walls = project.elements.filter((e) => e.type === "wall" && e.category === "exterior" && e.levelId === lv.id);
     if (walls.length < 3) throw new Error("Нужны наружные стены этажа — пол кладётся внутри них");
+    const C = BS.contour;
+    const cid = C && walls.map((w) => w.params && w.params.contourId).find((id) => id && C.get(project, id));
+    if (cid) {
+      const el = C.slabFromContour(project, cid, { kind: "ground" }).created[0];
+      el.name = `Пол (${lv.name.toLowerCase()})`;
+      return el;
+    }
     const t = Math.min(...walls.map((w) => w.size.thickness));
     const b = G.bbox2(walls.flatMap((w) => S.footprint(w, project)));
     const el = addRect(project, "slab", { x: b.minX + t, y: b.minY + t }, { x: b.maxX - t, y: b.maxY - t }, { levelId: lv.id });
@@ -585,32 +650,33 @@
 
   // ---------------------------------------------------------------- стартовый дом
 
-  /** Стартовый одноэтажный дом по project.house: фундамент, 4 стены, пол, перегородка, проёмы, крыша, комнаты. */
+  /**
+   * Стартовый одноэтажный дом по project.house — по той же последовательности, что и в редакторе плана:
+   * контур → фундамент → стены → пол → перегородка, проёмы, перемычки → крыша, комнаты.
+   */
   function buildStarterHouse(project) {
     const h = project.house;
+    const C = BS.contour;
     project.elements = [];
+    project.plan = { contours: [] };
     project.levels = [{ id: "L1", name: "Этаж 1", elevation: 0, height: h.wallHeight }];
     const L = h.length, W = h.width, t = h.wallThickness;
-    addElement(project, "slab_foundation", {
-      name: "Фундаментная плита", shell: "foundation",
-      position: { x: 0, y: 0, z: -h.foundationThickness }, size: { length: L, width: W, height: h.foundationThickness },
-    });
-    const walls = {
-      south: [{ x: 0, y: 0 }, { x: L, y: 0 }], east: [{ x: L, y: 0 }, { x: L, y: W }],
-      north: [{ x: L, y: W }, { x: 0, y: W }], west: [{ x: 0, y: W }, { x: 0, y: 0 }],
-    };
+    const contour = C.addContour(project, C.rectangle(0, 0, L, W), { levelId: "L1" });
+    const found = C.foundationFromContour(project, contour.id, { type: "slab", thickness: h.foundationThickness }).created[0];
+    found.name = "Фундаментная плита";
+    found.shell = "foundation";
+    const walls = C.wallsFromContour(project, contour.id, { thickness: t, height: h.wallHeight, material: "brick" }).created;
+    const sides = ["south", "east", "north", "west"];
     const names = { south: "Стена южная", east: "Стена восточная", north: "Стена северная", west: "Стена западная" };
     const ids = {};
-    for (const [side, [a, b]] of Object.entries(walls)) {
-      const w = addWallByPoints(project, a, b, { category: "exterior", thickness: t });
-      w.name = names[side];
-      w.shell = side;
-      ids[side] = w.id;
-    }
-    addElement(project, "slab", {
-      name: "Пол первого этажа", category: "ground", shell: "floor",
-      position: { x: t, y: t, z: 0 }, size: { length: L - 2 * t, width: W - 2 * t, height: h.slabThickness },
+    walls.forEach((w, i) => {
+      w.name = names[sides[i]];
+      w.shell = sides[i];
+      ids[sides[i]] = w.id;
     });
+    const floor = C.slabFromContour(project, contour.id, { kind: "ground", thickness: h.slabThickness }).created[0];
+    floor.name = "Пол первого этажа";
+    floor.shell = "floor";
     const part = addWallByPoints(project, { x: L * 0.6, y: t }, { x: L * 0.6, y: W - t }, { category: "partition" });
     part.name = "Перегородка";
     placeOpening(project, "door", ids.south, L * 0.3);
@@ -620,8 +686,8 @@
     placeOpening(project, "window", ids.east, null);
     placeOpening(project, "window", ids.west, null);
     placeOpening(project, "door", part.id, 1.0);
-    for (const side of ["south", "east", "north", "west"]) addLintels(project, ids[side]);
-    addRoofOverBuilding(project);
+    for (const side of sides) addLintels(project, ids[side]);
+    C.roofFromContour(project, contour.id, { roofType: h.roofType, slope: h.roofSlope, overhang: h.roofOverhang });
     const z0 = h.slabThickness;
     addElement(project, "room", { name: "Гостиная", params: { roomName: "Гостиная", roomType: "common" },
       position: { x: t, y: t, z: z0 }, size: { length: L * 0.6 - t - 0.06, width: W - 2 * t, height: h.wallHeight - z0 } });

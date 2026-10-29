@@ -3,38 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BuildSense — редактор дома</title>
+  <title>BuildSense — учебная САПР</title>
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/plan.css">
+  <link rel="stylesheet" href="css/mech.css">
 </head>
-<!-- Открывается двойным щелчком (file://): все скрипты обычные, Three.js лежит в vendor/. -->
-<body>
+<!-- Открывается двойным щелчком (file://): все скрипты обычные, Three.js лежит в vendor/.
+     Режим и вид задаются атрибутами body; переключает их js/ui/shell.js (см. docs/INTEGRATION.md). -->
+<body data-mode="arch" data-archview="split">
   <header class="topbar">
-    <div class="brand">
-      <span class="logo" aria-hidden="true">BS</span>
-      <div><h1>BuildSense</h1><p>учебный редактор дома</p></div>
+    <div class="brand" title="BuildSense — учебная САПР">
+      <svg class="brand-mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2l7 4v8l-7 4-7-4V6z M10 10l7-4 M10 10L3 6 M10 10v8"/></svg>
+      <h1>BuildSense</h1>
     </div>
-    <input id="project-name" class="project-name" type="text" maxlength="80" title="Название проекта" autocomplete="off">
-    <div class="tb-group">
+
+    <div class="segmented mode-switch" role="group" aria-label="Режим работы">
+      <button type="button" data-setmode="arch" data-icon="mode-arch" aria-pressed="true" title="Архитектура: дом, 2D-план и 3D-модель">Архитектура</button>
+      <button type="button" data-setmode="mech" data-icon="mode-mech" aria-pressed="false" title="Машиностроение: параметрические детали (втулка, вал, фланец)">Машиностроение</button>
+    </div>
+
+    <div class="tb-group arch-only">
+      <input id="project-name" class="project-name" type="text" maxlength="80" title="Название проекта" aria-label="Название проекта" autocomplete="off">
+    </div>
+    <div class="tb-group arch-only" role="group" aria-label="Файл">
       <button type="button" data-action="new-menu" data-icon="file" title="Новый проект">Новый</button>
       <button type="button" data-action="open" data-icon="open" title="Открыть проект (JSON)">Открыть</button>
       <button type="button" data-action="save" data-icon="save" title="Сохранить проект в JSON (Ctrl+S)">Сохранить</button>
     </div>
-    <div class="tb-group">
-      <button type="button" data-action="undo" data-icon="undo" title="Отменить (Ctrl+Z)" class="icon-only"></button>
-      <button type="button" data-action="redo" data-icon="redo" title="Повторить (Ctrl+Y)" class="icon-only"></button>
+    <div class="tb-group arch-only" role="group" aria-label="История">
+      <button type="button" data-action="undo" data-icon="undo" title="Отменить (Ctrl+Z)" class="icon-only" aria-label="Отменить"></button>
+      <button type="button" data-action="redo" data-icon="redo" title="Повторить (Ctrl+Y)" class="icon-only" aria-label="Повторить"></button>
     </div>
+
     <div class="tb-group tb-right">
-      <button type="button" data-action="wizard" data-icon="wizard" title="Пошаговый мастер создания дома">Мастер</button>
-      <button type="button" data-action="export" data-icon="export" class="primary" title="Экспорт JSON для макроса FreeCAD">Экспорт в FreeCAD</button>
-      <button type="button" data-action="macro" data-icon="code" title="Скачать макрос import_house.FCMacro: во FreeCAD — Макрос → Макросы… → Выполнить">Скачать макрос</button>
-      <button type="button" data-action="theme" data-icon="theme" title="Светлая / тёмная тема" class="icon-only"></button>
+      <span class="arch-only tb-group">
+        <button type="button" data-action="wizard" data-icon="wizard" title="Пошаговый мастер: план → фундамент → стены → перекрытие → крыша">Мастер</button>
+        <button type="button" data-action="export" data-icon="export" class="primary" title="Экспорт JSON для макроса FreeCAD">Экспорт в FreeCAD</button>
+        <button type="button" data-action="macro" data-icon="code" title="Скачать макрос import_house.FCMacro: во FreeCAD — Макрос → Макросы… → Выполнить" class="icon-only" aria-label="Скачать макрос FreeCAD"></button>
+      </span>
+      <button type="button" data-action="clean-view" data-icon="clean" title="Чистый просмотр: скрыть боковые панели (повторное нажатие — вернуть)" class="icon-only" aria-label="Чистый просмотр" aria-pressed="false"></button>
+      <button type="button" data-action="theme" data-icon="theme" title="Светлая / тёмная тема" class="icon-only" aria-label="Сменить тему"></button>
     </div>
     <input type="file" id="file-input" accept=".json,application/json" hidden>
     <input type="file" id="rules-input" accept=".json,application/json" hidden>
   </header>
 
-  <main class="layout">
-    <aside class="side side-left">
+  <!-- ===================== Режим «Архитектура» ===================== -->
+  <main class="layout" id="arch-root">
+    <aside class="side side-left" aria-label="Объекты проекта">
       <nav class="tabs" data-tabs="left">
         <button type="button" data-tab="palette" class="active">Объекты</button>
         <button type="button" data-tab="tree">Дерево</button>
@@ -49,62 +65,106 @@
       </section>
     </aside>
 
-    <section class="viewport" id="viewport">
-      <div class="vp-toolbar">
-        <div class="seg" id="tools">
-          <button type="button" data-tool="select" data-icon="cursor" title="Выбор и перетаскивание (V)">Выбор</button>
+    <div class="center">
+      <div class="cmdbar" role="toolbar" aria-label="Команды вида">
+        <button type="button" data-collapse="left" data-icon="panel-left" class="icon-only ghost" title="Свернуть / развернуть левую панель" aria-label="Левая панель"></button>
+        <div class="segmented" role="group" aria-label="Вид рабочей области">
+          <button type="button" data-archview="plan" data-icon="plan2d" title="Только 2D-план">План</button>
+          <button type="button" data-archview="3d" data-icon="cube" title="Только 3D-модель">3D</button>
+          <button type="button" data-archview="split" data-icon="split" title="План и 3D рядом">План + 3D</button>
         </div>
-        <div class="seg">
-          <button type="button" data-view="iso" data-icon="cube" title="Изометрия">Изо</button>
-          <button type="button" data-view="top" data-icon="plan" title="План сверху (ортографический)">План</button>
-          <button type="button" data-view="front" data-icon="front" title="Вид спереди">Фасад</button>
-          <button type="button" data-view="fit" data-icon="fit" title="Вписать модель (F)">Вписать</button>
-          <button type="button" data-toggle="ortho" data-icon="ortho" title="Перспектива / ортография">Орто</button>
-        </div>
-        <div class="seg">
-          <button type="button" data-toggle="dims" data-icon="ruler" title="Показать габариты">Габариты</button>
-          <button type="button" data-toggle="isolate" data-icon="isolate" title="Изолировать выбранный объект (I)">Изоляция</button>
-          <button type="button" data-toggle="snap" data-icon="magnet" title="Привязка к сетке и объектам" class="on">Магнит</button>
-          <select id="grid-step" title="Шаг строительной сетки">
-            <option value="0.05">5 см</option>
-            <option value="0.1" selected>10 см</option>
-            <option value="0.25">25 см</option>
-            <option value="0.5">50 см</option>
-            <option value="1">1 м</option>
-          </select>
-        </div>
+        <div id="plan-tools" class="plan-tools"></div>
+        <button type="button" data-collapse="right" data-icon="panel-right" class="icon-only ghost cmd-end" title="Свернуть / развернуть правую панель" aria-label="Правая панель"></button>
       </div>
-      <div class="tool-hint" id="tool-hint"></div>
-      <div class="sim-banner" id="sim-banner" hidden></div>
-      <div class="wizard" id="wizard" hidden></div>
-      <div class="view-error" id="view-error" hidden></div>
-      <div class="vp-legend">ЛКМ — вращать · колесо — масштаб · ПКМ — сдвиг · Esc — отмена · Del — удалить</div>
-    </section>
 
-    <aside class="side side-right">
+      <div class="workarea">
+        <section class="plan-view" id="plan-view" aria-label="2D-план"></section>
+
+        <section class="viewport" id="viewport" aria-label="3D-модель">
+          <div class="vp-toolbar">
+            <div class="seg" id="tools">
+              <button type="button" data-tool="select" data-icon="cursor" title="Выбор и перетаскивание (V)">Выбор</button>
+            </div>
+            <div class="seg">
+              <button type="button" data-view="iso" data-icon="cube" title="Изометрия">Изо</button>
+              <button type="button" data-view="top" data-icon="plan" title="Вид сверху (ортографический)">Сверху</button>
+              <button type="button" data-view="front" data-icon="front" title="Вид спереди">Фасад</button>
+              <button type="button" data-view="fit" data-icon="fit" title="Вписать модель (F)">Вписать</button>
+              <button type="button" data-toggle="ortho" data-icon="ortho" title="Перспектива / ортография">Орто</button>
+            </div>
+            <div class="seg">
+              <button type="button" data-toggle="dims" data-icon="ruler" title="Показать габариты">Габариты</button>
+              <button type="button" data-toggle="isolate" data-icon="isolate" title="Изолировать выбранный объект (I)">Изоляция</button>
+              <button type="button" data-toggle="snap" data-icon="magnet" title="Привязка к сетке и объектам" class="on">Магнит</button>
+              <select id="grid-step" title="Шаг строительной сетки" aria-label="Шаг сетки">
+                <option value="0.05">5 см</option>
+                <option value="0.1" selected>10 см</option>
+                <option value="0.25">25 см</option>
+                <option value="0.5">50 см</option>
+                <option value="1">1 м</option>
+              </select>
+            </div>
+          </div>
+          <div class="tool-hint" id="tool-hint"></div>
+          <div class="sim-banner" id="sim-banner" hidden></div>
+          <div class="view-error" id="view-error" hidden></div>
+          <div class="vp-legend">ЛКМ — вращать · колесо — масштаб · ПКМ — сдвиг · Esc — отмена · Del — удалить</div>
+        </section>
+
+        <div class="wizard" id="wizard" hidden></div>
+      </div>
+    </div>
+
+    <aside class="side side-right" aria-label="Параметры">
       <nav class="tabs" data-tabs="right">
         <button type="button" data-tab="props" class="active">Свойства</button>
         <button type="button" data-tab="problems">Проблемы <span class="count" id="problems-count"></span></button>
-        <button type="button" data-tab="sim">Симуляция</button>
-        <button type="button" data-tab="rules">Правила</button>
         <button type="button" data-tab="settings">Проект</button>
+        <span class="tabs-sec" role="group" aria-label="Анализ">
+          <span class="tabs-sec-label">Анализ</span>
+          <button type="button" data-tab="sim" data-icon="sim" title="Демонстрационная симуляция отказа (не расчёт)">Симуляция</button>
+          <button type="button" data-tab="rules" data-icon="rules" title="Реестр правил и норм">Правила</button>
+        </span>
       </nav>
       <section class="tab-pane active" data-pane="props"><div id="props"></div></section>
       <section class="tab-pane" data-pane="problems"><div id="problems"></div></section>
+      <section class="tab-pane" data-pane="settings"><div id="settings"></div></section>
       <section class="tab-pane" data-pane="sim"><div id="sim"></div></section>
       <section class="tab-pane" data-pane="rules"><div id="rules"></div></section>
-      <section class="tab-pane" data-pane="settings"><div id="settings"></div></section>
+    </aside>
+  </main>
+
+  <!-- ===================== Режим «Машиностроение» ===================== -->
+  <main class="layout" id="mech-root" aria-label="Машиностроение">
+    <aside class="side side-left" aria-label="Дерево детали">
+      <div class="side-head">Деталь</div>
+      <div class="side-body" id="mech-tree"></div>
+    </aside>
+    <div class="center">
+      <div class="cmdbar" role="toolbar" aria-label="Команды детали">
+        <button type="button" data-collapse="left" data-icon="panel-left" class="icon-only ghost" title="Свернуть / развернуть левую панель" aria-label="Левая панель"></button>
+        <div id="mech-commands" class="mech-commands"></div>
+        <button type="button" data-collapse="right" data-icon="panel-right" class="icon-only ghost cmd-end" title="Свернуть / развернуть правую панель" aria-label="Правая панель"></button>
+      </div>
+      <div class="workarea">
+        <section class="viewport" id="mech-viewport" aria-label="3D-вид детали"></section>
+      </div>
+    </div>
+    <aside class="side side-right" aria-label="Параметры детали">
+      <div class="side-head">Параметры</div>
+      <div class="side-body" id="mech-props"></div>
     </aside>
   </main>
 
   <footer class="statusbar">
-    <span id="status-text">Загрузка…</span>
+    <span id="status-text" role="status" aria-live="polite">Загрузка…</span>
     <span id="status-info"></span>
   </footer>
 
   <div class="menu" id="new-menu" hidden>
     <button type="button" data-new="starter">Стартовый дом (можно менять)</button>
     <button type="button" data-new="empty">Пустой проект</button>
+    <button type="button" data-new="example-l">Пример: Г-образный дом</button>
     <button type="button" data-new="example-two">Пример: двухэтажный дом</button>
     <button type="button" data-new="example-issues">Пример: дом с ошибками</button>
   </div>
@@ -121,6 +181,7 @@
   <script src="js/objects/support.js"></script>
   <script src="js/objects/snapping.js"></script>
   <script src="js/objects/project.js"></script>
+  <script src="js/objects/contour.js"></script>
   <script src="js/rules/builtinRules.js"></script>
   <script src="js/rules/ruleRegistry.js"></script>
   <script src="js/rules/checker.js"></script>
@@ -134,10 +195,16 @@
   <script src="js/io/macroSource.js"></script>
   <script src="js/editor/history.js"></script>
   <script src="examples/examples.js"></script>
+  <!-- Машиностроение: модель, геометрия, файлы (без DOM) -->
+  <script src="js/mech/mechModel.js"></script>
+  <script src="js/mech/mechGeometry.js"></script>
+  <script src="js/mech/mechIO.js"></script>
+  <script src="js/mech/mechMacroSource.js"></script>
   <!-- 3D и интерфейс -->
   <script src="js/scene/meshBuilder.js"></script>
   <script src="js/scene/sceneView.js"></script>
   <script src="js/scene/dimensions.js"></script>
+  <script src="js/plan/planEditor.js"></script>
   <script src="js/simulation/simPlayer.js"></script>
   <script src="js/editor/tools.js"></script>
   <script src="js/ui/icons.js"></script>
@@ -150,6 +217,8 @@
   <script src="js/ui/rulesPanel.js"></script>
   <script src="js/ui/settingsPanel.js"></script>
   <script src="js/ui/wizard.js"></script>
+  <script src="js/mech/mechApp.js"></script>
+  <script src="js/ui/shell.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

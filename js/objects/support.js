@@ -16,7 +16,7 @@
   /** Лежит ли точка плана внутри контура элемента (с допуском tol). */
   function containsPoint(el, project, x, y, tol = 0.001) {
     const fp = S.footprint(el, project);
-    return fp.length >= 3 && G.pointInConvex({ x, y }, fp, tol);
+    return fp.length >= 3 && G.pointInConvex({ x, y }, fp, tol); // невыпуклый контур проверяется общим алгоритмом
   }
 
   /**
@@ -50,6 +50,19 @@
   function samplePoints(el, project) {
     const t = BS.types.get(el.type) || {};
     if (t.shape === "cylinder") return [{ ...el.position }];
+    if (S.isPrism(el)) {
+      // Плита по контуру: узлы сетки 5 × 5 по габаритам, попавшие внутрь контура
+      const fp = S.footprint(el, project);
+      const b = G.bbox2(fp);
+      const pts = [];
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          const p = { x: b.minX + ((b.maxX - b.minX) * (i + 0.5)) / 5, y: b.minY + ((b.maxY - b.minY) * (j + 0.5)) / 5 };
+          if (G.pointInPolygon(p, fp, -0.01)) pts.push(p);
+        }
+      }
+      return pts.length ? pts : [S.center(el, project)];
+    }
     const ps = S.planSize(el);
     if (!ps) return [S.center(el, project)];
     const [a, b] = ps;

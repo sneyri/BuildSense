@@ -13,7 +13,7 @@
 Что создаётся:
   * режим BIM (по умолчанию, если доступен модуль Arch): стены — Arch Wall, окна и двери —
     Arch Window (пресеты) с вырезом в стене, плиты/фундаменты/колонны/балки — Arch Structure
-    с IFC-типом, лестницы — Arch Stairs, комнаты — Arch Space, этажи — BuildingPart «Этаж»;
+    с IFC-типом (многоугольная плита по контуру плана — Arch Structure на основе контура), лестницы — Arch Stairs, комнаты — Arch Space, этажи — BuildingPart «Этаж»;
   * для остального (крыши, фермы, перила, трубы, сантехника, мебель) — параметрические
     примитивы Part (Box, Cylinder, Wedge) или тела Part::Feature. Они НЕ являются BIM-объектами;
   * если создать BIM-объект не удалось, элемент строится примитивом Part, а причина
@@ -29,7 +29,7 @@ import FreeCAD as App
 import Part
 
 FORMAT = "buildsense-freecad-export"
-SUPPORTED_VERSION = 2
+SUPPORTED_VERSION = 3  # версия 2 — без многоугольных плит; версия 3 добавила форму "prism"
 TYPE_LABELS = {
     "slab_foundation": "Фундаменты", "strip_foundation": "Фундаменты", "pad_foundation": "Фундаменты",
     "round_pad": "Фундаменты", "pile": "Фундаменты",
@@ -192,8 +192,8 @@ def load_export(path):
         raise ValueError("Это файл проекта. Для FreeCAD нужен файл экспорта: кнопка «Экспорт в FreeCAD» в BuildSense")
     if data.get("format") != FORMAT:
         raise ValueError("Неизвестный формат файла (ожидался {})".format(FORMAT))
-    if int(data.get("schemaVersion", 0)) > SUPPORTED_VERSION:
-        raise ValueError("Версия схемы {} новее поддерживаемой ({})".format(data.get("schemaVersion"), SUPPORTED_VERSION))
+    if int(data.get("schemaVersion", 0)) not in (2, 3):
+        raise ValueError("Версия схемы {} не поддерживается (поддерживаются 2 и {})".format(data.get("schemaVersion"), SUPPORTED_VERSION))
     if data.get("units") != "mm":
         raise ValueError("Ожидались размеры в миллиметрах (units = mm)")
     if not isinstance(data.get("elements"), list):
@@ -335,6 +335,29 @@ class Builder:
             bim = self.structure(el, ifc, s["length"], s["width"], s["height"], placement(p)) if (ifc and self.arch) else None
             obj, _ = self.make(el, bim, lambda: part_box(self.doc, name, label, s["length"], s["width"], s["height"], placement(p)))
             return obj
+        if shape == "prism":
+            # Многоугольная плита (схема 3): контур outline в мировых мм, выдавливание вверх на size.height
+            h = float(s["height"])
+            z0 = float(p["z"])
+            pts = [App.Vector(float(q["x"]), float(q["y"]), z0) for q in el["outline"]]
+            A = self.arch
+
+            def bim():
+                base = self.doc.addObject("Part::Feature", name + "_outline")
+                base.Label = "Контур " + el["id"]
+                base.Shape = Part.Face(Part.makePolygon(pts + [pts[0]]))
+                st = A.makeStructure(base, height=h)
+                st.Normal = App.Vector(0, 0, 1)
+                if ifc:
+                    st.IfcType = ifc
+                st.Label = label
+                hide(base)
+                return st
+
+            def part():
+                return part_solid(self.doc, name, label, prism_shape(pts, h))
+            obj, _ = self.make(el, bim if (ifc and self.arch) else None, part)
+            return obj
         if shape == "cylinder":
             obj, _ = self.make(el, None, lambda: part_cylinder(self.doc, name, label, s["diameter"], s["height"], App.Placement(vec(p), App.Rotation())))
             return obj
@@ -377,6 +400,12 @@ class Builder:
             obj, _ = self.make(el, None, lambda: part_box(self.doc, name, label, s["length"], s["width"], s["height"], placement(p)))
             return obj
         return None
+
+
+def prism_shape(pts, h):
+    """Призма: грань по замкнутой полилинии, выдавленная вверх на h."""
+    face = Part.Face(Part.makePolygon(pts + [pts[0]]))
+    return face.extrude(App.Vector(0, 0, h))
 
 
 def stairs_shape(el):

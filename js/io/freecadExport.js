@@ -1,4 +1,7 @@
-// Экспорт модели в JSON для макроса freecad/import_house.FCMacro (схема buildsense-freecad-export, версия 2).
+// Экспорт модели в JSON для макроса freecad/import_house.FCMacro (схема buildsense-freecad-export, версия 3).
+// Версия 3 добавила форму "prism" — многоугольная плита (фундамент или перекрытие по контуру плана):
+// outline — вершины контура в мировых координатах (мм), выдавливание вверх на size.height от placement.z.
+// Макрос понимает версии 2 и 3.
 // Все длины — в миллиметрах (единица FreeCAD), координаты мировые, ось Z вверх.
 // Для проёмов дополнительно вычислены вырез (void) и заполнение (panel), чтобы макросу не пересчитывать геометрию.
 (function (BS) {
@@ -8,7 +11,7 @@
   const S = BS.shapes;
 
   const FORMAT = "buildsense-freecad-export";
-  const VERSION = 2;
+  const VERSION = 3;
   const VOID_MARGIN = 0.05;
   const mm = (v) => U.round(v * 1000, 2);
   const point = (p) => ({ x: mm(p.x), y: mm(p.y), z: mm(p.z) });
@@ -25,7 +28,7 @@
       if (!sizeOk) { warnings.push(`${el.id}: некорректные размеры — пропущен`); continue; }
       const mat = BS.materials.get(el.material);
       const base = {
-        id: el.id, type: el.type, typeLabel: t.label, shape: t.shape, ifcType: t.ifc || null,
+        id: el.id, type: el.type, typeLabel: t.label, shape: S.shapeOf(el), ifcType: t.ifc || null,
         name: el.name, category: el.category || null, levelId: el.levelId,
         material: el.material, materialLabel: mat.label, color: mat.color, density: mat.density,
         params: U.clone(el.params || {}),
@@ -44,7 +47,13 @@
       const size = {};
       for (const [k, v] of Object.entries(el.size)) size[k] = mm(v);
       if (t.shape === "roof") size.rise = mm(S.roofRise(el));
-      elements.push({ ...base, placement: { ...point(el.position), rotationZ: U.round(el.rotation || 0, 3) }, size });
+      const item = { ...base, placement: { ...point(el.position), rotationZ: U.round(el.rotation || 0, 3) }, size };
+      if (S.isPrism(el)) {
+        item.outline = S.footprint(el, project).map((q) => ({ x: mm(q.x), y: mm(q.y) }));
+        delete item.params.points; // контур уже в outline (мировые мм)
+      }
+      if (base.params.contourId) item.relations.contourId = base.params.contourId;
+      elements.push(item);
     }
     const data = {
       format: FORMAT,
@@ -54,6 +63,7 @@
       exportedAt: U.nowIso(),
       axes: "Z вверх; placement — точка привязки элемента (угол бруса, центр основания цилиндра, начало оси трубы) и поворот вокруг Z в градусах",
       project: { name: project.name, climateRegion: project.settings.climateRegion, housingFund: project.settings.housingFund },
+      plan: { contours: ((project.plan && project.plan.contours) || []).map((c) => ({ id: c.id, levelId: c.levelId, points: c.points.map((q) => ({ x: mm(q.x), y: mm(q.y) })) })) },
       levels: project.levels.map((l) => ({ id: l.id, name: l.name, elevation: mm(l.elevation), height: mm(l.height) })),
       elements,
     };

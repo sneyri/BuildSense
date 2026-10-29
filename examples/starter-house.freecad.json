@@ -1,6 +1,6 @@
 {
   "format": "buildsense-freecad-export",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "units": "mm",
   "generator": "BuildSense 1.0.0",
   "exportedAt": "2026-10-27T12:00:00.000Z",
@@ -9,6 +9,32 @@
     "name": "Стартовый дом",
     "climateRegion": "2V",
     "housingFund": "private"
+  },
+  "plan": {
+    "contours": [
+      {
+        "id": "C1",
+        "levelId": "L1",
+        "points": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 10000,
+            "y": 0
+          },
+          {
+            "x": 10000,
+            "y": 8000
+          },
+          {
+            "x": 0,
+            "y": 8000
+          }
+        ]
+      }
+    ]
   },
   "levels": [
     {
@@ -32,11 +58,15 @@
       "materialLabel": "Железобетон",
       "color": "#9ea3a8",
       "density": 2500,
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-foundation"
+      },
       "relations": {
         "hostId": null,
         "hosted": [],
-        "supports": []
+        "supports": [],
+        "contourId": "C1"
       },
       "placement": {
         "x": 0,
@@ -63,7 +93,12 @@
       "materialLabel": "Кирпич",
       "color": "#b4643c",
       "density": 1800,
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p1",
+        "edgeStart": 0
+      },
       "relations": {
         "hostId": null,
         "hosted": [
@@ -72,7 +107,8 @@
         ],
         "supports": [
           "slab_foundation-1"
-        ]
+        ],
+        "contourId": "C1"
       },
       "placement": {
         "x": 0,
@@ -99,7 +135,12 @@
       "materialLabel": "Кирпич",
       "color": "#b4643c",
       "density": 1800,
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p2",
+        "edgeStart": 0.4
+      },
       "relations": {
         "hostId": null,
         "hosted": [
@@ -107,7 +148,8 @@
         ],
         "supports": [
           "slab_foundation-1"
-        ]
+        ],
+        "contourId": "C1"
       },
       "placement": {
         "x": 10000,
@@ -134,7 +176,12 @@
       "materialLabel": "Кирпич",
       "color": "#b4643c",
       "density": 1800,
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p3",
+        "edgeStart": 0.4
+      },
       "relations": {
         "hostId": null,
         "hosted": [
@@ -143,7 +190,8 @@
         ],
         "supports": [
           "slab_foundation-1"
-        ]
+        ],
+        "contourId": "C1"
       },
       "placement": {
         "x": 9600,
@@ -170,7 +218,12 @@
       "materialLabel": "Кирпич",
       "color": "#b4643c",
       "density": 1800,
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p4",
+        "edgeStart": 0.4
+      },
       "relations": {
         "hostId": null,
         "hosted": [
@@ -178,7 +231,8 @@
         ],
         "supports": [
           "slab_foundation-1"
-        ]
+        ],
+        "contourId": "C1"
       },
       "placement": {
         "x": 0,
@@ -205,13 +259,17 @@
       "materialLabel": "Железобетон",
       "color": "#9ea3a8",
       "density": 2500,
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-slab"
+      },
       "relations": {
         "hostId": null,
         "hosted": [],
         "supports": [
           "slab_foundation-1"
-        ]
+        ],
+        "contourId": "C1"
       },
       "placement": {
         "x": 400,
@@ -709,7 +767,52 @@
       }
     },
     {
-      "id": "lintel-1",
+      "id": "roof-1",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25,
+        "overhang": 0.4,
+        "contourId": "C1",
+        "generatedBy": "contour-roof"
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-1",
+          "wall-2",
+          "wall-3",
+          "wall-4",
+          "wall-5"
+        ],
+        "contourId": "C1"
+      },
+      "placement": {
+        "x": -400,
+        "y": -400,
+        "z": 2800,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10800,
+        "width": 8800,
+        "rise": 2540.34
+      }
+    },
+    {
+      "id": "lintel-7",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -744,7 +847,7 @@
       }
     },
     {
-      "id": "lintel-2",
+      "id": "lintel-8",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -779,7 +882,7 @@
       }
     },
     {
-      "id": "lintel-3",
+      "id": "lintel-9",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -814,7 +917,7 @@
       }
     },
     {
-      "id": "lintel-4",
+      "id": "lintel-10",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -849,7 +952,7 @@
       }
     },
     {
-      "id": "lintel-5",
+      "id": "lintel-11",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -884,7 +987,7 @@
       }
     },
     {
-      "id": "lintel-6",
+      "id": "lintel-12",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -916,47 +1019,6 @@
         "length": 2000,
         "width": 400,
         "height": 200
-      }
-    },
-    {
-      "id": "roof-1",
-      "type": "roof",
-      "typeLabel": "Крыша",
-      "shape": "roof",
-      "ifcType": "Roof",
-      "name": "Крыша",
-      "category": null,
-      "levelId": "L1",
-      "material": "metal_tile",
-      "materialLabel": "Металлочерепица",
-      "color": "#8c3b32",
-      "density": 7850,
-      "params": {
-        "roofType": "gable",
-        "slope": 30,
-        "thickness": 0.25
-      },
-      "relations": {
-        "hostId": null,
-        "hosted": [],
-        "supports": [
-          "wall-1",
-          "wall-2",
-          "wall-3",
-          "wall-4",
-          "wall-5"
-        ]
-      },
-      "placement": {
-        "x": -400,
-        "y": -400,
-        "z": 2800,
-        "rotationZ": 0
-      },
-      "size": {
-        "length": 10800,
-        "width": 8800,
-        "rise": 2540.34
       }
     },
     {

@@ -1,6 +1,6 @@
 {
   "format": "buildsense-project",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "name": "Дом с ошибками",
   "units": "m",
   "createdAt": "2026-10-27T12:00:00.000Z",
@@ -72,7 +72,10 @@
         "width": 8,
         "height": 0.4
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-foundation"
+      },
       "shell": "foundation"
     },
     {
@@ -93,7 +96,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p1",
+        "edgeStart": 0
+      },
       "shell": "south"
     },
     {
@@ -114,7 +122,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {}
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p2",
+        "edgeStart": 0.4
+      }
     },
     {
       "id": "wall-3",
@@ -134,7 +147,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p3",
+        "edgeStart": 0.4
+      },
       "shell": "north"
     },
     {
@@ -155,7 +173,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p4",
+        "edgeStart": 0.4
+      },
       "shell": "west"
     },
     {
@@ -176,7 +199,10 @@
         "width": 7.2,
         "height": 0.2
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-slab"
+      },
       "shell": "floor"
     },
     {
@@ -326,7 +352,33 @@
       "hostId": "wall-5"
     },
     {
-      "id": "lintel-1",
+      "id": "roof-1",
+      "type": "roof",
+      "name": "Крыша",
+      "category": null,
+      "material": "metal_tile",
+      "levelId": "L1",
+      "position": {
+        "x": -0.4,
+        "y": -0.4,
+        "z": 3.2
+      },
+      "rotation": 0,
+      "size": {
+        "length": 10.8,
+        "width": 8.8
+      },
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25,
+        "overhang": 0.4,
+        "contourId": "C1",
+        "generatedBy": "contour-roof"
+      }
+    },
+    {
+      "id": "lintel-7",
       "type": "lintel",
       "name": "Перемычка над «Дверь 1»",
       "category": null,
@@ -348,7 +400,7 @@
       }
     },
     {
-      "id": "lintel-2",
+      "id": "lintel-8",
       "type": "lintel",
       "name": "Перемычка над «Окно 1»",
       "category": null,
@@ -370,7 +422,7 @@
       }
     },
     {
-      "id": "lintel-3",
+      "id": "lintel-9",
       "type": "lintel",
       "name": "Перемычка над «Окно 4»",
       "category": null,
@@ -392,7 +444,7 @@
       }
     },
     {
-      "id": "lintel-4",
+      "id": "lintel-10",
       "type": "lintel",
       "name": "Перемычка над «Окно 2»",
       "category": null,
@@ -414,7 +466,7 @@
       }
     },
     {
-      "id": "lintel-5",
+      "id": "lintel-11",
       "type": "lintel",
       "name": "Перемычка над «Окно 3»",
       "category": null,
@@ -436,7 +488,7 @@
       }
     },
     {
-      "id": "lintel-6",
+      "id": "lintel-12",
       "type": "lintel",
       "name": "Перемычка над «Окно 5»",
       "category": null,
@@ -455,29 +507,6 @@
       },
       "params": {
         "hostWallId": "wall-4"
-      }
-    },
-    {
-      "id": "roof-1",
-      "type": "roof",
-      "name": "Крыша",
-      "category": null,
-      "material": "metal_tile",
-      "levelId": "L1",
-      "position": {
-        "x": -0.4,
-        "y": -0.4,
-        "z": 3.2
-      },
-      "rotation": 0,
-      "size": {
-        "length": 10.8,
-        "width": 8.8
-      },
-      "params": {
-        "roofType": "gable",
-        "slope": 30,
-        "thickness": 0.25
       }
     },
     {
@@ -605,5 +634,36 @@
       "hostId": "wall-3"
     }
   ],
-  "customRules": []
+  "customRules": [],
+  "plan": {
+    "contours": [
+      {
+        "id": "C1",
+        "levelId": "L1",
+        "closed": true,
+        "points": [
+          {
+            "id": "p1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "p2",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "id": "p3",
+            "x": 10,
+            "y": 8
+          },
+          {
+            "id": "p4",
+            "x": 0,
+            "y": 8
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -1,0 +1,42 @@
+/* BuildSense · Машиностроение. Только токены из css/app.css; кнопки и .field стилизует app.css. */
+
+.mech-commands { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; flex: 1; min-width: 0; }
+.mech-commands .mech-sep { width: 1px; align-self: stretch; margin: 4px 4px; background: var(--line); }
+.mech-commands button svg { width: 16px; height: 16px; flex: none; }
+.mech-commands button { display: inline-flex; align-items: center; gap: 6px; }
+.mech-commands button:disabled { opacity: 0.45; cursor: default; }
+
+.mech-viewport { position: relative; background: var(--viewport); }
+.mech-viewport .mech-canvas { display: block; width: 100%; height: 100%; outline: none; touch-action: none; }
+.mech-hud {
+  position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px);
+  padding: 4px 8px; border-radius: var(--radius); border: 1px solid var(--line);
+  background: var(--panel); color: var(--text); font-size: 12px; font-family: var(--mono);
+  pointer-events: none; opacity: 0.92;
+}
+
+.mech-tree .row { min-width: 0; }
+.mech-tree .mech-ico { display: inline-flex; width: 16px; height: 16px; flex: none; color: var(--muted); }
+.mech-tree .mech-ico svg { width: 16px; height: 16px; }
+.mech-tree .mech-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mech-tree .mech-feature { cursor: default; color: var(--muted); font-size: 12px; }
+.mech-tree .mech-kind {
+  flex: none; min-width: 52px; padding: 0 4px; border-radius: 2px; background: var(--panel-3);
+  color: var(--text); font-family: var(--mono); font-size: 11px; text-align: center;
+}
+
+.mech-field { margin-bottom: 4px; }
+.mech-field input.invalid { border-color: var(--err); background: var(--err-bg); }
+.mech-err { color: var(--err); font-size: 12px; line-height: 16px; }
+.mech-err:empty { display: none; }
+
+.mech-steps { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); padding: 6px; margin: 8px 0; }
+.mech-steps-head { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+.mech-step { display: grid; grid-template-columns: 18px minmax(0, 1fr) minmax(0, 1fr) auto; gap: 4px; align-items: start; }
+.mech-step-n { color: var(--muted); font-family: var(--mono); font-size: 12px; line-height: var(--h, 28px); text-align: right; }
+.mech-step .field { grid-template-columns: 14px minmax(0, 1fr); gap: 4px; }
+.mech-step .field input { width: 100%; min-width: 0; }
+.mech-steps > button { margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; }
+.mech-steps > button svg, .mech-step button svg { width: 14px; height: 14px; }
+
+.mech-calc .ro { font-family: var(--mono); }

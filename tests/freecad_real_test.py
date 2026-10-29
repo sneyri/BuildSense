@@ -6,6 +6,7 @@
 Для каждого файла экспорта из examples/ в режимах BIM и Part:
   * макрос импортирует JSON и сохраняет .FCStd; файл открывается заново;
   * для каждого элемента найден объект с BuildSenseId, тело не пустое и валидное;
+  * многоугольные плиты (форма prism, схема 3): тело по контуру outline, объём = площадь контура × толщина;
   * габаритный контейнер объекта совпадает с ожидаемым по JSON (допуск 2 мм; окна и двери — 60 мм);
   * объём стены уменьшен на объём её проёмов (вырезы действительно сделаны);
   * неизвестный тип элемента пропускается и попадает в отчёт;
@@ -23,7 +24,7 @@ import FreeCAD as App
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) if "__file__" in globals() else os.getcwd()
 MACRO = os.path.join(ROOT, "freecad", "import_house.FCMacro")
-FILES = ["starter-house", "two-storey", "all-types"]
+FILES = ["starter-house", "two-storey", "all-types", "l-house", "t-house-strip"]  # l-house: Г-образный дом по контуру плана (схема 3)
 TOL = 2.0
 TOL_OPENING = 60.0
 REPORT = []
@@ -60,6 +61,8 @@ def expected_bbox(el):
         p = el["placement"]
         if shape == "wall":
             pts, z0, z1 = corners(p, s["length"], s["thickness"]), p["z"], p["z"] + s["height"]
+        elif shape == "prism":
+            pts, z0, z1 = [(q["x"], q["y"]) for q in el["outline"]], p["z"], p["z"] + s["height"]
         elif shape == "cylinder":
             r = s["diameter"] / 2.0
             pts, z0, z1 = [(p["x"] - r, p["y"] - r), (p["x"] + r, p["y"] + r)], p["z"], p["z"] + s["height"]
@@ -157,6 +160,17 @@ def check_file(slug, mode, tmp):
         if diff > tol:
             errors.append("{}/{}: {} ({}, {}) габариты отличаются на {:.1f} мм: получено {}, ожидалось {}".format(
                 slug, mode, el["id"], el["type"], obj.TypeId, diff, tuple(round(v) for v in got), tuple(round(v) for v in exp)))
+    # Многоугольные плиты: объём = площадь контура × толщина
+    for el in (e for e in data["elements"] if e["shape"] == "prism"):
+        obj = find(doc, el["id"])
+        if obj is None or not hasattr(obj, "Shape"):
+            continue
+        pts = el["outline"]
+        area = abs(sum(pts[i]["x"] * pts[(i + 1) % len(pts)]["y"] - pts[(i + 1) % len(pts)]["x"] * pts[i]["y"] for i in range(len(pts)))) / 2.0
+        exp_vol = area * el["size"]["height"]
+        if abs(obj.Shape.Volume - exp_vol) > 0.005 * exp_vol:
+            errors.append("{}/{}: {} (prism) объём {:.3f} м3, ожидалось {:.3f} м3".format(slug, mode, el["id"], obj.Shape.Volume / 1e9, exp_vol / 1e9))
+        stats["prism"] = stats.get("prism", 0) + 1
     # Вырезы проёмов
     for w in (e for e in data["elements"] if e["type"] == "wall"):
         obj = find(doc, w["id"])
@@ -168,8 +182,8 @@ def check_file(slug, mode, tmp):
         vol = obj.Shape.Volume
         if holes and abs(vol - (full - holes)) > 0.03 * full:
             errors.append("{}/{}: {} объём {:.3f} м3, ожидалось {:.3f} м3 (проёмы не вырезаны?)".format(slug, mode, w["id"], vol / 1e9, (full - holes) / 1e9))
-    REPORT.append("{:14s} {:5s}: объектов в файле {:3d}; проверено габаритов {:3d}; BIM {:3d}, Part {:3d}; ошибок {}".format(
-        slug, mode, len(doc.Objects), stats["checked"], stats["bim"], stats["part"], len(errors)))
+    REPORT.append("{:14s} {:5s}: объектов в файле {:3d}; проверено габаритов {:3d}; BIM {:3d}, Part {:3d}; плит по контуру {}; ошибок {}".format(
+        slug, mode, len(doc.Objects), stats["checked"], stats["bim"], stats["part"], stats.get("prism", 0), len(errors)))
     App.closeDocument(doc.Name)
     return errors
 

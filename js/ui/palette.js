@@ -23,7 +23,7 @@
     );
 
     const groups = BS.types.byGroup();
-    const nodes = Object.entries(BS.types.GROUPS).sort((a, b) => a[1].order - b[1].order).map(([gid, g]) => {
+    const nodes = Object.entries(BS.types.GROUPS).filter(([, g]) => !g.hidden).sort((a, b) => a[1].order - b[1].order).map(([gid, g]) => {
       const types = groups[gid] || [];
       const det = el("details", { open: opened.has(gid), ontoggle: () => (det.open ? opened.add(gid) : opened.delete(gid)) },
         el("summary", {}, g.label));
@@ -42,7 +42,7 @@
       return det;
     });
     paletteNode.replaceChildren(
-      el("p", { class: "note" }, "Выберите объект и постройте его мышью в 3D-сцене. Подсказка о действиях появится над сценой."),
+      el("p", { class: "note" }, "Удобнее начать с плана: нарисуйте контур дома, затем «Фундамент», «Стены», «Перекрытие», «Крыша». Отдельные объекты ниже строятся мышью в 3D-сцене."),
       ...nodes
     );
   }

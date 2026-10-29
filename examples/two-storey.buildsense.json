@@ -1,6 +1,6 @@
 {
   "format": "buildsense-project",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "name": "Двухэтажный дом",
   "units": "m",
   "createdAt": "2026-10-27T12:00:00.000Z",
@@ -78,7 +78,10 @@
         "width": 8,
         "height": 0.4
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-foundation"
+      },
       "shell": "foundation"
     },
     {
@@ -99,7 +102,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p1",
+        "edgeStart": 0
+      },
       "shell": "south"
     },
     {
@@ -120,7 +128,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p2",
+        "edgeStart": 0.4
+      },
       "shell": "east"
     },
     {
@@ -141,7 +154,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p3",
+        "edgeStart": 0.4
+      },
       "shell": "north"
     },
     {
@@ -162,7 +180,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p4",
+        "edgeStart": 0.4
+      },
       "shell": "west"
     },
     {
@@ -183,7 +206,10 @@
         "width": 7.2,
         "height": 0.2
       },
-      "params": {},
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-slab"
+      },
       "shell": "floor"
     },
     {
@@ -333,144 +359,12 @@
       "hostId": "wall-5"
     },
     {
-      "id": "lintel-1",
-      "type": "lintel",
-      "name": "Перемычка над «Дверь 1»",
-      "category": null,
-      "material": "concrete",
-      "levelId": "L1",
-      "position": {
-        "x": 2.75,
-        "y": 0,
-        "z": 2.1
-      },
-      "rotation": 0,
-      "size": {
-        "length": 1.4,
-        "width": 0.4,
-        "height": 0.2
-      },
-      "params": {
-        "hostWallId": "wall-1"
-      }
-    },
-    {
-      "id": "lintel-2",
-      "type": "lintel",
-      "name": "Перемычка над «Окно 1»",
-      "category": null,
-      "material": "concrete",
-      "levelId": "L1",
-      "position": {
-        "x": 6.5,
-        "y": 0,
-        "z": 2.3
-      },
-      "rotation": 0,
-      "size": {
-        "length": 2,
-        "width": 0.4,
-        "height": 0.2
-      },
-      "params": {
-        "hostWallId": "wall-1"
-      }
-    },
-    {
-      "id": "lintel-3",
-      "type": "lintel",
-      "name": "Перемычка над «Окно 4»",
-      "category": null,
-      "material": "concrete",
-      "levelId": "L1",
-      "position": {
-        "x": 10,
-        "y": 3.2,
-        "z": 2.3
-      },
-      "rotation": 90,
-      "size": {
-        "length": 2,
-        "width": 0.4,
-        "height": 0.2
-      },
-      "params": {
-        "hostWallId": "wall-2"
-      }
-    },
-    {
-      "id": "lintel-4",
-      "type": "lintel",
-      "name": "Перемычка над «Окно 2»",
-      "category": null,
-      "material": "concrete",
-      "levelId": "L1",
-      "position": {
-        "x": 8.35,
-        "y": 8,
-        "z": 2.3
-      },
-      "rotation": 180,
-      "size": {
-        "length": 2,
-        "width": 0.4,
-        "height": 0.2
-      },
-      "params": {
-        "hostWallId": "wall-3"
-      }
-    },
-    {
-      "id": "lintel-5",
-      "type": "lintel",
-      "name": "Перемычка над «Окно 3»",
-      "category": null,
-      "material": "concrete",
-      "levelId": "L1",
-      "position": {
-        "x": 3.05,
-        "y": 8,
-        "z": 2.3
-      },
-      "rotation": 180,
-      "size": {
-        "length": 2,
-        "width": 0.4,
-        "height": 0.2
-      },
-      "params": {
-        "hostWallId": "wall-3"
-      }
-    },
-    {
-      "id": "lintel-6",
-      "type": "lintel",
-      "name": "Перемычка над «Окно 5»",
-      "category": null,
-      "material": "concrete",
-      "levelId": "L1",
-      "position": {
-        "x": 0,
-        "y": 5,
-        "z": 2.3
-      },
-      "rotation": 270,
-      "size": {
-        "length": 2,
-        "width": 0.4,
-        "height": 0.2
-      },
-      "params": {
-        "hostWallId": "wall-4"
-      }
-    },
-    {
       "id": "roof-1",
       "type": "roof",
       "name": "Крыша",
       "category": null,
       "material": "metal_tile",
-      "levelId": "L1",
+      "levelId": "L2",
       "position": {
         "x": -0.4,
         "y": -0.4,
@@ -484,7 +378,10 @@
       "params": {
         "roofType": "gable",
         "slope": 30,
-        "thickness": 0.25
+        "thickness": 0.25,
+        "overhang": 0.4,
+        "contourId": "C2",
+        "generatedBy": "contour-roof"
       }
     },
     {
@@ -573,7 +470,142 @@
         "width": 8,
         "height": 0.2
       },
-      "params": {}
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-floor"
+      }
+    },
+    {
+      "id": "lintel-13",
+      "type": "lintel",
+      "name": "Перемычка над «Дверь 1»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 2.75,
+        "y": 0,
+        "z": 2.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 1.4,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-14",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 1»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 6.5,
+        "y": 0,
+        "z": 2.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 2,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-15",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 4»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 10,
+        "y": 3.2,
+        "z": 2.3
+      },
+      "rotation": 90,
+      "size": {
+        "length": 2,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-2"
+      }
+    },
+    {
+      "id": "lintel-16",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 2»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 8.35,
+        "y": 8,
+        "z": 2.3
+      },
+      "rotation": 180,
+      "size": {
+        "length": 2,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-17",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 3»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 3.05,
+        "y": 8,
+        "z": 2.3
+      },
+      "rotation": 180,
+      "size": {
+        "length": 2,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-18",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 5»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 5,
+        "z": 2.3
+      },
+      "rotation": 270,
+      "size": {
+        "length": 2,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-4"
+      }
     },
     {
       "id": "wall-6",
@@ -593,7 +625,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {}
+      "params": {
+        "contourId": "C2",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p1",
+        "edgeStart": 0
+      }
     },
     {
       "id": "window-6",
@@ -631,7 +668,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {}
+      "params": {
+        "contourId": "C2",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p2",
+        "edgeStart": 0.4
+      }
     },
     {
       "id": "window-7",
@@ -669,7 +711,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {}
+      "params": {
+        "contourId": "C2",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p3",
+        "edgeStart": 0.4
+      }
     },
     {
       "id": "window-8",
@@ -725,7 +772,12 @@
         "thickness": 0.4,
         "height": 2.8
       },
-      "params": {}
+      "params": {
+        "contourId": "C2",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p4",
+        "edgeStart": 0.4
+      }
     },
     {
       "id": "window-10",
@@ -784,7 +836,7 @@
       "hostId": "wall-10"
     },
     {
-      "id": "lintel-7",
+      "id": "lintel-19",
       "type": "lintel",
       "name": "Перемычка над «Окно 1»",
       "category": null,
@@ -806,7 +858,7 @@
       }
     },
     {
-      "id": "lintel-8",
+      "id": "lintel-20",
       "type": "lintel",
       "name": "Перемычка над «Окно 4»",
       "category": null,
@@ -828,7 +880,7 @@
       }
     },
     {
-      "id": "lintel-9",
+      "id": "lintel-21",
       "type": "lintel",
       "name": "Перемычка над «Окно 2»",
       "category": null,
@@ -850,7 +902,7 @@
       }
     },
     {
-      "id": "lintel-10",
+      "id": "lintel-22",
       "type": "lintel",
       "name": "Перемычка над «Окно 3»",
       "category": null,
@@ -872,7 +924,7 @@
       }
     },
     {
-      "id": "lintel-11",
+      "id": "lintel-23",
       "type": "lintel",
       "name": "Перемычка над «Окно 5»",
       "category": null,
@@ -892,166 +944,6 @@
       "params": {
         "hostWallId": "wall-9"
       }
-    },
-    {
-      "id": "bed-1",
-      "type": "bed",
-      "name": "Кровать 1",
-      "category": null,
-      "material": "fabric",
-      "levelId": "L2",
-      "position": {
-        "x": 1,
-        "y": 4.7,
-        "z": 3
-      },
-      "rotation": 0,
-      "size": {
-        "length": 2,
-        "width": 1.6,
-        "height": 0.5
-      },
-      "params": {}
-    },
-    {
-      "id": "wardrobe-1",
-      "type": "wardrobe",
-      "name": "Шкаф 1",
-      "category": null,
-      "material": "fabric",
-      "levelId": "L2",
-      "position": {
-        "x": 0.6,
-        "y": 0.7,
-        "z": 3
-      },
-      "rotation": 0,
-      "size": {
-        "length": 1.2,
-        "width": 0.6,
-        "height": 2.1
-      },
-      "params": {}
-    },
-    {
-      "id": "sofa-1",
-      "type": "sofa",
-      "name": "Диван 1",
-      "category": null,
-      "material": "fabric",
-      "levelId": "L1",
-      "position": {
-        "x": 2,
-        "y": 6.35,
-        "z": 0.2
-      },
-      "rotation": 0,
-      "size": {
-        "length": 2,
-        "width": 0.9,
-        "height": 0.85
-      },
-      "params": {}
-    },
-    {
-      "id": "table-1",
-      "type": "table",
-      "name": "Стол 1",
-      "category": null,
-      "material": "fabric",
-      "levelId": "L1",
-      "position": {
-        "x": 2.3,
-        "y": 3.1,
-        "z": 0.2
-      },
-      "rotation": 0,
-      "size": {
-        "length": 1.4,
-        "width": 0.8,
-        "height": 0.75
-      },
-      "params": {}
-    },
-    {
-      "id": "chair-1",
-      "type": "chair",
-      "name": "Стул 1",
-      "category": null,
-      "material": "fabric",
-      "levelId": "L1",
-      "position": {
-        "x": 2.775,
-        "y": 2.575,
-        "z": 0.2
-      },
-      "rotation": 0,
-      "size": {
-        "length": 0.45,
-        "width": 0.45,
-        "height": 0.9
-      },
-      "params": {}
-    },
-    {
-      "id": "toilet-1",
-      "type": "toilet",
-      "name": "Унитаз 1",
-      "category": null,
-      "material": "ceramic",
-      "levelId": "L1",
-      "position": {
-        "x": 9,
-        "y": 6.65,
-        "z": 0.2
-      },
-      "rotation": 0,
-      "size": {
-        "length": 0.4,
-        "width": 0.7,
-        "height": 0.8
-      },
-      "params": {}
-    },
-    {
-      "id": "sink-1",
-      "type": "sink",
-      "name": "Раковина 1",
-      "category": null,
-      "material": "ceramic",
-      "levelId": "L1",
-      "position": {
-        "x": 8.9,
-        "y": 5.975,
-        "z": 0.2
-      },
-      "rotation": 0,
-      "size": {
-        "length": 0.6,
-        "width": 0.45,
-        "height": 0.85
-      },
-      "params": {}
-    },
-    {
-      "id": "light-1",
-      "type": "light",
-      "name": "Светильник 1",
-      "category": null,
-      "material": "plastic",
-      "levelId": "L1",
-      "position": {
-        "x": 2.8,
-        "y": 3.8,
-        "z": 2.65
-      },
-      "rotation": 0,
-      "size": {
-        "length": 0.4,
-        "width": 0.4,
-        "height": 0.15
-      },
-      "params": {}
     },
     {
       "id": "chimney-1",
@@ -1074,27 +966,6 @@
       "params": {}
     },
     {
-      "id": "pipe-1",
-      "type": "pipe",
-      "name": "Труба 1",
-      "category": null,
-      "material": "steel",
-      "levelId": "L1",
-      "position": {
-        "x": 9,
-        "y": 7.2,
-        "z": 0.5
-      },
-      "rotation": 270,
-      "size": {
-        "length": 2.2,
-        "diameter": 0.05
-      },
-      "params": {
-        "vertical": false
-      }
-    },
-    {
       "id": "terrace-1",
       "type": "terrace",
       "name": "Терраса 1",
@@ -1115,5 +986,63 @@
       "params": {}
     }
   ],
-  "customRules": []
+  "customRules": [],
+  "plan": {
+    "contours": [
+      {
+        "id": "C1",
+        "levelId": "L1",
+        "closed": true,
+        "points": [
+          {
+            "id": "p1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "p2",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "id": "p3",
+            "x": 10,
+            "y": 8
+          },
+          {
+            "id": "p4",
+            "x": 0,
+            "y": 8
+          }
+        ]
+      },
+      {
+        "id": "C2",
+        "levelId": "L2",
+        "closed": true,
+        "points": [
+          {
+            "id": "p1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "p2",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "id": "p3",
+            "x": 10,
+            "y": 8
+          },
+          {
+            "id": "p4",
+            "x": 0,
+            "y": 8
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -1,0 +1,194 @@
+# -*- coding: utf-8 -*-
+"""import_parts.FCMacro — импорт деталей BuildSense (машиностроение) в FreeCAD как твёрдых тел Part.
+
+Вход: файл *.mech-freecad.json (кнопка «Экспорт FreeCAD (JSON)» в режиме «Машиностроение»).
+
+Запуск в FreeCAD: Макрос → Макросы… → import_parts → Выполнить → выбрать JSON.
+Без интерфейса:
+  BUILDSENSE_MECH_JSON=demo.mech-freecad.json BUILDSENSE_MECH_OUT=demo.FCStd freecadcmd import_parts.FCMacro
+  BUILDSENSE_MECH_STEP=demo.step — дополнительно записать STEP (по умолчанию рядом с .FCStd).
+
+Что строится (точно, ядром OpenCASCADE, а не из сетки):
+  * профиль детали (полилиния в плоскости RZ, уже с фасками 45°) → грань → вращение 360° вокруг Z;
+  * отверстия (фланец) — цилиндры Part.makeCylinder, вычитаемые из тела (cut);
+  * положение — Placement: перенос (x, y, z) мм и поворот Rx·Ry·Rz (как THREE.Euler "XYZ").
+Для каждой детали создаётся объект Part::Feature со свойствами BuildSense* (id, тип, параметры JSON,
+материал, плотность, масса) и пишется отчёт: объём тела против аналитического, isValid().
+"""
+
+import json
+import math
+import os
+
+import FreeCAD as App
+import Part
+
+FORMAT = "buildsense-mech-freecad"
+SUPPORTED_VERSION = 1
+VOLUME_TOL = 0.005  # 0,5 %
+
+
+def rotation_xyz(rot):
+    """Поворот Rx·Ry·Rz (градусы), как THREE.Euler(x, y, z, "XYZ")."""
+    rx = App.Rotation(App.Vector(1, 0, 0), float(rot.get("x", 0)))
+    ry = App.Rotation(App.Vector(0, 1, 0), float(rot.get("y", 0)))
+    rz = App.Rotation(App.Vector(0, 0, 1), float(rot.get("z", 0)))
+    return rx.multiply(ry).multiply(rz)
+
+
+def placement_of(part):
+    pl = part["placement"]
+    return App.Placement(App.Vector(pl["x"], pl["y"], pl["z"]), rotation_xyz(pl.get("rotation", {})))
+
+
+def revolve_profile(profile):
+    """Замкнутая полилиния (r, z) в плоскости XZ → тело вращения вокруг оси Z на 360°."""
+    pts = [App.Vector(float(r), 0, float(z)) for r, z in profile]
+    pts.append(pts[0])
+    face = Part.Face(Part.makePolygon(pts))
+    solid = face.revolve(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 360)
+    if solid.ShapeType != "Solid":
+        solids = solid.Solids
+        if len(solids) != 1:
+            raise ValueError("вращение профиля не дало одного тела")
+        solid = solids[0]
+    return solid
+
+
+def build_shape(part):
+    """Твёрдое тело детали в её локальной системе."""
+    solid_def = part["solid"]
+    shape = revolve_profile(solid_def["revolve"]["profile"])
+    holes = solid_def.get("holes") or []
+    if holes:
+        eps = 1.0  # цилиндр длиннее отверстия: исключает совпадающие грани
+        tools = [
+            Part.makeCylinder(h["d"] / 2.0, (h["z1"] - h["z0"]) + 2 * eps, App.Vector(h["x"], h["y"], h["z0"] - eps), App.Vector(0, 0, 1))
+            for h in holes
+        ]
+        tool = tools[0] if len(tools) == 1 else tools[0].multiFuse(tools[1:])
+        shape = shape.cut(tool)
+        if len(shape.Solids) == 1:
+            shape = shape.Solids[0]
+    return shape
+
+
+def add_props(obj, part, volume):
+    def prop(kind, name, value):
+        if name not in obj.PropertiesList:
+            obj.addProperty(kind, name, "BuildSense")
+        setattr(obj, name, value)
+
+    prop("App::PropertyString", "BuildSenseId", part["id"])
+    prop("App::PropertyString", "BuildSenseType", part["type"])
+    prop("App::PropertyString", "BuildSenseParams", json.dumps(part["params"], ensure_ascii=False))
+    prop("App::PropertyString", "BuildSenseMaterial", part.get("materialLabel", part.get("material", "")))
+    prop("App::PropertyFloat", "BuildSenseDensity", float(part.get("density", 0)))
+    prop("App::PropertyFloat", "BuildSenseMassKg", volume * 1e-9 * float(part.get("density", 0)))
+
+
+def load(path):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if data.get("format") != FORMAT:
+        raise ValueError("ожидался format «%s», получено «%s»" % (FORMAT, data.get("format")))
+    if data.get("schemaVersion") != SUPPORTED_VERSION:
+        raise ValueError("версия схемы %s не поддерживается" % data.get("schemaVersion"))
+    if data.get("units") != "mm":
+        raise ValueError("поддерживаются только миллиметры")
+    return data
+
+
+def build_document(data, doc=None):
+    """Построить детали в документе. Возвращает (doc, report) — report: список словарей по деталям."""
+    if doc is None:
+        doc = App.newDocument("BuildSense_Mech")
+    group = doc.addObject("App::DocumentObjectGroup", "BuildSense_Mech")
+    group.Label = data.get("name") or "BuildSense_Mech"
+    report = []
+    for part in data.get("parts", []):
+        item = {"id": part.get("id"), "name": part.get("name"), "type": part.get("type")}
+        try:
+            shape = build_shape(part)
+            obj = doc.addObject("Part::Feature", "Part_" + str(part["id"]))
+            obj.Label = part.get("name") or part["id"]
+            obj.Shape = shape
+            obj.Placement = placement_of(part)
+            add_props(obj, part, shape.Volume)
+            group.addObject(obj)
+            analytic = float(part["analytic"]["volume"])
+            dev = (shape.Volume - analytic) / analytic
+            item.update(
+                object=obj.Name,
+                valid=shape.isValid(),
+                solids=len(shape.Solids),
+                volume=shape.Volume,
+                analytic=analytic,
+                deviation=dev,
+                ok=shape.isValid() and abs(dev) <= VOLUME_TOL,
+            )
+        except Exception as e:  # деталь пропускается, остальные строятся
+            item.update(ok=False, error=str(e))
+        report.append(item)
+    doc.recompute()
+    return doc, report
+
+
+def placed_shapes(doc):
+    return [o.Shape for o in doc.Objects if o.TypeId == "Part::Feature" and "BuildSenseId" in o.PropertiesList]
+
+
+def export_step(doc, path):
+    shapes = placed_shapes(doc)
+    if not shapes:
+        return None
+    Part.makeCompound(shapes).exportStep(path)
+    return path
+
+
+def format_report(report):
+    lines = ["Импорт деталей BuildSense:"]
+    for r in report:
+        if r.get("error"):
+            lines.append("  [ОШИБКА] %s (%s): %s" % (r["name"], r["type"], r["error"]))
+        else:
+            lines.append(
+                "  [%s] %s: V = %.1f мм³, аналитически %.1f мм³, отклонение %+.4f %%, isValid=%s, тел=%d"
+                % ("OK" if r["ok"] else "!!", r["name"], r["volume"], r["analytic"], r["deviation"] * 100, r["valid"], r["solids"])
+            )
+    return "\n".join(lines)
+
+
+def main():
+    path = os.environ.get("BUILDSENSE_MECH_JSON")
+    out = os.environ.get("BUILDSENSE_MECH_OUT")
+    step = os.environ.get("BUILDSENSE_MECH_STEP")
+    gui = App.GuiUp
+    if not path and gui:
+        from PySide import QtGui
+
+        path, _ = QtGui.QFileDialog.getOpenFileName(None, "Экспорт BuildSense (машиностроение)", "", "BuildSense mech (*.json)")
+    if not path:
+        App.Console.PrintError("BuildSense: не указан файл экспорта (BUILDSENSE_MECH_JSON)\n")
+        return
+    data = load(path)
+    doc, report = build_document(data)
+    App.Console.PrintMessage(format_report(report) + "\n")
+    if gui:
+        import FreeCADGui as Gui
+
+        Gui.SendMsgToActiveView("ViewFit")
+        Gui.activeDocument().activeView().viewIsometric()
+    if out:
+        doc.saveAs(out)
+        App.Console.PrintMessage("Сохранено: %s\n" % out)
+        if not step:
+            step = os.path.splitext(out)[0] + ".step"
+    if step:
+        export_step(doc, step)
+        App.Console.PrintMessage("STEP: %s\n" % step)
+
+
+if __name__ == "__main__" or os.environ.get("BUILDSENSE_MECH_JSON"):
+    if not globals().get("BUILDSENSE_MECH_NO_MAIN"):
+        main()
