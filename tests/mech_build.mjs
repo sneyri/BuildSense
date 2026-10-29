@@ -1,13 +1,14 @@
 // Генератор файлов машиностроения: примеры и встроенный исходник макроса FreeCAD.
 //   node tests/mech_build.mjs
-// Пишет examples/mech/demo.mech.json, examples/mech/demo.mech-freecad.json, js/mech/mechMacroSource.js.
+// Пишет examples/mech/demo.mech.json, examples/mech/demo.mech-freecad.json, examples/mech/assembly.mech.json,
+// examples/mech/assembly.mech-freecad.json, js/mech/mechMacroSource.js.
 import vm from "node:vm";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-export const MECH_FILES = ["vendor/three/three.min.js", "js/core/namespace.js", "js/mech/mechModel.js", "js/mech/mechGeometry.js", "js/mech/mechIO.js"];
+export const MECH_FILES = ["vendor/three/three.min.js", "js/core/namespace.js", "js/mech/mechModel.js", "js/mech/mechAssembly.js", "js/mech/mechGeometry.js", "js/mech/mechIO.js"];
 
 export function loadMech(files = MECH_FILES) {
   const ctx = vm.createContext({ console });
@@ -30,6 +31,34 @@ export function variantsProject(BS) {
   return pr;
 }
 
+/** Сборка с намеренным пересечением (две втулки заходят друг в друга на 2 мм) — сверка объёма с FreeCAD. */
+export function interferenceProject(BS) {
+  const M = BS.mechModel, A = BS.mechAssembly;
+  const pr = A.createDemoAssemblyProject();
+  pr.name = "Пересечение для проверки";
+  const asm = pr.assemblies[0];
+  pr.parts[0].params.steps[1].L = 20;
+  const b2 = M.createPart(pr, "bushing", { name: "Втулка 2" });
+  pr.parts.push(b2);
+  const c4 = A.addComponent(pr, asm, b2.id);
+  A.addMate(pr, asm, { type: "coaxial", a: { comp: "c1" }, b: { comp: c4.id } });
+  A.addMate(pr, asm, { type: "planar", mode: "contact", a: { comp: "c1", ref: "end1" }, b: { comp: c4.id, ref: "end0" } });
+  asm.mates.find((m) => m.id === "m4").offset = 12;
+  A.solveAll(pr);
+  return pr;
+}
+
+/** Экспорт сборки с пересечением + ожидаемый объём пересечения по решателю. */
+export function interferenceExport(BS) {
+  const pr = interferenceProject(BS);
+  const asm = pr.assemblies[0];
+  const r = BS.mechAssembly.solve(pr, asm, { apply: false });
+  const ex = BS.mechModel.exportForCad(pr);
+  const partOf = (cid) => asm.components.find((c) => c.id === cid).partId;
+  ex.expectedInterference = r.interference.filter((i) => i.volume > 0).map((i) => ({ a: partOf(i.a), b: partOf(i.b), volume: i.volume }));
+  return ex;
+}
+
 export function macroSourceJs() {
   const src = readFileSync(path.join(ROOT, "freecad/import_parts.FCMacro"), "utf-8");
   return (
@@ -45,13 +74,17 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const demo = BS.mechModel.createDemoProject();
   writeFileSync(path.join(ROOT, "examples/mech/demo.mech.json"), BS.mechIO.serialize(demo) + "\n");
   writeFileSync(path.join(ROOT, "examples/mech/demo.mech-freecad.json"), BS.mechIO.exportFreecadJson(demo) + "\n");
+  const asm = BS.mechAssembly.createDemoAssemblyProject();
+  writeFileSync(path.join(ROOT, "examples/mech/assembly.mech.json"), BS.mechIO.serialize(asm) + "\n");
+  writeFileSync(path.join(ROOT, "examples/mech/assembly.mech-freecad.json"), BS.mechIO.exportFreecadJson(asm) + "\n");
   writeFileSync(path.join(ROOT, "js/mech/mechMacroSource.js"), macroSourceJs());
   writeFileSync(path.join(ROOT, "tests/mech_variants.freecad.json"), BS.mechIO.exportFreecadJson(variantsProject(BS)) + "\n");
+  writeFileSync(path.join(ROOT, "tests/mech_interference.freecad.json"), JSON.stringify(interferenceExport(BS), null, 2) + "\n");
   if (process.argv[2]) {
     // node tests/mech_build.mjs <out.stl> — двоичный STL демо-проекта (для проверки в FreeCAD/Blender)
     const G = BS.mechGeometry;
     writeFileSync(process.argv[2], Buffer.from(G.stlBinary(G.projectTriangles(demo))));
     console.log("STL:", process.argv[2]);
   }
-  console.log("ok: examples/mech/demo.mech.json, examples/mech/demo.mech-freecad.json, js/mech/mechMacroSource.js");
+  console.log("ok: examples/mech/demo.*, examples/mech/assembly.*, js/mech/mechMacroSource.js, tests/mech_variants.freecad.json");
 }

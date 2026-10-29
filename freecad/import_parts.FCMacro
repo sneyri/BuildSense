@@ -14,6 +14,11 @@
   * положение — Placement: перенос (x, y, z) мм и поворот Rx·Ry·Rz (как THREE.Euler "XYZ").
 Для каждой детали создаётся объект Part::Feature со свойствами BuildSense* (id, тип, параметры JSON,
 материал, плотность, масса) и пишется отчёт: объём тела против аналитического, isValid().
+
+Сборки (схема 2): каждая сборка — контейнер App::Part с нулевым Placement; её компоненты — те же отдельные
+Part::Feature (детали не сливаются в одно тело) в положениях, уже найденных решателем BuildSense.
+Сопряжения и их статусы записываются в свойство BuildSenseMates (JSON). FreeCAD их не пересчитывает:
+это не связи верстака Assembly, а запись структуры сборки. Схема 1 (без сборок) читается как раньше.
 """
 
 import json
@@ -24,7 +29,7 @@ import FreeCAD as App
 import Part
 
 FORMAT = "buildsense-mech-freecad"
-SUPPORTED_VERSION = 1
+SUPPORTED_VERSIONS = (1, 2)
 VOLUME_TOL = 0.005  # 0,5 %
 
 
@@ -92,7 +97,7 @@ def load(path):
         data = json.load(f)
     if data.get("format") != FORMAT:
         raise ValueError("ожидался format «%s», получено «%s»" % (FORMAT, data.get("format")))
-    if data.get("schemaVersion") != SUPPORTED_VERSION:
+    if data.get("schemaVersion") not in SUPPORTED_VERSIONS:
         raise ValueError("версия схемы %s не поддерживается" % data.get("schemaVersion"))
     if data.get("units") != "mm":
         raise ValueError("поддерживаются только миллиметры")
@@ -105,6 +110,20 @@ def build_document(data, doc=None):
         doc = App.newDocument("BuildSense_Mech")
     group = doc.addObject("App::DocumentObjectGroup", "BuildSense_Mech")
     group.Label = data.get("name") or "BuildSense_Mech"
+    containers = {}  # id детали → (App::Part сборки, компонент)
+    for asm in data.get("assemblies") or []:
+        cont = doc.addObject("App::Part", "Assembly_" + str(asm["id"]))
+        cont.Label = asm.get("name") or asm["id"]
+        for kind, name, value in (
+            ("App::PropertyString", "BuildSenseAssemblyId", str(asm["id"])),
+            ("App::PropertyString", "BuildSenseMates", json.dumps(asm.get("mates", []), ensure_ascii=False)),
+            ("App::PropertyBool", "BuildSenseSolved", bool(asm.get("ok"))),
+        ):
+            cont.addProperty(kind, name, "BuildSense")
+            setattr(cont, name, value)
+        group.addObject(cont)
+        for comp in asm.get("components", []):
+            containers[comp["partId"]] = (cont, comp)
     report = []
     for part in data.get("parts", []):
         item = {"id": part.get("id"), "name": part.get("name"), "type": part.get("type")}
@@ -115,7 +134,19 @@ def build_document(data, doc=None):
             obj.Shape = shape
             obj.Placement = placement_of(part)
             add_props(obj, part, shape.Volume)
-            group.addObject(obj)
+            if part["id"] in containers:
+                cont, comp = containers[part["id"]]
+                for kind, name, value in (
+                    ("App::PropertyString", "BuildSenseComponent", str(comp["id"])),
+                    ("App::PropertyBool", "BuildSenseFixed", bool(comp.get("fixed"))),
+                    ("App::PropertyString", "BuildSenseStatus", str(comp.get("status", ""))),
+                ):
+                    obj.addProperty(kind, name, "BuildSense")
+                    setattr(obj, name, value)
+                cont.addObject(obj)
+                item["assembly"] = cont.Name
+            else:
+                group.addObject(obj)
             analytic = float(part["analytic"]["volume"])
             dev = (shape.Volume - analytic) / analytic
             item.update(
@@ -146,7 +177,7 @@ def export_step(doc, path):
     return path
 
 
-def format_report(report):
+def format_report(report, data=None):
     lines = ["Импорт деталей BuildSense:"]
     for r in report:
         if r.get("error"):
@@ -156,6 +187,12 @@ def format_report(report):
                 "  [%s] %s: V = %.1f мм³, аналитически %.1f мм³, отклонение %+.4f %%, isValid=%s, тел=%d"
                 % ("OK" if r["ok"] else "!!", r["name"], r["volume"], r["analytic"], r["deviation"] * 100, r["valid"], r["solids"])
             )
+    for asm in (data or {}).get("assemblies") or []:
+        lines.append("Сборка «%s»: компонентов %d, сопряжений %d, %s" % (
+            asm.get("name"), len(asm.get("components", [])), len(asm.get("mates", [])),
+            "решена в BuildSense" if asm.get("ok") else "в BuildSense есть ошибки — см. сообщения"))
+        for m in asm.get("messages", []):
+            lines.append("  [%s] %s" % (m.get("severity"), m.get("text")))
     return "\n".join(lines)
 
 
@@ -173,7 +210,7 @@ def main():
         return
     data = load(path)
     doc, report = build_document(data)
-    App.Console.PrintMessage(format_report(report) + "\n")
+    App.Console.PrintMessage(format_report(report, data) + "\n")
     if gui:
         import FreeCADGui as Gui
 

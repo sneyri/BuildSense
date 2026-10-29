@@ -1,0 +1,178 @@
+{
+  "format": "buildsense-mech",
+  "schemaVersion": 2,
+  "units": "mm",
+  "name": "Учебная сборка: вал, фланец, втулка",
+  "parts": [
+    {
+      "id": "p1",
+      "type": "shaft",
+      "name": "Вал с буртиком",
+      "params": {
+        "c1": 1,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 30,
+            "L": 40
+          },
+          {
+            "d": 50,
+            "L": 10
+          },
+          {
+            "d": 40,
+            "L": 50
+          },
+          {
+            "d": 25,
+            "L": 40
+          }
+        ]
+      },
+      "placement": {
+        "x": -70,
+        "y": 0,
+        "z": 80,
+        "rotation": {
+          "x": 0,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p2",
+      "type": "flange",
+      "name": "Фланец ⌀140",
+      "params": {
+        "D": 140,
+        "T": 14,
+        "d": 40,
+        "hubD": 70,
+        "hubH": 16,
+        "n": 6,
+        "pcd": 110,
+        "holeD": 14
+      },
+      "placement": {
+        "x": -20,
+        "y": 0,
+        "z": 80,
+        "rotation": {
+          "x": 0,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p3",
+      "type": "bushing",
+      "name": "Втулка 40×25×30",
+      "params": {
+        "D": 40,
+        "d": 25,
+        "L": 30,
+        "c": 1,
+        "ci": 0.5
+      },
+      "placement": {
+        "x": 35,
+        "y": 0,
+        "z": 80,
+        "rotation": {
+          "x": 0,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "bronze"
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "A1",
+      "name": "Узел вала",
+      "components": [
+        {
+          "id": "c1",
+          "partId": "p1",
+          "fixed": true
+        },
+        {
+          "id": "c2",
+          "partId": "p2",
+          "fixed": false
+        },
+        {
+          "id": "c3",
+          "partId": "p3",
+          "fixed": false
+        }
+      ],
+      "mates": [
+        {
+          "id": "m1",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m2",
+          "type": "planar",
+          "a": {
+            "comp": "c1",
+            "ref": "step2"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m3",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m4",
+          "type": "distance",
+          "a": {
+            "comp": "c1",
+            "ref": "step3"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 5
+        }
+      ]
+    }
+  ]
+}

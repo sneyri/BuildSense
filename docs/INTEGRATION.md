@@ -35,7 +35,7 @@
 
 ## Скрипты (порядок в index.html)
 
-После `js/editor/history.js` и `examples/examples.js`: `js/mech/mechModel.js`, `js/mech/mechGeometry.js`,
+После `js/editor/history.js` и `examples/examples.js`: `js/mech/mechModel.js`, `js/mech/mechAssembly.js`, `js/mech/mechGeometry.js`,
 `js/mech/mechIO.js`. После `js/scene/dimensions.js`: `js/plan/planEditor.js`. После `js/ui/wizard.js`:
 `js/mech/mechApp.js`, `js/ui/shell.js`, затем `js/app.js`. Стили: `css/app.css`, `css/plan.css`, `css/mech.css`.
 

@@ -8,7 +8,8 @@
   BUILDSENSE_MECH_STL — список STL (через ;) для проверки Mesh: замкнутость и объём;
   BUILDSENSE_MECH_STL_VOLUME — ожидаемый суммарный объём STL, мм³ (допуск 0,5 %).
 
-Проверяется для examples/mech/demo.mech-freecad.json и tests/mech_variants.freecad.json:
+Проверяется для examples/mech/demo.mech-freecad.json, examples/mech/assembly.mech-freecad.json
+и tests/mech_variants.freecad.json:
   * каждое тело isValid(), одно тело (Solid), объём = аналитический ± 0,5 %;
   * габарит BoundBox = аналитический габарит (± 0,01 мм) — значит, верен и поворот;
   * отверстия сквозные: ось отверстия не пересекает тело, расстояние от оси = радиус;
@@ -123,8 +124,95 @@ def run_file(path, tmp):
     check(back.isValid(), "STEP: тело после чтения невалидно")
     print("  STEP: %s (%d байт), Part.read: тел=%d, V=%.3f (в документе %.3f), откл.=%.2e" % (
         os.path.basename(step), os.path.getsize(step), len(back.Solids), back.Volume, total, (back.Volume - total) / total))
+    if data.get("assemblies"):
+        check_assemblies(data, doc2)
     App.closeDocument(doc2.Name)
     return total
+
+
+def check_assemblies(data, doc):
+    """Сборка после повторного открытия .FCStd: контейнер App::Part, отдельные тела, без пересечений, контакт граней."""
+    parts = {p["id"]: p for p in data["parts"]}
+    objs = {o.BuildSenseId: o for o in doc.Objects if "BuildSenseId" in o.PropertiesList}
+    for asm in data["assemblies"]:
+        conts = [o for o in doc.Objects if o.TypeId == "App::Part" and getattr(o, "BuildSenseAssemblyId", None) == asm["id"]]
+        check(len(conts) == 1, "%s: контейнер App::Part не найден" % asm["name"])
+        if not conts:
+            continue
+        cont = conts[0]
+        inside = [o for o in cont.Group if "BuildSenseId" in o.PropertiesList]
+        check(sorted(o.BuildSenseId for o in inside) == sorted(c["partId"] for c in asm["components"]), "%s: состав контейнера не совпадает" % asm["name"])
+        check(len(json.loads(cont.BuildSenseMates)) == len(asm["mates"]), "%s: сопряжения не записаны" % asm["name"])
+        check(asm["ok"] and cont.BuildSenseSolved, "%s: сборка не решена в BuildSense" % asm["name"])
+        shapes = [(o.Label, o.Shape) for o in inside]
+        worst = 0.0
+        for i in range(len(shapes)):
+            for j in range(i + 1, len(shapes)):
+                v = shapes[i][1].common(shapes[j][1]).Volume
+                worst = max(worst, v)
+                check(v < 1e-3, "%s и %s пересекаются: %.4f мм³" % (shapes[i][0], shapes[j][0], v))
+        print("  Сборка «%s»: App::Part %s, компонентов %d, сопряжений %d, наибольшее пересечение тел %.2e мм³" % (
+            asm["name"], cont.Name, len(inside), len(asm["mates"]), worst))
+        comp_part = {c["id"]: c["partId"] for c in asm["components"]}
+        for m in asm["mates"]:
+            if m["type"] == "coaxial":
+                continue
+            a, b = objs[comp_part[m["a"]["comp"]]], objs[comp_part[m["b"]["comp"]]]
+            d = a.Shape.distToShape(b.Shape)[0]
+            if m["type"] == "planar" and m["mode"] == "contact":
+                check(d < 1e-6, "%s: тела не касаются (зазор %.6f мм)" % (m["label"], d))
+                print("    %s: расстояние между телами %.2e мм (касание)" % (m["label"], d))
+            else:
+                # смещение: расстояние между плоскостями граней вдоль оси, из геометрии FreeCAD
+                pa, pb = parts[comp_part[m["a"]["comp"]]], parts[comp_part[m["b"]["comp"]]]
+                za = face_z(pa, m["a"]["ref"])
+                zb = face_z(pb, m["b"]["ref"])
+                axis = a.Placement.Rotation.multVec(App.Vector(0, 0, 1))
+                qa = a.Placement.multVec(App.Vector(0, 0, za))
+                qb = b.Placement.multVec(App.Vector(0, 0, zb))
+                gap = abs((qb - qa).dot(axis))
+                check(abs(gap - m["offset"]) < 1e-6, "%s: смещение %.6f мм, ожидалось %.6f" % (m["label"], gap, m["offset"]))
+                print("    %s: смещение граней по FreeCAD %.6f мм" % (m["label"], gap))
+
+
+def check_interference(path):
+    """Пересечение, найденное решателем BuildSense по профилям, против common() ядра OpenCASCADE."""
+    print("Файл:", os.path.relpath(path, ROOT))
+    data = MACRO["load"](path)
+    doc, _ = MACRO["build_document"](data)
+    objs = {o.BuildSenseId: o for o in doc.Objects if "BuildSenseId" in o.PropertiesList}
+    exp = data["expectedInterference"]
+    check(len(exp) == 1, "ожидалось одно пересечение, в файле %d" % len(exp))
+    for e in exp:
+        v = objs[e["a"]].Shape.common(objs[e["b"]].Shape).Volume
+        dev = (v - e["volume"]) / v
+        print("  Пересечение %s / %s: BuildSense %.4f мм³, FreeCAD common() %.4f мм³, откл. %+.5f %%" % (
+            objs[e["a"]].Label, objs[e["b"]].Label, e["volume"], v, dev * 100))
+        check(abs(dev) < 0.005, "объём пересечения отличается на %.4f %%" % (dev * 100))
+    pairs = {tuple(sorted((e["a"], e["b"]))) for e in exp}
+    ids = sorted(objs)
+    for i in range(len(ids)):
+        for j in range(i + 1, len(ids)):
+            if (ids[i], ids[j]) not in pairs:
+                v = objs[ids[i]].Shape.common(objs[ids[j]].Shape).Volume
+                check(v < 1e-3, "%s / %s: пересечение %.4f мм³, решатель его не нашёл" % (ids[i], ids[j], v))
+    App.closeDocument(doc.Name)
+
+
+def face_z(part, ref):
+    p = part["params"]
+    if ref == "end0":
+        return 0.0
+    if part["type"] == "shaft":
+        if ref == "end1":
+            return float(sum(s["L"] for s in p["steps"]))
+        i = int(ref[4:])
+        return float(sum(s["L"] for s in p["steps"][:i]))
+    if part["type"] == "bushing":
+        return float(p["L"])
+    if ref == "disk":
+        return float(p["T"])
+    return float(p["T"] + (p["hubH"] if p["hubD"] > 0 and p["hubH"] > 0 else 0))
 
 
 def check_stl(paths, expected):
@@ -155,8 +243,10 @@ def main():
     tmp = os.environ.get("BUILDSENSE_MECH_TMP") or tempfile.mkdtemp(prefix="bs_mech_")
     os.makedirs(tmp, exist_ok=True)
     print("FreeCAD", ".".join(App.Version()[:3]), "| временная папка:", tmp)
-    for f in (os.path.join(ROOT, "examples", "mech", "demo.mech-freecad.json"), os.path.join(HERE, "mech_variants.freecad.json")):
+    for f in (os.path.join(ROOT, "examples", "mech", "demo.mech-freecad.json"), os.path.join(ROOT, "examples", "mech", "assembly.mech-freecad.json"),
+              os.path.join(HERE, "mech_variants.freecad.json")):
         run_file(f, tmp)
+    check_interference(os.path.join(HERE, "mech_interference.freecad.json"))
     stl = [p for p in os.environ.get("BUILDSENSE_MECH_STL", "").split(";") if p]
     if stl:
         check_stl(stl, float(os.environ.get("BUILDSENSE_MECH_STL_VOLUME") or 0))

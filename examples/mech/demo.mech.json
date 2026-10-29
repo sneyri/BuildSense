@@ -1,6 +1,6 @@
 {
   "format": "buildsense-mech",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "units": "mm",
   "name": "Демо: втулка, вал, фланец",
   "parts": [
@@ -91,5 +91,6 @@
       },
       "material": "cast_iron"
     }
-  ]
+  ],
+  "assemblies": []
 }

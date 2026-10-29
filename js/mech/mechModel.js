@@ -1,6 +1,7 @@
 // BuildSense · Машиностроение — модель проекта деталей (без DOM и Three.js, тестируется в Node).
 //
-// Проект: { format:"buildsense-mech", schemaVersion:1, units:"mm", name, parts:[...] }
+// Проект: { format:"buildsense-mech", schemaVersion:2, units:"mm", name, parts:[...], assemblies:[...] }
+//   schemaVersion 2 добавила сборки (js/mech/mechAssembly.js); файлы версии 1 открываются без изменений.
 // Деталь: { id, type, name, params, placement:{ x, y, z, rotation:{ x, y, z } }, material }
 //   params    — только размеры, введённые пользователем (источник истины);
 //   placement — положение локальной системы детали в мм, поворот — углы Эйлера в градусах,
@@ -18,8 +19,12 @@
   "use strict";
 
   const FORMAT = "buildsense-mech";
-  const SCHEMA_VERSION = 1;
+  const SCHEMA_VERSION = 2;
+  const SUPPORTED_SCHEMAS = [1, 2];
   const EXPORT_FORMAT = "buildsense-mech-freecad";
+  /** Экспорт без сборок остаётся версии 1 (его читает и прежний макрос), со сборками — версии 2. */
+  const EXPORT_VERSION_PARTS = 1;
+  const EXPORT_VERSION_ASSEMBLY = 2;
   /** Учебные ограничения (не нормативные): минимальная стенка и перемычка, мм. */
   const MIN_WALL = 1;
   const MIN_BRIDGE = 1;
@@ -237,6 +242,7 @@
       if (part && ids.has(part.id)) errors.push({ partId: part.id, field: "id", message: `Повторяющийся id «${part.id}»` });
       if (part) ids.add(part.id);
     }
+    if (BS.mechAssembly) errors.push(...BS.mechAssembly.validate(project));
     return errors;
   }
 
@@ -427,7 +433,7 @@
   // ------------------------------------------------------------------ проект
 
   function createProject(name = "Новый проект") {
-    return { format: FORMAT, schemaVersion: SCHEMA_VERSION, units: "mm", name, parts: [] };
+    return { format: FORMAT, schemaVersion: SCHEMA_VERSION, units: "mm", name, parts: [], assemblies: [] };
   }
 
   function nextId(project) {
@@ -470,7 +476,7 @@
   function normalizeProject(data) {
     if (!data || typeof data !== "object") throw new Error("Файл не содержит проект BuildSense (машиностроение)");
     if (data.format !== FORMAT) throw new Error(`Это не проект деталей: ожидался format «${FORMAT}», получено «${data.format}»`);
-    if (data.schemaVersion !== SCHEMA_VERSION) throw new Error(`Версия схемы ${data.schemaVersion} не поддерживается (нужна ${SCHEMA_VERSION})`);
+    if (!SUPPORTED_SCHEMAS.includes(data.schemaVersion)) throw new Error(`Версия схемы ${data.schemaVersion} не поддерживается (поддерживаются ${SUPPORTED_SCHEMAS.join(", ")})`);
     if (data.units !== "mm") throw new Error("Поддерживаются только миллиметры (units: \"mm\")");
     const pr = createProject(typeof data.name === "string" ? data.name : "Проект");
     for (const raw of Array.isArray(data.parts) ? data.parts : []) {
@@ -479,7 +485,13 @@
       });
       pr.parts.push(part);
     }
-    return { project: pr, errors: validateProject(pr) };
+    const notes = [];
+    if (BS.mechAssembly && Array.isArray(data.assemblies)) {
+      const r = BS.mechAssembly.normalize(data.assemblies, pr);
+      pr.assemblies = r.assemblies;
+      notes.push(...r.notes);
+    }
+    return { project: pr, errors: validateProject(pr), notes };
   }
 
   // ------------------------------------------------------------------ экспорт для FreeCAD/Blender
@@ -487,9 +499,11 @@
   function exportForCad(project) {
     const errors = validateProject(project);
     if (errors.length) throw new Error(`Проект содержит ошибки: ${errors[0].message}`);
-    return {
+    const A = BS.mechAssembly;
+    const asms = A && Array.isArray(project.assemblies) ? project.assemblies : [];
+    const out = {
       format: EXPORT_FORMAT,
-      schemaVersion: SCHEMA_VERSION,
+      schemaVersion: asms.length ? EXPORT_VERSION_ASSEMBLY : EXPORT_VERSION_PARTS,
       units: "mm",
       name: project.name,
       generator: `BuildSense ${BS.version || ""}`.trim(),
@@ -514,10 +528,25 @@
         };
       }),
     };
+    if (asms.length) {
+      // положения деталей уже решены (part.placement); сопряжения и статусы — для справки и проверки в FreeCAD
+      out.assemblies = asms.map((asm) => {
+        const r = A.solve(JSON.parse(JSON.stringify(project)), asm, { apply: false });
+        return {
+          id: asm.id,
+          name: asm.name,
+          ok: r.ok,
+          components: asm.components.map((c) => ({ id: c.id, partId: c.partId, fixed: c.fixed, status: r.components[c.id].status, note: r.components[c.id].text })),
+          mates: asm.mates.map((m) => ({ ...JSON.parse(JSON.stringify(m)), label: A.mateLabel(project, asm, m), status: r.mates[m.id].status, note: r.mates[m.id].text })),
+          messages: r.messages.map((x) => ({ severity: x.severity, text: x.text })),
+        };
+      });
+    }
+    return out;
   }
 
   BS.mechModel = {
-    FORMAT, SCHEMA_VERSION, EXPORT_FORMAT, MIN_WALL, MIN_BRIDGE, MATERIALS, TYPES,
+    FORMAT, SCHEMA_VERSION, SUPPORTED_SCHEMAS, EXPORT_FORMAT, EXPORT_VERSION_PARTS, EXPORT_VERSION_ASSEMBLY, MIN_WALL, MIN_BRIDGE, MATERIALS, TYPES,
     defaultParams, paramDef, fieldLabel, validateParams, validatePart, validateProject,
     features, applyChamfers, evaluate, shaftSketch, profileVolume, analyticVolume, density, massKg,
     rotationMatrix, transformPoint, worldBounds,

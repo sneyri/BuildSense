@@ -118,6 +118,7 @@
     const n = $("status-text");
     if (!n) return;
     n.textContent = text == null ? "" : String(text);
+    n.title = n.textContent; // длинное сообщение обрезается многоточием — полностью видно в подсказке
     n.className = kind || "";
   }
 
