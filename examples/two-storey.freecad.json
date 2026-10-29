@@ -1,0 +1,2206 @@
+{
+  "format": "buildsense-freecad-export",
+  "schemaVersion": 2,
+  "units": "mm",
+  "generator": "BuildSense 1.0.0",
+  "exportedAt": "2026-10-27T12:00:00.000Z",
+  "axes": "Z вверх; placement — точка привязки элемента (угол бруса, центр основания цилиндра, начало оси трубы) и поворот вокруг Z в градусах",
+  "project": {
+    "name": "Двухэтажный дом",
+    "climateRegion": "2V",
+    "housingFund": "private"
+  },
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Этаж 1",
+      "elevation": 0,
+      "height": 2800
+    },
+    {
+      "id": "L2",
+      "name": "Этаж 2",
+      "elevation": 3000,
+      "height": 2800
+    }
+  ],
+  "elements": [
+    {
+      "id": "slab_foundation-1",
+      "type": "slab_foundation",
+      "typeLabel": "Плитный фундамент",
+      "shape": "box",
+      "ifcType": "Footing",
+      "name": "Фундаментная плита",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": -400,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 400
+      }
+    },
+    {
+      "id": "wall-1",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-1",
+          "window-1"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-2",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-4"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 0,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-3",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-2",
+          "window-3"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 0,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "wall-4",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная",
+      "category": "exterior",
+      "levelId": "L1",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-5"
+        ],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 0,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "slab-1",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Пол первого этажа",
+      "category": "ground",
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 400,
+        "y": 400,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 9200,
+        "width": 7200,
+        "height": 200
+      }
+    },
+    {
+      "id": "wall-5",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Перегородка",
+      "category": "partition",
+      "levelId": "L1",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-2"
+        ],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 6060,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 120,
+        "height": 2600
+      }
+    },
+    {
+      "id": "door-1",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 1",
+      "category": "entrance",
+      "levelId": "L1",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "hostId": "wall-1",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 3000,
+        "elevation": 0
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 3000,
+        "y": 0,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 3000,
+          "y": -50,
+          "z": -50,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 900,
+          "width": 500,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 3000,
+          "y": 175,
+          "z": 0,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "window-1",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "hostId": "wall-1",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 900,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-2",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "hostId": "wall-3",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-3",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "hostId": "wall-3",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-4",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-2",
+        "hosted": [],
+        "supports": [
+          "wall-2"
+        ]
+      },
+      "hostId": "wall-2",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 900,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-5",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L1",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-4",
+        "hosted": [],
+        "supports": [
+          "wall-4"
+        ]
+      },
+      "hostId": "wall-4",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 900,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "door-2",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 2",
+      "category": "interior",
+      "levelId": "L1",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "relations": {
+        "hostId": "wall-5",
+        "hosted": [],
+        "supports": [
+          "wall-5"
+        ]
+      },
+      "hostId": "wall-5",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 1000,
+        "elevation": 0
+      },
+      "hostThickness": 120,
+      "placement": {
+        "x": 6060,
+        "y": 1400,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 6110,
+          "y": 1400,
+          "z": 150,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 220,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6025,
+          "y": 1400,
+          "z": 200,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "lintel-1",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Дверь 1»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-1"
+      },
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "placement": {
+        "x": 2750,
+        "y": 0,
+        "z": 2100,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 1400,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-2",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 1»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-1"
+      },
+      "relations": {
+        "hostId": "wall-1",
+        "hosted": [],
+        "supports": [
+          "wall-1"
+        ]
+      },
+      "placement": {
+        "x": 6500,
+        "y": 0,
+        "z": 2300,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-3",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 4»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-2"
+      },
+      "relations": {
+        "hostId": "wall-2",
+        "hosted": [],
+        "supports": [
+          "wall-2"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 3200,
+        "z": 2300,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-4",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 2»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-3"
+      },
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "placement": {
+        "x": 8350,
+        "y": 8000,
+        "z": 2300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-5",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 3»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-3"
+      },
+      "relations": {
+        "hostId": "wall-3",
+        "hosted": [],
+        "supports": [
+          "wall-3"
+        ]
+      },
+      "placement": {
+        "x": 3050,
+        "y": 8000,
+        "z": 2300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-6",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 5»",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-4"
+      },
+      "relations": {
+        "hostId": "wall-4",
+        "hosted": [],
+        "supports": [
+          "wall-4"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 5000,
+        "z": 2300,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "roof-1",
+      "type": "roof",
+      "typeLabel": "Крыша",
+      "shape": "roof",
+      "ifcType": "Roof",
+      "name": "Крыша",
+      "category": null,
+      "levelId": "L1",
+      "material": "metal_tile",
+      "materialLabel": "Металлочерепица",
+      "color": "#8c3b32",
+      "density": 7850,
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-6",
+          "wall-7",
+          "wall-8",
+          "wall-9",
+          "wall-10"
+        ]
+      },
+      "placement": {
+        "x": -400,
+        "y": -400,
+        "z": 5800,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10800,
+        "width": 8800,
+        "rise": 2540.34
+      }
+    },
+    {
+      "id": "room-1",
+      "type": "room",
+      "typeLabel": "Комната (зона)",
+      "shape": "zone",
+      "ifcType": "Space",
+      "name": "Гостиная",
+      "category": null,
+      "levelId": "L1",
+      "material": "zone",
+      "materialLabel": "Зона (без материала)",
+      "color": "#4cc9f0",
+      "density": 0,
+      "params": {
+        "roomName": "Гостиная",
+        "roomType": "common"
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 400,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 5540,
+        "width": 7200,
+        "height": 2600
+      }
+    },
+    {
+      "id": "room-2",
+      "type": "room",
+      "typeLabel": "Комната (зона)",
+      "shape": "zone",
+      "ifcType": "Space",
+      "name": "Спальня",
+      "category": null,
+      "levelId": "L1",
+      "material": "zone",
+      "materialLabel": "Зона (без материала)",
+      "color": "#4cc9f0",
+      "density": 0,
+      "params": {
+        "roomName": "Спальня",
+        "roomType": "bedroom"
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 6060,
+        "y": 400,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 3540,
+        "width": 7200,
+        "height": 2600
+      }
+    },
+    {
+      "id": "stairs-1",
+      "type": "stairs",
+      "typeLabel": "Лестница",
+      "shape": "stairs",
+      "ifcType": "Stair",
+      "name": "Лестница 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "steps": 16
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 8700,
+        "y": 2200,
+        "z": 200,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 4000,
+        "width": 1000,
+        "height": 2800
+      }
+    },
+    {
+      "id": "slab-2",
+      "type": "slab",
+      "typeLabel": "Перекрытие / пол",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Перекрытие (Этаж 1 / Этаж 2)",
+      "category": "floor",
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "wall-1",
+          "wall-2",
+          "wall-3",
+          "wall-4",
+          "wall-5"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 2800,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "width": 8000,
+        "height": 200
+      }
+    },
+    {
+      "id": "wall-6",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена южная (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-6"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 3000,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 10000,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-6",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 1",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-6",
+        "hosted": [],
+        "supports": [
+          "wall-6"
+        ]
+      },
+      "hostId": "wall-6",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6750,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 6750,
+        "y": 0,
+        "z": 3900,
+        "rotationZ": 0
+      },
+      "void": {
+        "placement": {
+          "x": 6750,
+          "y": -50,
+          "z": 3900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 6750,
+          "y": 170,
+          "z": 3900,
+          "rotationZ": 0
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-7",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена восточная (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-7"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 400,
+        "z": 3000,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-7",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 4",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-7",
+        "hosted": [],
+        "supports": [
+          "wall-7"
+        ]
+      },
+      "hostId": "wall-7",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 3050,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 10000,
+        "y": 3450,
+        "z": 3900,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 10050,
+          "y": 3450,
+          "z": 3900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 9830,
+          "y": 3450,
+          "z": 3900,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-8",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена северная (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-8",
+          "window-9"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 9600,
+        "y": 8000,
+        "z": 3000,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 9600,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-8",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 2",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-8",
+        "hosted": [],
+        "supports": [
+          "wall-8"
+        ]
+      },
+      "hostId": "wall-8",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 1500,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 8100,
+        "y": 8000,
+        "z": 3900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 8100,
+          "y": 8050,
+          "z": 3900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 8100,
+          "y": 7830,
+          "z": 3900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "window-9",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 3",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-8",
+        "hosted": [],
+        "supports": [
+          "wall-8"
+        ]
+      },
+      "hostId": "wall-8",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 6800,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 2800,
+        "y": 8000,
+        "z": 3900,
+        "rotationZ": 180
+      },
+      "void": {
+        "placement": {
+          "x": 2800,
+          "y": 8050,
+          "z": 3900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 2800,
+          "y": 7830,
+          "z": 3900,
+          "rotationZ": 180
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-9",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Стена западная (этаж 2)",
+      "category": "exterior",
+      "levelId": "L2",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "window-10"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 7600,
+        "z": 3000,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 400,
+        "height": 2800
+      }
+    },
+    {
+      "id": "window-10",
+      "type": "window",
+      "typeLabel": "Окно",
+      "shape": "opening",
+      "ifcType": "Window",
+      "name": "Окно 5",
+      "category": null,
+      "levelId": "L2",
+      "material": "pvc",
+      "materialLabel": "ПВХ-профиль",
+      "color": "#f2f4f5",
+      "density": 1400,
+      "params": {},
+      "relations": {
+        "hostId": "wall-9",
+        "hosted": [],
+        "supports": [
+          "wall-9"
+        ]
+      },
+      "hostId": "wall-9",
+      "size": {
+        "width": 1500,
+        "height": 1400
+      },
+      "position": {
+        "offset": 2850,
+        "elevation": 900
+      },
+      "hostThickness": 400,
+      "placement": {
+        "x": 0,
+        "y": 4750,
+        "z": 3900,
+        "rotationZ": 270
+      },
+      "void": {
+        "placement": {
+          "x": -50,
+          "y": 4750,
+          "z": 3900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 500,
+          "height": 1400
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 170,
+          "y": 4750,
+          "z": 3900,
+          "rotationZ": 270
+        },
+        "size": {
+          "length": 1500,
+          "width": 60,
+          "height": 1400
+        }
+      }
+    },
+    {
+      "id": "wall-10",
+      "type": "wall",
+      "typeLabel": "Стена",
+      "shape": "wall",
+      "ifcType": "Wall",
+      "name": "Перегородка (этаж 2)",
+      "category": "partition",
+      "levelId": "L2",
+      "material": "aerated",
+      "materialLabel": "Газобетон",
+      "color": "#d8d2c4",
+      "density": 500,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [
+          "door-3"
+        ],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 4060,
+        "y": 400,
+        "z": 3000,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 7200,
+        "thickness": 120,
+        "height": 2800
+      }
+    },
+    {
+      "id": "door-3",
+      "type": "door",
+      "typeLabel": "Дверь",
+      "shape": "opening",
+      "ifcType": "Door",
+      "name": "Дверь 3",
+      "category": "interior",
+      "levelId": "L2",
+      "material": "wood_door",
+      "materialLabel": "Дерево (дверь)",
+      "color": "#7a4a24",
+      "density": 600,
+      "params": {},
+      "relations": {
+        "hostId": "wall-10",
+        "hosted": [],
+        "supports": [
+          "wall-10"
+        ]
+      },
+      "hostId": "wall-10",
+      "size": {
+        "width": 900,
+        "height": 2100
+      },
+      "position": {
+        "offset": 1000,
+        "elevation": 0
+      },
+      "hostThickness": 120,
+      "placement": {
+        "x": 4060,
+        "y": 1400,
+        "z": 3000,
+        "rotationZ": 90
+      },
+      "void": {
+        "placement": {
+          "x": 4110,
+          "y": 1400,
+          "z": 2950,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 220,
+          "height": 2150
+        }
+      },
+      "panel": {
+        "placement": {
+          "x": 4025,
+          "y": 1400,
+          "z": 3000,
+          "rotationZ": 90
+        },
+        "size": {
+          "length": 900,
+          "width": 50,
+          "height": 2100
+        }
+      }
+    },
+    {
+      "id": "lintel-7",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 1»",
+      "category": null,
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-6"
+      },
+      "relations": {
+        "hostId": "wall-6",
+        "hosted": [],
+        "supports": [
+          "wall-6"
+        ]
+      },
+      "placement": {
+        "x": 6500,
+        "y": 0,
+        "z": 5300,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-8",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 4»",
+      "category": null,
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-7"
+      },
+      "relations": {
+        "hostId": "wall-7",
+        "hosted": [],
+        "supports": [
+          "wall-7"
+        ]
+      },
+      "placement": {
+        "x": 10000,
+        "y": 3200,
+        "z": 5300,
+        "rotationZ": 90
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-9",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 2»",
+      "category": null,
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-8"
+      },
+      "relations": {
+        "hostId": "wall-8",
+        "hosted": [],
+        "supports": [
+          "wall-8"
+        ]
+      },
+      "placement": {
+        "x": 8350,
+        "y": 8000,
+        "z": 5300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-10",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 3»",
+      "category": null,
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-8"
+      },
+      "relations": {
+        "hostId": "wall-8",
+        "hosted": [],
+        "supports": [
+          "wall-8"
+        ]
+      },
+      "placement": {
+        "x": 3050,
+        "y": 8000,
+        "z": 5300,
+        "rotationZ": 180
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "lintel-11",
+      "type": "lintel",
+      "typeLabel": "Перемычка",
+      "shape": "box",
+      "ifcType": "Beam",
+      "name": "Перемычка над «Окно 5»",
+      "category": null,
+      "levelId": "L2",
+      "material": "concrete",
+      "materialLabel": "Железобетон",
+      "color": "#9ea3a8",
+      "density": 2500,
+      "params": {
+        "hostWallId": "wall-9"
+      },
+      "relations": {
+        "hostId": "wall-9",
+        "hosted": [],
+        "supports": [
+          "wall-9"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 5000,
+        "z": 5300,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 2000,
+        "width": 400,
+        "height": 200
+      }
+    },
+    {
+      "id": "bed-1",
+      "type": "bed",
+      "typeLabel": "Кровать",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Кровать 1",
+      "category": null,
+      "levelId": "L2",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 1000,
+        "y": 4700,
+        "z": 3000,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 1600,
+        "height": 500
+      }
+    },
+    {
+      "id": "wardrobe-1",
+      "type": "wardrobe",
+      "typeLabel": "Шкаф",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Шкаф 1",
+      "category": null,
+      "levelId": "L2",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 600,
+        "y": 700,
+        "z": 3000,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 1200,
+        "width": 600,
+        "height": 2100
+      }
+    },
+    {
+      "id": "sofa-1",
+      "type": "sofa",
+      "typeLabel": "Диван",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Диван 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 2000,
+        "y": 6350,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 2000,
+        "width": 900,
+        "height": 850
+      }
+    },
+    {
+      "id": "table-1",
+      "type": "table",
+      "typeLabel": "Стол",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Стол 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 2300,
+        "y": 3100,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 1400,
+        "width": 800,
+        "height": 750
+      }
+    },
+    {
+      "id": "chair-1",
+      "type": "chair",
+      "typeLabel": "Стул",
+      "shape": "fixture",
+      "ifcType": "Furniture",
+      "name": "Стул 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "fabric",
+      "materialLabel": "Ткань / мебель",
+      "color": "#6d7fa3",
+      "density": 300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 2775,
+        "y": 2575,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 450,
+        "width": 450,
+        "height": 900
+      }
+    },
+    {
+      "id": "toilet-1",
+      "type": "toilet",
+      "typeLabel": "Унитаз",
+      "shape": "fixture",
+      "ifcType": "SanitaryTerminal",
+      "name": "Унитаз 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "ceramic",
+      "materialLabel": "Керамика",
+      "color": "#f5f6f7",
+      "density": 2300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 9000,
+        "y": 6650,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 400,
+        "width": 700,
+        "height": 800
+      }
+    },
+    {
+      "id": "sink-1",
+      "type": "sink",
+      "typeLabel": "Раковина",
+      "shape": "fixture",
+      "ifcType": "SanitaryTerminal",
+      "name": "Раковина 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "ceramic",
+      "materialLabel": "Керамика",
+      "color": "#f5f6f7",
+      "density": 2300,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-1"
+        ]
+      },
+      "placement": {
+        "x": 8900,
+        "y": 5975,
+        "z": 200,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 600,
+        "width": 450,
+        "height": 850
+      }
+    },
+    {
+      "id": "light-1",
+      "type": "light",
+      "typeLabel": "Светильник",
+      "shape": "fixture",
+      "ifcType": "LightFixture",
+      "name": "Светильник 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "plastic",
+      "materialLabel": "Пластик",
+      "color": "#e9ecef",
+      "density": 1200,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 2800,
+        "y": 3800,
+        "z": 2650,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 400,
+        "width": 400,
+        "height": 150
+      }
+    },
+    {
+      "id": "chimney-1",
+      "type": "chimney",
+      "typeLabel": "Дымоход",
+      "shape": "box",
+      "ifcType": "Chimney",
+      "name": "Дымоход 1",
+      "category": null,
+      "levelId": "L2",
+      "material": "brick",
+      "materialLabel": "Кирпич",
+      "color": "#b4643c",
+      "density": 1800,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab-2"
+        ]
+      },
+      "placement": {
+        "x": 6700,
+        "y": 3300,
+        "z": 3000,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 600,
+        "width": 600,
+        "height": 4200
+      }
+    },
+    {
+      "id": "pipe-1",
+      "type": "pipe",
+      "typeLabel": "Труба",
+      "shape": "pipe",
+      "ifcType": "Pipe",
+      "name": "Труба 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "steel",
+      "materialLabel": "Сталь",
+      "color": "#7d8791",
+      "density": 7850,
+      "params": {
+        "vertical": false
+      },
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": []
+      },
+      "placement": {
+        "x": 9000,
+        "y": 7200,
+        "z": 500,
+        "rotationZ": 270
+      },
+      "size": {
+        "length": 2200,
+        "diameter": 50
+      }
+    },
+    {
+      "id": "terrace-1",
+      "type": "terrace",
+      "typeLabel": "Терраса",
+      "shape": "box",
+      "ifcType": "Slab",
+      "name": "Терраса 1",
+      "category": null,
+      "levelId": "L1",
+      "material": "timber",
+      "materialLabel": "Дерево (брус)",
+      "color": "#c49a6c",
+      "density": 500,
+      "params": {},
+      "relations": {
+        "hostId": null,
+        "hosted": [],
+        "supports": [
+          "slab_foundation-1"
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": -3000,
+        "z": 0,
+        "rotationZ": 0
+      },
+      "size": {
+        "length": 4000,
+        "width": 3000,
+        "height": 150
+      }
+    }
+  ]
+}

@@ -1,0 +1,621 @@
+# -*- coding: utf-8 -*-
+"""import_house.FCMacro — импорт модели BuildSense в FreeCAD.
+
+Запуск в FreeCAD (проверено на FreeCAD 1.1.4 для Windows, см. docs/TESTS.md):
+  1. В BuildSense нажмите «Экспорт в FreeCAD» — скачается файл *.freecad.json.
+  2. FreeCAD → Макрос → Макросы… → укажите папку freecad/ проекта → import_house → Выполнить.
+  3. Выберите *.freecad.json. После импорта макрос предложит сохранить модель в .FCStd.
+
+Без интерфейса (консольный FreeCAD):
+  BUILDSENSE_JSON=house.freecad.json BUILDSENSE_OUT=house.FCStd FreeCADCmd import_house.FCMacro
+  BUILDSENSE_MODE=part — принудительно только примитивы Part (без объектов BIM/Arch).
+
+Что создаётся:
+  * режим BIM (по умолчанию, если доступен модуль Arch): стены — Arch Wall, окна и двери —
+    Arch Window (пресеты) с вырезом в стене, плиты/фундаменты/колонны/балки — Arch Structure
+    с IFC-типом, лестницы — Arch Stairs, комнаты — Arch Space, этажи — BuildingPart «Этаж»;
+  * для остального (крыши, фермы, перила, трубы, сантехника, мебель) — параметрические
+    примитивы Part (Box, Cylinder, Wedge) или тела Part::Feature. Они НЕ являются BIM-объектами;
+  * если создать BIM-объект не удалось, элемент строится примитивом Part, а причина
+    пишется в отчёт импорта. Неизвестные типы пропускаются и перечисляются в отчёте.
+У каждого объекта сохраняются исходные данные: свойства BuildSenseId, BuildSenseType, материал, этаж.
+"""
+
+import json
+import math
+import os
+
+import FreeCAD as App
+import Part
+
+FORMAT = "buildsense-freecad-export"
+SUPPORTED_VERSION = 2
+TYPE_LABELS = {
+    "slab_foundation": "Фундаменты", "strip_foundation": "Фундаменты", "pad_foundation": "Фундаменты",
+    "round_pad": "Фундаменты", "pile": "Фундаменты",
+    "wall": "Стены", "column": "Колонны и балки", "round_column": "Колонны и балки", "beam": "Колонны и балки",
+    "lintel": "Колонны и балки", "truss": "Колонны и балки", "slab": "Перекрытия", "landing": "Перекрытия",
+    "stairs": "Лестницы", "roof": "Крыши", "window": "Окна", "door": "Двери",
+    "balcony": "Архитектура", "terrace": "Архитектура", "railing": "Архитектура", "chimney": "Архитектура",
+    "room": "Комнаты", "decor": "Архитектура",
+    "pipe": "Инженерия", "toilet": "Инженерия", "sink": "Инженерия", "bathtub": "Инженерия",
+    "light": "Инженерия", "socket": "Инженерия", "switch": "Инженерия",
+    "bed": "Мебель", "table": "Мебель", "chair": "Мебель", "sofa": "Мебель", "wardrobe": "Мебель",
+}
+BOX_SHAPES = ("box", "fixture", "balcony", "railing", "zone")
+
+
+# ---------------------------------------------------------------- журнал импорта
+
+class Report:
+    def __init__(self):
+        self.created = {}
+        self.bim = 0
+        self.part = 0
+        self.fallbacks = []
+        self.skipped = []
+        self.errors = []
+
+    def add(self, el, kind):
+        self.created[el["type"]] = self.created.get(el["type"], 0) + 1
+        if kind == "bim":
+            self.bim += 1
+        else:
+            self.part += 1
+
+    def text(self, mode):
+        lines = ["Режим: {}".format("BIM (Arch) + Part" if mode == "bim" else "только Part"),
+                 "Создано объектов: {} (BIM: {}, Part: {})".format(self.bim + self.part, self.bim, self.part)]
+        for t, n in sorted(self.created.items()):
+            lines.append("  {} — {}".format(t, n))
+        if self.fallbacks:
+            lines.append("Построено примитивами Part вместо BIM ({}):".format(len(self.fallbacks)))
+            lines += ["  " + f for f in self.fallbacks[:20]]
+        if self.skipped:
+            lines.append("Пропущено (неподдерживаемые типы): " + ", ".join(self.skipped))
+        if self.errors:
+            lines.append("Ошибки ({}):".format(len(self.errors)))
+            lines += ["  " + e for e in self.errors[:20]]
+        return "\n".join(lines)
+
+
+def log(msg):
+    App.Console.PrintMessage(msg + "\n")
+
+
+def warn(msg):
+    App.Console.PrintWarning(msg + "\n")
+
+
+# ---------------------------------------------------------------- геометрия
+
+def vec(p):
+    return App.Vector(float(p["x"]), float(p["y"]), float(p["z"]))
+
+
+def rot_z(deg):
+    return App.Rotation(App.Vector(0, 0, 1), float(deg or 0))
+
+
+def placement(p, local=None):
+    """Placement из JSON (точка привязки + поворот вокруг Z) с необязательным локальным поворотом."""
+    r = rot_z(p.get("rotationZ", 0))
+    if local is not None:
+        r = r.multiply(local)
+    return App.Placement(vec(p), r)
+
+
+def local_point(p, u, v, w):
+    """Точка в локальных осях элемента (u — вдоль, v — поперёк, w — вверх) → мировые координаты."""
+    a = math.radians(float(p.get("rotationZ", 0)))
+    return App.Vector(p["x"] + u * math.cos(a) - v * math.sin(a), p["y"] + u * math.sin(a) + v * math.cos(a), p["z"] + w)
+
+
+def safe_name(text):
+    name = "".join(c if (c.isascii() and c.isalnum()) else "_" for c in str(text))
+    return name if name and not name[0].isdigit() else "E_" + name
+
+
+def tag(obj, el, role):
+    for prop, value in (("BuildSenseId", el["id"]), ("BuildSenseType", el["type"]), ("BuildSenseRole", role),
+                        ("BuildSenseMaterial", el.get("materialLabel") or el.get("material", "")),
+                        ("BuildSenseLevel", el.get("levelId", "")), ("BuildSenseIfcHint", el.get("ifcType") or "")):
+        if prop not in obj.PropertiesList:
+            obj.addProperty("App::PropertyString", prop, "BuildSense", "Данные из BuildSense")
+        setattr(obj, prop, str(value))
+
+
+def style(obj, color, transparency=0):
+    if not App.GuiUp or getattr(obj, "ViewObject", None) is None:
+        return
+    try:
+        h = (color or "#cccccc").lstrip("#")
+        obj.ViewObject.ShapeColor = tuple(int(h[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+        obj.ViewObject.Transparency = int(transparency)
+    except Exception:
+        pass
+
+
+def hide(obj):
+    if App.GuiUp and getattr(obj, "ViewObject", None) is not None:
+        obj.ViewObject.Visibility = False
+
+
+def fit_to_corner(obj, corner, rotation_deg, local=None):
+    """Ставит BIM-объект так, чтобы угол его габаритов совпал с углом элемента BuildSense.
+
+    У объектов Arch свои соглашения о точке привязки (стена без базовой линии центрирована,
+    балка-Structure центрирована по высоте, пресет окна строится в плоскости XY). Поэтому объект
+    создаётся в начале координат (с локальным поворотом local), после пересчёта читается его
+    фактический габаритный контейнер и вычисляется размещение: угол → corner, поворот вокруг Z."""
+    p0 = App.Placement(App.Vector(0, 0, 0), local or App.Rotation())
+    obj.Placement = p0
+    obj.Document.recompute()
+    bb = obj.Shape.BoundBox
+    shift = App.Placement(App.Vector(-bb.XMin, -bb.YMin, -bb.ZMin), App.Rotation())
+    obj.Placement = App.Placement(corner, rot_z(rotation_deg)).multiply(shift).multiply(p0)
+    obj.Document.recompute()
+    return obj
+
+
+def part_box(doc, name, label, l, w, h, plc):
+    obj = doc.addObject("Part::Box", name)
+    obj.Label = label
+    obj.Length, obj.Width, obj.Height = float(l), float(w), float(h)
+    obj.Placement = plc
+    return obj
+
+
+def part_cylinder(doc, name, label, d, h, plc):
+    obj = doc.addObject("Part::Cylinder", name)
+    obj.Label = label
+    obj.Radius, obj.Height = float(d) / 2.0, float(h)
+    obj.Placement = plc
+    return obj
+
+
+def part_solid(doc, name, label, shape):
+    obj = doc.addObject("Part::Feature", name)
+    obj.Label = label
+    obj.Shape = shape
+    return obj
+
+
+# ---------------------------------------------------------------- проверка файла
+
+def load_export(path):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, dict):
+        raise ValueError("Файл должен содержать JSON-объект")
+    if data.get("format") == "buildsense-project":
+        raise ValueError("Это файл проекта. Для FreeCAD нужен файл экспорта: кнопка «Экспорт в FreeCAD» в BuildSense")
+    if data.get("format") != FORMAT:
+        raise ValueError("Неизвестный формат файла (ожидался {})".format(FORMAT))
+    if int(data.get("schemaVersion", 0)) > SUPPORTED_VERSION:
+        raise ValueError("Версия схемы {} новее поддерживаемой ({})".format(data.get("schemaVersion"), SUPPORTED_VERSION))
+    if data.get("units") != "mm":
+        raise ValueError("Ожидались размеры в миллиметрах (units = mm)")
+    if not isinstance(data.get("elements"), list):
+        raise ValueError("В файле нет списка elements")
+    return data
+
+
+# ---------------------------------------------------------------- построители
+
+class Builder:
+    def __init__(self, doc, mode, report):
+        self.doc = doc
+        self.mode = mode
+        self.report = report
+        self.arch = None
+        if mode == "bim":
+            try:
+                import Arch  # noqa: F401
+                self.arch = Arch
+            except Exception as exc:
+                self.mode = "part"
+                report.fallbacks.append("модуль Arch недоступен ({}) — все элементы построены Part".format(exc))
+        self.walls = {}
+
+    # -- общий механизм: сначала BIM, при ошибке — Part
+    def make(self, el, bim_fn, part_fn):
+        if self.mode == "bim" and bim_fn is not None:
+            try:
+                obj = bim_fn()
+                self.doc.recompute()
+                if hasattr(obj, "Shape") and (obj.Shape.isNull() or not obj.Shape.isValid()):
+                    raise RuntimeError("пустая или невалидная геометрия")
+                self.report.add(el, "bim")
+                return obj, "bim"
+            except Exception as exc:
+                self.report.fallbacks.append("{} ({}): {}".format(el["id"], el["type"], exc))
+                try:
+                    if "obj" in locals() and obj is not None:
+                        self.doc.removeObject(obj.Name)
+                except Exception:
+                    pass
+        obj = part_fn()
+        self.report.add(el, "part")
+        return obj, "part"
+
+    def structure(self, el, ifc, l, w, h, plc_corner):
+        """Arch Structure как брус l × w × h с углом в plc_corner (Structure строится от центра основания)."""
+        A = self.arch
+
+        def bim():
+            s = A.makeStructure(None, length=float(l), width=float(w), height=float(h))
+            s.IfcType = ifc
+            return fit_to_corner(s, plc_corner.Base, plc_corner.Rotation.toEuler()[0])
+        return bim
+
+    # -- стены
+    def wall(self, el):
+        s, p = el["size"], el["placement"]
+        name, label = safe_name(el["id"]), el["name"]
+        A = self.arch
+
+        def bim():
+            w = A.makeWall(None, length=float(s["length"]), width=float(s["thickness"]), height=float(s["height"]))
+            w.Label = label
+            return fit_to_corner(w, vec(p), p.get("rotationZ", 0))
+
+        def part():
+            return part_box(self.doc, name, label, s["length"], s["thickness"], s["height"], placement(p))
+        obj, kind = self.make(el, bim if self.arch else None, part)
+        tag(obj, el, "wall")
+        self.walls[el["id"]] = (obj, kind, el)
+        return obj
+
+    # -- окна и двери
+    def opening(self, el):
+        host = self.walls.get(el["hostId"])
+        if host is None:
+            self.report.errors.append("{}: стена {} не найдена — проём пропущен".format(el["id"], el["hostId"]))
+            return None
+        wall_obj, wall_kind, wall_el = host
+        A = self.arch
+        sz, pos = el["size"], el["position"]
+        t = el["hostThickness"]
+
+        def bim():
+            preset = "Simple door" if el["type"] == "door" else "Open 1-pane"
+            frame = min(50.0, sz["width"] / 6.0)
+            win = A.makeWindowPreset(preset, width=float(sz["width"]), height=float(sz["height"]), h1=frame, h2=frame, h3=frame,
+                                     w1=float(t), w2=40.0, o1=0.0, o2=0.0, placement=App.Placement())
+            if win is None:
+                raise RuntimeError("makeWindowPreset вернул None")
+            # Пресет строится лёжа (в плоскости XY): поворот на 90° вокруг X ставит его вертикально
+            corner = local_point(wall_el["placement"], pos["offset"], 0, pos["elevation"])
+            fit_to_corner(win, corner, wall_el["placement"].get("rotationZ", 0), App.Rotation(App.Vector(1, 0, 0), 90))
+            win.Hosts = [wall_obj]
+            win.Label = el["name"]
+            return win
+
+        def part():
+            v = el["void"]
+            void = part_box(self.doc, safe_name(el["id"]) + "_void", "Вырез " + el["id"], v["size"]["length"], v["size"]["width"], v["size"]["height"], placement(v["placement"]))
+            hide(void)
+            tag(void, el, "opening-void")
+            self._cut_wall(el["hostId"], void)
+            pn = el["panel"]
+            panel = part_box(self.doc, safe_name(el["id"]), el["name"], pn["size"]["length"], pn["size"]["width"], pn["size"]["height"], placement(pn["placement"]))
+            style(panel, "#7fb6e0" if el["type"] == "window" else el.get("color"), 55 if el["type"] == "window" else 0)
+            return panel
+        use_bim = self.arch is not None and wall_kind == "bim"
+        obj, _ = self.make(el, bim if use_bim else None, part)
+        return obj
+
+    def _cut_wall(self, wall_id, tool):
+        obj, kind, el = self.walls[wall_id]
+        if kind == "bim":
+            obj.Subtractions = list(obj.Subtractions) + [tool]
+            return
+        cut = self.doc.addObject("Part::Cut", safe_name(wall_id) + "_cut")
+        cut.Base = obj
+        cut.Tool = tool
+        cut.Label = obj.Label
+        hide(obj)
+        # Предыдущее звено цепочки вырезов — промежуточное: исходный id остаётся только у итогового тела
+        if "BuildSenseId" in obj.PropertiesList:
+            obj.BuildSenseRole = "wall-body"
+            obj.BuildSenseId = el["id"] + ":body"
+        style(cut, el.get("color"))
+        self.walls[wall_id] = (cut, kind, el)
+
+    # -- прочие формы
+    def generic(self, el):
+        t, shape = el["type"], el["shape"]
+        s, p = el["size"], el.get("placement")
+        name, label = safe_name(el["id"]), el["name"]
+        ifc = {"slab_foundation": "Footing", "strip_foundation": "Footing", "pad_foundation": "Footing",
+               "slab": "Slab", "landing": "Slab", "terrace": "Slab", "balcony": "Slab",
+               "column": "Column", "beam": "Beam", "lintel": "Beam"}.get(t)
+        if shape == "box" or (shape in BOX_SHAPES and t in ("balcony",)):
+            bim = self.structure(el, ifc, s["length"], s["width"], s["height"], placement(p)) if (ifc and self.arch) else None
+            obj, _ = self.make(el, bim, lambda: part_box(self.doc, name, label, s["length"], s["width"], s["height"], placement(p)))
+            return obj
+        if shape == "cylinder":
+            obj, _ = self.make(el, None, lambda: part_cylinder(self.doc, name, label, s["diameter"], s["height"], App.Placement(vec(p), App.Rotation())))
+            return obj
+        if shape == "stairs":
+            A = self.arch
+
+            def bim():
+                st = A.makeStairs(length=float(s["length"]), width=float(s["width"]), height=float(s["height"]), steps=int(el["params"].get("steps", 16)))
+                st.Label = label
+                return fit_to_corner(st, vec(p), p.get("rotationZ", 0))
+            obj, _ = self.make(el, bim if self.arch else None, lambda: part_solid(self.doc, name, label, stairs_shape(el)))
+            return obj
+        if shape == "zone":
+            A = self.arch
+            box = part_box(self.doc, name + "_zone", label + " (объём)", s["length"], s["width"], s["height"], placement(p))
+
+            def bim():
+                sp = A.makeSpace([box])
+                sp.Label = label
+                hide(box)
+                return sp
+
+            def part():
+                style(box, "#4cc9f0", 85)
+                return box
+            obj, _ = self.make(el, bim if self.arch else None, part)
+            return obj
+        if shape == "roof":
+            obj, _ = self.make(el, None, lambda: roof_object(self.doc, el))
+            return obj
+        if shape == "pipe":
+            vertical = bool(el["params"].get("vertical"))
+            local = None if vertical else App.Rotation(App.Vector(0, 1, 0), 90)
+            obj, _ = self.make(el, None, lambda: part_cylinder(self.doc, name, label, s["diameter"], s["length"], placement(p, local)))
+            return obj
+        if shape == "truss":
+            obj, _ = self.make(el, None, lambda: part_solid(self.doc, name, label, truss_shape(el)))
+            return obj
+        if shape in BOX_SHAPES:
+            obj, _ = self.make(el, None, lambda: part_box(self.doc, name, label, s["length"], s["width"], s["height"], placement(p)))
+            return obj
+        return None
+
+
+def stairs_shape(el):
+    s, p = el["size"], el["placement"]
+    n = max(1, int(el["params"].get("steps", 1)))
+    run, rise = s["length"] / n, s["height"] / n
+    boxes = [Part.makeBox(run, s["width"], rise * (i + 1), App.Vector(i * run, 0, 0)) for i in range(n)]
+    shape = boxes[0].fuse(boxes[1:]).removeSplitter() if n > 1 else boxes[0]
+    shape.Placement = placement(p)
+    return shape
+
+
+def truss_shape(el):
+    s, p = el["size"], el["placement"]
+    L, b, H = s["length"], s["width"], s["height"]
+    n = max(2, int(el["params"].get("panels", 4)))
+    top = lambda x: H * (1 - abs(2.0 * x / L - 1))  # noqa: E731
+    bars = [((0, 0), (L, 0)), ((0, 0), (L / 2.0, H)), ((L / 2.0, H), (L, 0))]
+    for i in range(1, n):
+        x = i * L / n
+        bars.append(((x, 0), (x, top(x))))
+        xn = (i + (-1 if x < L / 2.0 else 1)) * L / n
+        bars.append(((x, 0), (xn, top(xn))))
+    solids = []
+    for (u0, w0), (u1, w1) in bars:
+        length = math.hypot(u1 - u0, w1 - w0)
+        if length < 1:
+            continue
+        bar = Part.makeBox(length, b, b, App.Vector(0, 0, -b / 2.0))
+        bar.rotate(App.Vector(0, 0, 0), App.Vector(0, -1, 0), math.degrees(math.atan2(w1 - w0, u1 - u0)))
+        bar.translate(App.Vector(u0, 0, w0 + b / 2.0))
+        solids.append(bar)
+    shape = Part.makeCompound(solids)
+    shape.Placement = placement(p)
+    return shape
+
+
+def roof_object(doc, el):
+    """Крыша: плоская — Part::Box, двускатная/односкатная — Part::Wedge, вальмовая — тело Part::Feature."""
+    s, p, prm = el["size"], el["placement"], el["params"]
+    name, label = safe_name(el["id"]), el["name"]
+    L, W, R = float(s["length"]), float(s["width"]), float(s.get("rise", 0))
+    kind = prm.get("roofType", "gable")
+    if kind == "flat":
+        return part_box(doc, name, label, L, W, s.get("thickness", prm.get("thickness", 250)), placement(p))
+    if kind in ("gable", "shed"):
+        # Клин: X — пролёт, Y — высота, Z — длина; поворот 120° вокруг (1,1,1): X→Y, Y→Z, Z→X
+        w = doc.addObject("Part::Wedge", name)
+        w.Label = label
+        w.Xmin, w.Xmax, w.Ymin, w.Ymax, w.Zmin, w.Zmax = 0.0, W, 0.0, R, 0.0, L
+        top = W / 2.0 if kind == "gable" else 0.0
+        w.X2min = w.X2max = top
+        w.Z2min, w.Z2max = 0.0, L
+        w.Placement = placement(p, App.Rotation(App.Vector(1, 1, 1), 120))
+        return w
+    # Вальмовая: многогранник по 6 вершинам
+    swap = W > L
+    a, b = (W, L) if swap else (L, W)
+    r = max(0.0, a - b)
+
+    def P(x, y, z):
+        if swap:
+            x, y = L - y, x
+        return local_point(p, x, y, z)
+    A, B, C, D = P(0, 0, 0), P(a, 0, 0), P(a, b, 0), P(0, b, 0)
+    R1, R2 = P(b / 2.0, b / 2.0, R), P(b / 2.0 + r, b / 2.0, R)
+    faces = [Part.Face(Part.makePolygon(pts + [pts[0]])) for pts in ([A, D, C, B], [A, B, R2, R1], [B, C, R2], [C, D, R1, R2], [D, A, R1])]
+    shell = Part.Shell(faces)
+    return part_solid(doc, name, label, Part.Solid(shell))
+
+
+# ---------------------------------------------------------------- импорт
+
+def import_house(path, mode=None):
+    data = load_export(path)
+    mode = mode or os.environ.get("BUILDSENSE_MODE", "bim")
+    report = Report()
+    doc = App.newDocument("BuildSense")
+    doc.Label = data.get("project", {}).get("name") or "BuildSense"
+    b = Builder(doc, mode, report)
+
+    # Этажи: BuildingPart «Этаж» в режиме BIM, иначе группы
+    levels = {}
+    root = None
+    for lv in data.get("levels", []):
+        grp = None
+        if b.arch is not None:
+            try:
+                grp = b.arch.makeFloor([], name=lv["name"])
+                grp.Placement = App.Placement(App.Vector(0, 0, 0), App.Rotation())
+            except Exception as exc:
+                report.fallbacks.append("этаж {}: {}".format(lv["id"], exc))
+                grp = None
+        if grp is None:
+            grp = doc.addObject("App::DocumentObjectGroup", safe_name("Level_" + lv["id"]))
+            grp.Label = lv["name"]
+        levels[lv["id"]] = grp
+    if b.arch is not None:
+        try:
+            root = b.arch.makeBuilding(list(levels.values()), name=doc.Label)
+        except Exception as exc:
+            report.fallbacks.append("здание: {}".format(exc))
+
+    elements = data["elements"]
+    order = ["wall"]  # стены раньше проёмов
+    built = {}
+    for el in sorted(elements, key=lambda e: 0 if e["type"] == "wall" else 2 if e["shape"] == "opening" else 1):
+        try:
+            if el["type"] not in TYPE_LABELS:
+                report.skipped.append("{} ({})".format(el["id"], el["type"]))
+                continue
+            if el["type"] == "wall":
+                b.wall(el)
+                continue  # итоговое тело стены (после вырезов) раскладывается ниже
+            elif el["shape"] == "opening":
+                obj = b.opening(el)
+            else:
+                obj = b.generic(el)
+            if obj is None:
+                if el["type"] not in ("window", "door"):
+                    report.skipped.append("{} ({})".format(el["id"], el["type"]))
+                continue
+            tag(obj, el, el["type"])
+            if el["shape"] != "opening" or "Window" not in obj.TypeId:
+                style(obj, el.get("color"))
+            built[el["id"]] = obj
+        except Exception as exc:
+            report.errors.append("{} ({}): {}".format(el.get("id"), el.get("type"), exc))
+    del order
+
+    doc.recompute()
+    # Окончательные объекты стен (после вырезов Part::Cut) и раскладка по этажам
+    for wid, (obj, kind, el) in b.walls.items():
+        built[wid] = obj
+        tag(obj, el, "wall")
+        style(obj, el.get("color"))
+    for el in elements:
+        obj = built.get(el["id"])
+        grp = levels.get(el.get("levelId"))
+        if obj is None or grp is None:
+            continue
+        try:
+            if hasattr(grp, "addObject"):
+                grp.addObject(obj)
+        except Exception as exc:
+            report.errors.append("{}: не добавлен в этаж ({})".format(el["id"], exc))
+    doc.recompute()
+    for obj in doc.Objects:
+        if hasattr(obj, "Shape") and obj.TypeId != "App::DocumentObjectGroup" and "Invalid" in obj.State:
+            report.errors.append("{}: объект в состоянии {}".format(obj.Label, obj.State))
+    return doc, report, b.mode
+
+
+# ---------------------------------------------------------------- интерфейс
+
+def qt_widgets():
+    try:
+        from PySide import QtGui
+        if hasattr(QtGui, "QFileDialog"):
+            return QtGui
+    except ImportError:
+        pass
+    import importlib
+    for mod in ("PySide6.QtWidgets", "PySide2.QtWidgets"):
+        try:
+            return importlib.import_module(mod)
+        except ImportError:
+            continue
+    return None
+
+
+def main_window():
+    import FreeCADGui
+    return FreeCADGui.getMainWindow()
+
+
+def choose_json_path():
+    env = os.environ.get("BUILDSENSE_JSON")
+    if env:
+        return env
+    if not App.GuiUp:
+        return None
+    res = qt_widgets().QFileDialog.getOpenFileName(main_window(), "Выберите файл экспорта BuildSense", os.path.expanduser("~"), "BuildSense (*.json);;Все файлы (*)")
+    path = res[0] if isinstance(res, (tuple, list)) else res
+    return path or None
+
+
+def default_fcstd(json_path):
+    base = os.path.splitext(json_path)[0]
+    if base.lower().endswith(".freecad"):
+        base = base[: -len(".freecad")]
+    return base + ".FCStd"
+
+
+def save_document(doc, json_path):
+    out = os.environ.get("BUILDSENSE_OUT")
+    if out:
+        doc.saveAs(out)
+        return out
+    if not App.GuiUp:
+        out = default_fcstd(json_path)
+        doc.saveAs(out)
+        return out
+    res = qt_widgets().QFileDialog.getSaveFileName(main_window(), "Сохранить модель FreeCAD (.FCStd)", default_fcstd(json_path), "FreeCAD (*.FCStd)")
+    path = res[0] if isinstance(res, (tuple, list)) else res
+    if not path:
+        return None
+    if not path.lower().endswith(".fcstd"):
+        path += ".FCStd"
+    doc.saveAs(path)
+    return path
+
+
+def show(title, text, error=False):
+    (App.Console.PrintError if error else App.Console.PrintMessage)(text + "\n")
+    if App.GuiUp:
+        qt = qt_widgets()
+        (qt.QMessageBox.critical if error else qt.QMessageBox.information)(main_window(), title, text)
+
+
+def main():
+    path = choose_json_path()
+    if not path:
+        show("BuildSense", "Файл не выбран. Укажите *.freecad.json или переменную BUILDSENSE_JSON.", error=not App.GuiUp)
+        return None
+    try:
+        doc, report, mode = import_house(path)
+    except Exception as exc:
+        show("BuildSense — ошибка импорта", "Не удалось импортировать {}:\n{}".format(path, exc), error=True)
+        return None
+    if App.GuiUp:
+        import FreeCADGui
+        FreeCADGui.activeDocument().activeView().viewIsometric()
+        FreeCADGui.SendMsgToActiveView("ViewFit")
+    text = report.text(mode)
+    saved = save_document(doc, path)
+    text += "\nМодель сохранена: {}".format(saved) if saved else "\nМодель не сохранена — Файл → Сохранить как… (.FCStd)."
+    show("BuildSense — импорт завершён", text, error=bool(report.errors) and not App.GuiUp and False)
+    return doc
+
+
+main()

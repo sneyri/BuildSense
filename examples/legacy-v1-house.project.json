@@ -1,0 +1,288 @@
+{
+  "format": "freecad-checker-project",
+  "version": 1,
+  "name": "Демо-дом 10×8",
+  "units": "m",
+  "createdAt": "2026-10-26T12:00:00.000Z",
+  "updatedAt": "2026-10-26T12:00:00.000Z",
+  "settings": {
+    "climateRegion": "2V",
+    "housingFund": "private"
+  },
+  "house": {
+    "length": 10,
+    "width": 8,
+    "wallHeight": 2.8,
+    "wallThickness": 0.4,
+    "floorThickness": 0.2,
+    "foundationThickness": 0.4,
+    "roofType": "gable",
+    "roofSlope": 30,
+    "roofOverhang": 0.4,
+    "roofThickness": 0.25
+  },
+  "elements": [
+    {
+      "id": "foundation-1",
+      "type": "foundation",
+      "name": "Фундаментная плита",
+      "category": "slab",
+      "material": "concrete",
+      "shell": "foundation",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": -0.4
+      },
+      "rotation": 0,
+      "size": {
+        "length": 10,
+        "width": 8,
+        "thickness": 0.4
+      },
+      "params": {}
+    },
+    {
+      "id": "wall-1",
+      "type": "wall",
+      "name": "Наружная стена — юг",
+      "category": "exterior",
+      "material": "brick",
+      "shell": "south",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": 0,
+      "size": {
+        "length": 10,
+        "thickness": 0.4,
+        "height": 2.8
+      },
+      "params": {}
+    },
+    {
+      "id": "wall-2",
+      "type": "wall",
+      "name": "Наружная стена — восток",
+      "category": "exterior",
+      "material": "brick",
+      "shell": "east",
+      "position": {
+        "x": 10,
+        "y": 0.4,
+        "z": 0
+      },
+      "rotation": 90,
+      "size": {
+        "length": 7.2,
+        "thickness": 0.4,
+        "height": 2.8
+      },
+      "params": {}
+    },
+    {
+      "id": "wall-3",
+      "type": "wall",
+      "name": "Наружная стена — север",
+      "category": "exterior",
+      "material": "brick",
+      "shell": "north",
+      "position": {
+        "x": 10,
+        "y": 8,
+        "z": 0
+      },
+      "rotation": 180,
+      "size": {
+        "length": 10,
+        "thickness": 0.4,
+        "height": 2.8
+      },
+      "params": {}
+    },
+    {
+      "id": "wall-4",
+      "type": "wall",
+      "name": "Наружная стена — запад",
+      "category": "exterior",
+      "material": "brick",
+      "shell": "west",
+      "position": {
+        "x": 0,
+        "y": 7.6,
+        "z": 0
+      },
+      "rotation": 270,
+      "size": {
+        "length": 7.2,
+        "thickness": 0.4,
+        "height": 2.8
+      },
+      "params": {}
+    },
+    {
+      "id": "floor-1",
+      "type": "floor",
+      "name": "Пол первого этажа",
+      "category": "ground",
+      "material": "concrete",
+      "shell": "floor",
+      "position": {
+        "x": 0.4,
+        "y": 0.4,
+        "z": 0
+      },
+      "rotation": 0,
+      "size": {
+        "length": 9.2,
+        "width": 7.2,
+        "thickness": 0.2
+      },
+      "params": {}
+    },
+    {
+      "id": "roof-1",
+      "type": "roof",
+      "name": "Крыша",
+      "category": "main",
+      "material": "metal_tile",
+      "shell": "roof",
+      "position": {
+        "x": -0.4,
+        "y": -0.4,
+        "z": 2.8
+      },
+      "rotation": 0,
+      "size": {
+        "length": 10.8,
+        "width": 8.8
+      },
+      "params": {
+        "roofType": "gable",
+        "slope": 30,
+        "thickness": 0.25
+      }
+    },
+    {
+      "id": "door-1",
+      "type": "door",
+      "name": "Дверь 1",
+      "category": "entrance",
+      "material": "wood_door",
+      "hostId": "wall-1",
+      "position": {
+        "offset": 4.55,
+        "elevation": 0
+      },
+      "size": {
+        "width": 0.9,
+        "height": 2.1
+      },
+      "params": {}
+    },
+    {
+      "id": "window-1",
+      "type": "window",
+      "name": "Окно 1",
+      "category": "exterior",
+      "material": "pvc_window",
+      "hostId": "wall-1",
+      "position": {
+        "offset": 1.5,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 1.5,
+        "height": 1.4
+      },
+      "params": {}
+    },
+    {
+      "id": "window-2",
+      "type": "window",
+      "name": "Окно 2",
+      "category": "exterior",
+      "material": "pvc_window",
+      "hostId": "wall-1",
+      "position": {
+        "offset": 7,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 1.5,
+        "height": 1.4
+      },
+      "params": {}
+    },
+    {
+      "id": "window-3",
+      "type": "window",
+      "name": "Окно 3",
+      "category": "exterior",
+      "material": "pvc_window",
+      "hostId": "wall-3",
+      "position": {
+        "offset": 2,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 1.5,
+        "height": 1.4
+      },
+      "params": {}
+    },
+    {
+      "id": "window-4",
+      "type": "window",
+      "name": "Окно 4",
+      "category": "exterior",
+      "material": "pvc_window",
+      "hostId": "wall-3",
+      "position": {
+        "offset": 6.5,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 1.5,
+        "height": 1.4
+      },
+      "params": {}
+    },
+    {
+      "id": "window-5",
+      "type": "window",
+      "name": "Окно 5",
+      "category": "exterior",
+      "material": "pvc_window",
+      "hostId": "wall-2",
+      "position": {
+        "offset": 2.85,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 1.5,
+        "height": 1.4
+      },
+      "params": {}
+    },
+    {
+      "id": "window-6",
+      "type": "window",
+      "name": "Окно 6",
+      "category": "exterior",
+      "material": "pvc_window",
+      "hostId": "wall-4",
+      "position": {
+        "offset": 2.85,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 1.5,
+        "height": 1.4
+      },
+      "params": {}
+    }
+  ]
+}

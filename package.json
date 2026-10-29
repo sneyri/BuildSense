@@ -1,0 +1,13 @@
+{
+  "name": "buildsense",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BuildSense — учебный визуальный редактор дома с проверками конструкции, демонстрационной симуляцией и экспортом в FreeCAD. Для работы не нужен: package.json используется только для запуска автотестов.",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "build:rules": "node tools/build-rules.js",
+    "build:examples": "node tools/make-examples.js",
+    "build:macro": "node tools/build-macro.js"
+  }
+}
