@@ -28,8 +28,11 @@ for (const key of KEYS) {
   });
 }
 
-test("башня: ошибки только из-за области применения СП 55 (до 3 этажей и 20 м)", () => {
+test("башня: СП 55 вне области применения (до 3 этажей и 20 м) — не ошибка, остальные его пункты не дают PASS", () => {
   const p = BS.projectIO.fromData(plain(BS.examples.tower)).project;
-  const errs = BS.validation.validate(p).issues.filter((i) => i.severity === "error");
-  assert.ok(errs.length > 0 && errs.every((i) => i.id.startsWith("NORM-SP55-1.1")));
+  const r = BS.validation.validate(p);
+  assert.equal(r.issues.filter((i) => i.severity === "error").length, 0);
+  assert.equal(r.norms.results.find((n) => n.ruleId === "SP55-1.1-STOREYS").status, "OUT OF SCOPE");
+  assert.ok(!r.norms.results.some((n) => /^SP55-(6|9)/.test(n.ruleId)), "пункты 6.x и 9.x не проверяются");
+  assert.ok(r.notApplicable.some((n) => n.checkId === "NORM-SP55-6.2-HEIGHT-OTHER"));
 });

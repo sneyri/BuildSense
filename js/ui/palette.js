@@ -2,7 +2,7 @@
 (function (BS) {
   "use strict";
   const { el, iconButton } = BS.dom;
-  const OPEN_BY_DEFAULT = new Set(["foundation", "structure", "roof"]);
+  const OPEN_BY_DEFAULT = new Set(["foundation", "structure", "modules", "roof"]);
   const opened = new Set(OPEN_BY_DEFAULT);
 
   /**
@@ -41,9 +41,17 @@
       if (actions.length) det.append(el("div", { class: "actions" }, actions));
       return det;
     });
+    const modOpen = opened.has("modules");
+    const mod = el("details", { open: modOpen, ontoggle: () => (mod.open ? opened.add("modules") : opened.delete("modules")) },
+      el("summary", {}, "Модульные узлы (ГОСТ)"),
+      el("div", { class: "grid" }, BS.modules.NODES.map((n) => iconButton(n.icon, n.label, () => handlers.onNode(n.id), {
+        title: `${n.label}: ${n.standard} «${n.standardTitle}». Строится как «${BS.types.label(n.base)}». ${BS.modules.NOT_VERIFIED}`,
+        class: state.activeNode === n.id ? "active" : null,
+      }))),
+      el("p", { class: "note" }, `Планируются: ${BS.modules.PLANNED.map((p) => `${p.label.toLowerCase()} (${p.standard})`).join(", ")}.`));
     paletteNode.replaceChildren(
       el("p", { class: "note" }, "Удобнее начать с плана: нарисуйте контур дома, затем «Фундамент», «Стены», «Перекрытие», «Крыша». Отдельные объекты ниже строятся мышью в 3D-сцене."),
-      ...nodes
+      ...nodes.slice(0, 2), mod, ...nodes.slice(2)
     );
   }
 

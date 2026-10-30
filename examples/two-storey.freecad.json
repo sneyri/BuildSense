@@ -8,7 +8,11 @@
   "project": {
     "name": "Двухэтажный дом",
     "climateRegion": "2V",
-    "housingFund": "private"
+    "housingFund": "private",
+    "bim": {
+      "object": "ЖК01",
+      "section": "С1"
+    }
   },
   "plan": {
     "contours": [
@@ -75,6 +79,7 @@
   "elements": [
     {
       "id": "slab_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФПЛ-001",
       "type": "slab_foundation",
       "typeLabel": "Плитный фундамент",
       "shape": "box",
@@ -90,6 +95,7 @@
         "contourId": "C1",
         "generatedBy": "contour-foundation"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -110,6 +116,7 @@
     },
     {
       "id": "wall-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-001",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -127,6 +134,7 @@
         "edgeFrom": "p1",
         "edgeStart": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -152,6 +160,7 @@
     },
     {
       "id": "wall-2",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-002",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -169,6 +178,7 @@
         "edgeFrom": "p2",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -193,6 +203,7 @@
     },
     {
       "id": "wall-3",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-003",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -210,6 +221,7 @@
         "edgeFrom": "p3",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -235,6 +247,7 @@
     },
     {
       "id": "wall-4",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-004",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -252,6 +265,7 @@
         "edgeFrom": "p4",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -276,6 +290,7 @@
     },
     {
       "id": "slab-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПЛТ-001",
       "type": "slab",
       "typeLabel": "Перекрытие / пол",
       "shape": "box",
@@ -291,6 +306,7 @@
         "contourId": "C1",
         "generatedBy": "contour-slab"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -313,6 +329,7 @@
     },
     {
       "id": "wall-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРГ-001",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -325,6 +342,7 @@
       "color": "#d8d2c4",
       "density": 500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -348,6 +366,7 @@
     },
     {
       "id": "door-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-001",
       "type": "door",
       "typeLabel": "Дверь",
       "shape": "opening",
@@ -360,6 +379,7 @@
       "color": "#7a4a24",
       "density": 600,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -412,6 +432,7 @@
     },
     {
       "id": "window-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-001",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -424,6 +445,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -476,6 +498,7 @@
     },
     {
       "id": "window-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-002",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -488,6 +511,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -540,6 +564,7 @@
     },
     {
       "id": "window-3",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-003",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -552,6 +577,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -604,6 +630,7 @@
     },
     {
       "id": "window-4",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-004",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -616,6 +643,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-2",
         "hosted": [],
@@ -668,6 +696,7 @@
     },
     {
       "id": "window-5",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-005",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -680,6 +709,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-4",
         "hosted": [],
@@ -732,6 +762,7 @@
     },
     {
       "id": "door-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-002",
       "type": "door",
       "typeLabel": "Дверь",
       "shape": "opening",
@@ -744,6 +775,7 @@
       "color": "#7a4a24",
       "density": 600,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-5",
         "hosted": [],
@@ -796,6 +828,7 @@
     },
     {
       "id": "roof-1",
+      "bimCode": "ЖК01-С1-Э02-КР-КРШ-001",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -816,6 +849,7 @@
         "generatedBy": "contour-roof",
         "part": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -842,6 +876,7 @@
     },
     {
       "id": "room-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-001",
       "type": "room",
       "typeLabel": "Комната (зона)",
       "shape": "zone",
@@ -857,6 +892,7 @@
         "roomName": "Гостиная",
         "roomType": "common"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -876,6 +912,7 @@
     },
     {
       "id": "room-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-002",
       "type": "room",
       "typeLabel": "Комната (зона)",
       "shape": "zone",
@@ -891,6 +928,7 @@
         "roomName": "Спальня",
         "roomType": "bedroom"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -910,6 +948,7 @@
     },
     {
       "id": "stairs-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ЛМ-001",
       "type": "stairs",
       "typeLabel": "Лестница",
       "shape": "stairs",
@@ -924,6 +963,7 @@
       "params": {
         "steps": 16
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -945,6 +985,7 @@
     },
     {
       "id": "slab-2",
+      "bimCode": "ЖК01-С1-Э02-КР-ПЛТ-002",
       "type": "slab",
       "typeLabel": "Перекрытие / пол",
       "shape": "box",
@@ -960,6 +1001,7 @@
         "contourId": "C1",
         "generatedBy": "contour-floor"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -986,6 +1028,7 @@
     },
     {
       "id": "lintel-13",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-001",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1000,6 +1043,7 @@
       "params": {
         "hostWallId": "wall-1"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -1021,6 +1065,7 @@
     },
     {
       "id": "lintel-14",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-002",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1035,6 +1080,7 @@
       "params": {
         "hostWallId": "wall-1"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -1056,6 +1102,7 @@
     },
     {
       "id": "lintel-15",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-003",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1070,6 +1117,7 @@
       "params": {
         "hostWallId": "wall-2"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-2",
         "hosted": [],
@@ -1091,6 +1139,7 @@
     },
     {
       "id": "lintel-16",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-004",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1105,6 +1154,7 @@
       "params": {
         "hostWallId": "wall-3"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -1126,6 +1176,7 @@
     },
     {
       "id": "lintel-17",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-005",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1140,6 +1191,7 @@
       "params": {
         "hostWallId": "wall-3"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -1161,6 +1213,7 @@
     },
     {
       "id": "lintel-18",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-006",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1175,6 +1228,7 @@
       "params": {
         "hostWallId": "wall-4"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-4",
         "hosted": [],
@@ -1196,6 +1250,7 @@
     },
     {
       "id": "wall-6",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-005",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -1213,6 +1268,7 @@
         "edgeFrom": "p1",
         "edgeStart": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -1237,6 +1293,7 @@
     },
     {
       "id": "window-6",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-006",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -1249,6 +1306,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-6",
         "hosted": [],
@@ -1301,6 +1359,7 @@
     },
     {
       "id": "wall-7",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-006",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -1318,6 +1377,7 @@
         "edgeFrom": "p2",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -1342,6 +1402,7 @@
     },
     {
       "id": "window-7",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-007",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -1354,6 +1415,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-7",
         "hosted": [],
@@ -1406,6 +1468,7 @@
     },
     {
       "id": "wall-8",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-007",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -1423,6 +1486,7 @@
         "edgeFrom": "p3",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -1448,6 +1512,7 @@
     },
     {
       "id": "window-8",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-008",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -1460,6 +1525,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-8",
         "hosted": [],
@@ -1512,6 +1578,7 @@
     },
     {
       "id": "window-9",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-009",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -1524,6 +1591,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-8",
         "hosted": [],
@@ -1576,6 +1644,7 @@
     },
     {
       "id": "wall-9",
+      "bimCode": "ЖК01-С1-Э02-КР-СТН-008",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -1593,6 +1662,7 @@
         "edgeFrom": "p4",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -1617,6 +1687,7 @@
     },
     {
       "id": "window-10",
+      "bimCode": "ЖК01-С1-Э02-АР-ОК-010",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -1629,6 +1700,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-9",
         "hosted": [],
@@ -1681,6 +1753,7 @@
     },
     {
       "id": "wall-10",
+      "bimCode": "ЖК01-С1-Э02-КР-ПРГ-002",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -1693,6 +1766,7 @@
       "color": "#d8d2c4",
       "density": 500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -1716,6 +1790,7 @@
     },
     {
       "id": "door-3",
+      "bimCode": "ЖК01-С1-Э02-АР-ДВ-003",
       "type": "door",
       "typeLabel": "Дверь",
       "shape": "opening",
@@ -1728,6 +1803,7 @@
       "color": "#7a4a24",
       "density": 600,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-10",
         "hosted": [],
@@ -1780,6 +1856,7 @@
     },
     {
       "id": "lintel-19",
+      "bimCode": "ЖК01-С1-Э02-КР-ПРМ-007",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1794,6 +1871,7 @@
       "params": {
         "hostWallId": "wall-6"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-6",
         "hosted": [],
@@ -1815,6 +1893,7 @@
     },
     {
       "id": "lintel-20",
+      "bimCode": "ЖК01-С1-Э02-КР-ПРМ-008",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1829,6 +1908,7 @@
       "params": {
         "hostWallId": "wall-7"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-7",
         "hosted": [],
@@ -1850,6 +1930,7 @@
     },
     {
       "id": "lintel-21",
+      "bimCode": "ЖК01-С1-Э02-КР-ПРМ-009",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1864,6 +1945,7 @@
       "params": {
         "hostWallId": "wall-8"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-8",
         "hosted": [],
@@ -1885,6 +1967,7 @@
     },
     {
       "id": "lintel-22",
+      "bimCode": "ЖК01-С1-Э02-КР-ПРМ-010",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1899,6 +1982,7 @@
       "params": {
         "hostWallId": "wall-8"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-8",
         "hosted": [],
@@ -1920,6 +2004,7 @@
     },
     {
       "id": "lintel-23",
+      "bimCode": "ЖК01-С1-Э02-КР-ПРМ-011",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1934,6 +2019,7 @@
       "params": {
         "hostWallId": "wall-9"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-9",
         "hosted": [],
@@ -1955,6 +2041,7 @@
     },
     {
       "id": "chimney-1",
+      "bimCode": "ЖК01-С1-Э02-АР-ДМХ-001",
       "type": "chimney",
       "typeLabel": "Дымоход",
       "shape": "box",
@@ -1967,6 +2054,7 @@
       "color": "#b4643c",
       "density": 1800,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1988,6 +2076,7 @@
     },
     {
       "id": "terrace-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ТРС-001",
       "type": "terrace",
       "typeLabel": "Терраса",
       "shape": "box",
@@ -2000,6 +2089,7 @@
       "color": "#c49a6c",
       "density": 500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -2019,5 +2109,23 @@
         "height": 150
       }
     }
-  ]
+  ],
+  "envelope": {
+    "wallGross": 192.64,
+    "windows": 21,
+    "doors": 1.89,
+    "wallNet": 169.75,
+    "glazingFacade": 0.109,
+    "roof": 109.74,
+    "footprint": 80,
+    "height": 5.8,
+    "volume": 464,
+    "envelope": 352.64,
+    "compactness": 0.76,
+    "counts": {
+      "walls": 8,
+      "windows": 10,
+      "doors": 1
+    }
+  }
 }

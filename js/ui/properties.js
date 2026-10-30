@@ -24,7 +24,9 @@
     if (!e) return BS.dom.fill(root, summary(project, state.validation));
     const t = BS.types.get(e.type);
     const parts = [];
-    parts.push(el("h3", {}, t.label), readonly("Идентификатор", e.id));
+    parts.push(el("h3", {}, t.label), readonly("Идентификатор", e.id), readonly("BIM-код", BS.bimCode.code(project, e)));
+    const node = BS.modules.ofElement(e);
+    if (node) parts.push(readonly("Модульный узел", node.label), readonly("Стандарт на изделие", node.standard), el("p", { class: "note" }, BS.modules.NOT_VERIFIED));
     parts.push(textField({ label: "Название", value: e.name, onChange: (v) => h.onChange(e.id, { name: v || e.id }) }));
     if (t.categories) {
       parts.push(selectField({ label: "Категория", info: `${e.type}.category`, value: e.category, options: Object.entries(t.categories).map(([value, label]) => ({ value, label })), onChange: (v) => h.onChange(e.id, { category: v }) }));
@@ -157,6 +159,7 @@
       el("p", { class: "note" }, "Объект не выбран. Щёлкните элемент в 3D-сцене или в дереве."),
       ...Object.entries(BS.types.GROUPS).filter(([g, d]) => !d.hidden || count(g)).map(([g, d]) => readonly(d.label, count(g))),
       readonly("Этажей", project.levels.length),
+      envelopeBox(project),
       el("hr", { class: "sep" }),
       el("h3", {}, "Как читать проверки"),
       el("div", { class: "legend-box" },
@@ -164,6 +167,21 @@
         el("p", {}, el("b", {}, "Потенциальная конструктивная проблема"), " — эвристика: «элемент не опирается», «большой пролёт», «тонкая стена». Алгоритм не доказывает разрушение — требуется инженерная проверка."),
         el("p", {}, el("b", {}, "Нормы и правила"), " — пункты документов (статус «сверено») и ваши учебные ограничения. Непроверенные значения показываются как информация.")),
       validation ? readonly("Итог проверок", `ошибки ${validation.summary.error} · предупр. ${validation.summary.warning} · инфо ${validation.summary.info}`) : null);
+  }
+
+  function envelopeBox(project) {
+    const env = BS.envelope.compute(project);
+    if (!env) return null;
+    return el("div", {},
+      el("hr", { class: "sep" }),
+      el("h3", {}, "Оболочка здания"),
+      el("p", { class: "note" }, "Исходные данные для теплотехнического расчёта по СП 50.13330 (по размерам модели; сам расчёт не выполняется)."),
+      readonly("Наружные стены", `${fmt(env.wallGross, 1)} м² (без проёмов ${fmt(env.wallNet, 1)} м²)`),
+      readonly("Окна / двери", `${fmt(env.windows, 1)} / ${fmt(env.doors, 1)} м²`),
+      readonly("Доля остекления фасадов", `${fmt(env.glazingFacade * 100, 1)} %`),
+      readonly("Покрытие (крыша)", `${fmt(env.roof, 1)} м²`),
+      readonly("Объём (пятно × высота)", `${fmt(env.volume, 0)} м³`),
+      readonly("Компактность A/V", env.compactness === null ? "—" : `${fmt(env.compactness, 2)} 1/м`));
   }
 
   BS.ui = BS.ui || {};

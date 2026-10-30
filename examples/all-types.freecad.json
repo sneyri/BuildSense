@@ -8,7 +8,11 @@
   "project": {
     "name": "Все типы объектов",
     "climateRegion": "2V",
-    "housingFund": "private"
+    "housingFund": "private",
+    "bim": {
+      "object": "ЖК01",
+      "section": "С1"
+    }
   },
   "plan": {
     "contours": [
@@ -47,6 +51,7 @@
   "elements": [
     {
       "id": "slab_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФПЛ-001",
       "type": "slab_foundation",
       "typeLabel": "Плитный фундамент",
       "shape": "box",
@@ -62,6 +67,7 @@
         "contourId": "C1",
         "generatedBy": "contour-foundation"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -82,6 +88,7 @@
     },
     {
       "id": "wall-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-001",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -99,6 +106,7 @@
         "edgeFrom": "p1",
         "edgeStart": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -124,6 +132,7 @@
     },
     {
       "id": "wall-2",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-002",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -141,6 +150,7 @@
         "edgeFrom": "p2",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -165,6 +175,7 @@
     },
     {
       "id": "wall-3",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-003",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -182,6 +193,7 @@
         "edgeFrom": "p3",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -207,6 +219,7 @@
     },
     {
       "id": "wall-4",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-004",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -224,6 +237,7 @@
         "edgeFrom": "p4",
         "edgeStart": 0.4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -248,6 +262,7 @@
     },
     {
       "id": "slab-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПЛТ-001",
       "type": "slab",
       "typeLabel": "Перекрытие / пол",
       "shape": "box",
@@ -263,6 +278,7 @@
         "contourId": "C1",
         "generatedBy": "contour-slab"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -285,6 +301,7 @@
     },
     {
       "id": "wall-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРГ-001",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -297,6 +314,7 @@
       "color": "#d8d2c4",
       "density": 500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [
@@ -320,6 +338,7 @@
     },
     {
       "id": "door-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-001",
       "type": "door",
       "typeLabel": "Дверь",
       "shape": "opening",
@@ -332,6 +351,7 @@
       "color": "#7a4a24",
       "density": 600,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -384,6 +404,7 @@
     },
     {
       "id": "window-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-001",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -396,6 +417,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -448,6 +470,7 @@
     },
     {
       "id": "window-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-002",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -460,6 +483,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -512,6 +536,7 @@
     },
     {
       "id": "window-3",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-003",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -524,6 +549,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -576,6 +602,7 @@
     },
     {
       "id": "window-4",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-004",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -588,6 +615,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-2",
         "hosted": [],
@@ -640,6 +668,7 @@
     },
     {
       "id": "window-5",
+      "bimCode": "ЖК01-С1-Э01-АР-ОК-005",
       "type": "window",
       "typeLabel": "Окно",
       "shape": "opening",
@@ -652,6 +681,7 @@
       "color": "#f2f4f5",
       "density": 1400,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-4",
         "hosted": [],
@@ -704,6 +734,7 @@
     },
     {
       "id": "door-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ДВ-002",
       "type": "door",
       "typeLabel": "Дверь",
       "shape": "opening",
@@ -716,6 +747,7 @@
       "color": "#7a4a24",
       "density": 600,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": "wall-5",
         "hosted": [],
@@ -768,6 +800,7 @@
     },
     {
       "id": "roof-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-001",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -788,6 +821,7 @@
         "generatedBy": "contour-roof",
         "part": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -814,6 +848,7 @@
     },
     {
       "id": "lintel-7",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-001",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -828,6 +863,7 @@
       "params": {
         "hostWallId": "wall-1"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -849,6 +885,7 @@
     },
     {
       "id": "lintel-8",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-002",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -863,6 +900,7 @@
       "params": {
         "hostWallId": "wall-1"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-1",
         "hosted": [],
@@ -884,6 +922,7 @@
     },
     {
       "id": "lintel-9",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-003",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -898,6 +937,7 @@
       "params": {
         "hostWallId": "wall-2"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-2",
         "hosted": [],
@@ -919,6 +959,7 @@
     },
     {
       "id": "lintel-10",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-004",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -933,6 +974,7 @@
       "params": {
         "hostWallId": "wall-3"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -954,6 +996,7 @@
     },
     {
       "id": "lintel-11",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-005",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -968,6 +1011,7 @@
       "params": {
         "hostWallId": "wall-3"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-3",
         "hosted": [],
@@ -989,6 +1033,7 @@
     },
     {
       "id": "lintel-12",
+      "bimCode": "ЖК01-С1-Э01-КР-ПРМ-006",
       "type": "lintel",
       "typeLabel": "Перемычка",
       "shape": "box",
@@ -1003,6 +1048,7 @@
       "params": {
         "hostWallId": "wall-4"
       },
+      "node": null,
       "relations": {
         "hostId": "wall-4",
         "hosted": [],
@@ -1024,6 +1070,7 @@
     },
     {
       "id": "room-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-001",
       "type": "room",
       "typeLabel": "Комната (зона)",
       "shape": "zone",
@@ -1039,6 +1086,7 @@
         "roomName": "Гостиная",
         "roomType": "common"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1058,6 +1106,7 @@
     },
     {
       "id": "room-2",
+      "bimCode": "ЖК01-С1-Э01-АР-ПМЩ-002",
       "type": "room",
       "typeLabel": "Комната (зона)",
       "shape": "zone",
@@ -1073,6 +1122,7 @@
         "roomName": "Спальня",
         "roomType": "bedroom"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1092,6 +1142,7 @@
     },
     {
       "id": "strip_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-001",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -1104,6 +1155,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1123,6 +1175,7 @@
     },
     {
       "id": "pad_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФСТ-001",
       "type": "pad_foundation",
       "typeLabel": "Столбчатая опора",
       "shape": "box",
@@ -1135,6 +1188,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1154,6 +1208,7 @@
     },
     {
       "id": "round_pad-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФКР-001",
       "type": "round_pad",
       "typeLabel": "Круглая опора",
       "shape": "cylinder",
@@ -1166,6 +1221,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1184,6 +1240,7 @@
     },
     {
       "id": "pile-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СВ-001",
       "type": "pile",
       "typeLabel": "Свая",
       "shape": "cylinder",
@@ -1196,6 +1253,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1214,6 +1272,7 @@
     },
     {
       "id": "column-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КЛН-001",
       "type": "column",
       "typeLabel": "Колонна",
       "shape": "box",
@@ -1226,6 +1285,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1245,6 +1305,7 @@
     },
     {
       "id": "round_column-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КЛН-002",
       "type": "round_column",
       "typeLabel": "Круглая колонна",
       "shape": "cylinder",
@@ -1257,6 +1318,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1275,6 +1337,7 @@
     },
     {
       "id": "beam-1",
+      "bimCode": "ЖК01-С1-Э01-КР-БЛК-001",
       "type": "beam",
       "typeLabel": "Балка",
       "shape": "box",
@@ -1287,6 +1350,7 @@
       "color": "#c49a6c",
       "density": 500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1306,6 +1370,7 @@
     },
     {
       "id": "truss-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФРМ-001",
       "type": "truss",
       "typeLabel": "Ферма",
       "shape": "truss",
@@ -1320,6 +1385,7 @@
       "params": {
         "panels": 4
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1339,6 +1405,7 @@
     },
     {
       "id": "stairs-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ЛМ-001",
       "type": "stairs",
       "typeLabel": "Лестница",
       "shape": "stairs",
@@ -1353,6 +1420,7 @@
       "params": {
         "steps": 17
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1372,6 +1440,7 @@
     },
     {
       "id": "landing-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ЛП-001",
       "type": "landing",
       "typeLabel": "Площадка",
       "shape": "box",
@@ -1384,6 +1453,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1403,6 +1473,7 @@
     },
     {
       "id": "balcony-1",
+      "bimCode": "ЖК01-С1-Э01-АР-БЛН-001",
       "type": "balcony",
       "typeLabel": "Балкон",
       "shape": "balcony",
@@ -1415,6 +1486,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1434,6 +1506,7 @@
     },
     {
       "id": "terrace-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ТРС-001",
       "type": "terrace",
       "typeLabel": "Терраса",
       "shape": "box",
@@ -1446,6 +1519,7 @@
       "color": "#c49a6c",
       "density": 500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1465,6 +1539,7 @@
     },
     {
       "id": "railing-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ОГР-001",
       "type": "railing",
       "typeLabel": "Перила",
       "shape": "railing",
@@ -1477,6 +1552,7 @@
       "color": "#7d8791",
       "density": 7850,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1496,6 +1572,7 @@
     },
     {
       "id": "chimney-1",
+      "bimCode": "ЖК01-С1-Э01-АР-ДМХ-001",
       "type": "chimney",
       "typeLabel": "Дымоход",
       "shape": "box",
@@ -1508,6 +1585,7 @@
       "color": "#b4643c",
       "density": 1800,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1527,6 +1605,7 @@
     },
     {
       "id": "decor-1",
+      "bimCode": "ЖК01-С1-Э01-АР-КРН-001",
       "type": "decor",
       "typeLabel": "Декор (карниз)",
       "shape": "box",
@@ -1539,6 +1618,7 @@
       "color": "#9ea3a8",
       "density": 2500,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1558,6 +1638,7 @@
     },
     {
       "id": "pipe-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-ТРБ-001",
       "type": "pipe",
       "typeLabel": "Труба",
       "shape": "pipe",
@@ -1572,6 +1653,7 @@
       "params": {
         "vertical": false
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1590,6 +1672,7 @@
     },
     {
       "id": "toilet-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-УНТ-001",
       "type": "toilet",
       "typeLabel": "Унитаз",
       "shape": "fixture",
@@ -1602,6 +1685,7 @@
       "color": "#f5f6f7",
       "density": 2300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1621,6 +1705,7 @@
     },
     {
       "id": "sink-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-РКВ-001",
       "type": "sink",
       "typeLabel": "Раковина",
       "shape": "fixture",
@@ -1633,6 +1718,7 @@
       "color": "#f5f6f7",
       "density": 2300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1652,6 +1738,7 @@
     },
     {
       "id": "bathtub-1",
+      "bimCode": "ЖК01-С1-Э01-ВК-ЭЛМ-001",
       "type": "bathtub",
       "typeLabel": "Ванна",
       "shape": "fixture",
@@ -1664,6 +1751,7 @@
       "color": "#f5f6f7",
       "density": 2300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1683,6 +1771,7 @@
     },
     {
       "id": "light-1",
+      "bimCode": "ЖК01-С1-Э01-ЭО-СВТ-001",
       "type": "light",
       "typeLabel": "Светильник",
       "shape": "fixture",
@@ -1695,6 +1784,7 @@
       "color": "#e9ecef",
       "density": 1200,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1714,6 +1804,7 @@
     },
     {
       "id": "socket-1",
+      "bimCode": "ЖК01-С1-Э01-ЭО-РЗТ-001",
       "type": "socket",
       "typeLabel": "Розетка",
       "shape": "fixture",
@@ -1726,6 +1817,7 @@
       "color": "#e9ecef",
       "density": 1200,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1745,6 +1837,7 @@
     },
     {
       "id": "switch-1",
+      "bimCode": "ЖК01-С1-Э01-ЭО-ВКЛ-001",
       "type": "switch",
       "typeLabel": "Выключатель",
       "shape": "fixture",
@@ -1757,6 +1850,7 @@
       "color": "#e9ecef",
       "density": 1200,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1776,6 +1870,7 @@
     },
     {
       "id": "bed-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-001",
       "type": "bed",
       "typeLabel": "Кровать",
       "shape": "fixture",
@@ -1788,6 +1883,7 @@
       "color": "#6d7fa3",
       "density": 300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1807,6 +1903,7 @@
     },
     {
       "id": "table-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-002",
       "type": "table",
       "typeLabel": "Стол",
       "shape": "fixture",
@@ -1819,6 +1916,7 @@
       "color": "#6d7fa3",
       "density": 300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1838,6 +1936,7 @@
     },
     {
       "id": "chair-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-003",
       "type": "chair",
       "typeLabel": "Стул",
       "shape": "fixture",
@@ -1850,6 +1949,7 @@
       "color": "#6d7fa3",
       "density": 300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1869,6 +1969,7 @@
     },
     {
       "id": "sofa-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-004",
       "type": "sofa",
       "typeLabel": "Диван",
       "shape": "fixture",
@@ -1881,6 +1982,7 @@
       "color": "#6d7fa3",
       "density": 300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1900,6 +2002,7 @@
     },
     {
       "id": "wardrobe-1",
+      "bimCode": "ЖК01-С1-Э01-АР-МБЛ-005",
       "type": "wardrobe",
       "typeLabel": "Шкаф",
       "shape": "fixture",
@@ -1912,6 +2015,7 @@
       "color": "#6d7fa3",
       "density": 300,
       "params": {},
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1931,6 +2035,7 @@
     },
     {
       "id": "roof-2",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-002",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -1947,6 +2052,7 @@
         "slope": 25,
         "thickness": 0.25
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -1966,6 +2072,7 @@
     },
     {
       "id": "roof-3",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-003",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -1982,6 +2089,7 @@
         "slope": 25,
         "thickness": 0.25
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -2001,6 +2109,7 @@
     },
     {
       "id": "roof-4",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-004",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -2017,6 +2126,7 @@
         "slope": 25,
         "thickness": 0.25
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -2034,5 +2144,23 @@
         "rise": 932.62
       }
     }
-  ]
+  ],
+  "envelope": {
+    "wallGross": 96.32,
+    "windows": 10.5,
+    "doors": 1.89,
+    "wallNet": 83.93,
+    "glazingFacade": 0.109,
+    "roof": 186.7,
+    "footprint": 80,
+    "height": 2.8,
+    "volume": 224,
+    "envelope": 256.32,
+    "compactness": 1.144,
+    "counts": {
+      "walls": 4,
+      "windows": 5,
+      "doors": 1
+    }
+  }
 }
