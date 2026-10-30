@@ -165,5 +165,5 @@ test("файлы в репозитории синхронны с кодом (nod
   assert.deepEqual(JSON.parse(read("examples/mech/demo.mech.json")), plain(M.createDemoProject()));
   assert.deepEqual(JSON.parse(read("examples/mech/demo.mech-freecad.json")), plain(M.exportForCad(M.createDemoProject())));
   assert.deepEqual(JSON.parse(read("tests/mech_variants.freecad.json")), plain(M.exportForCad(variantsProject(BS))));
-  assert.equal(read("js/mech/mechMacroSource.js"), macroSourceJs());
+  assert.equal(read("js/mech/mechMacroSource.js").replace(/\r\n/g, "\n"), macroSourceJs());
 });

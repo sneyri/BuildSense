@@ -26,7 +26,7 @@ test("файлы примеров совпадают со встроенными
 });
 
 test("встроенный текст макроса (кнопка «Скачать макрос») совпадает с freecad/import_house.FCMacro", () => {
-  const disk = readFileSync(path.join(ROOT, "freecad", "import_house.FCMacro"), "utf-8");
+  const disk = readFileSync(path.join(ROOT, "freecad", "import_house.FCMacro"), "utf-8").replace(/\r\n/g, "\n");
   assert.equal(BS.freecadMacro.source, disk, "запустите node tools/build-macro.js");
   assert.equal(BS.freecadMacro.fileName, "import_house.FCMacro");
 });

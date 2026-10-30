@@ -67,7 +67,8 @@ export function interferenceExport(BS) {
 }
 
 export function macroSourceJs() {
-  const src = readFileSync(path.join(ROOT, "freecad/import_parts.FCMacro"), "utf-8");
+  // Окончания строк — всегда LF: на Windows git может выгрузить макрос с CRLF
+  const src = readFileSync(path.join(ROOT, "freecad/import_parts.FCMacro"), "utf-8").replace(/\r\n/g, "\n");
   return (
     "// СГЕНЕРИРОВАНО tests/mech_build.mjs из freecad/import_parts.FCMacro — не редактируйте вручную.\n" +
     "(function (BS) {\n  \"use strict\";\n" +
