@@ -7,7 +7,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const source = readFileSync(path.join(ROOT, "freecad", "import_house.FCMacro"), "utf-8");
+// Окончания строк — всегда LF: на Windows git может выгрузить макрос с CRLF
+const source = readFileSync(path.join(ROOT, "freecad", "import_house.FCMacro"), "utf-8").replace(/\r\n/g, "\n");
 
 writeFileSync(path.join(ROOT, "js", "io", "macroSource.js"), `// СГЕНЕРИРОВАНО tools/build-macro.js из freecad/import_house.FCMacro — не редактируйте вручную.
 (function (BS) {
