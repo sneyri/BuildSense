@@ -1,0 +1,27 @@
+/* Визуальное обучение: затемнение с подсвеченным местом, стрелка и карточка шага. Не блокирует мышь. */
+.coach { position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+.coach-spot { position: fixed; display: none; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(8, 12, 20, .55); outline: 3px solid var(--accent); animation: coach-pulse 1.4s ease-in-out infinite; transition: left .25s, top .25s, width .25s, height .25s; }
+.coach.no-target::before { content: ""; position: fixed; inset: 0; background: rgba(8, 12, 20, .55); }
+@keyframes coach-pulse { 0%, 100% { outline-offset: 0; outline-color: var(--accent); } 50% { outline-offset: 5px; outline-color: #ffd166; } }
+.coach-arrow { position: fixed; inset: 0; overflow: visible; }
+.coach-arrow path { fill: none; stroke: #ffd166; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 8 6; animation: coach-dash 1s linear infinite; }
+.coach-arrow marker path { fill: #ffd166; stroke: none; animation: none; stroke-dasharray: none; }
+@keyframes coach-dash { to { stroke-dashoffset: -28; } }
+.coach-card { position: fixed; bottom: 24px; width: min(380px, calc(100vw - 24px)); max-height: calc(100vh - 24px); overflow-y: auto; padding: 12px 14px; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 10px; box-shadow: 0 8px 28px rgba(0, 0, 0, .5); pointer-events: auto; line-height: 1.5; }
+.coach-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+.coach-x { min-height: 22px; width: 22px; padding: 0; }
+.coach-bar { height: 4px; border-radius: 2px; background: var(--line); margin: 6px 0 8px; overflow: hidden; }
+.coach-bar i { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+.coach-card h3 { margin: 0 0 6px; font-size: 16px; }
+.coach-card p { margin: 0 0 8px; }
+.coach-items { list-style: none; margin: 4px 0 8px; padding: 0; }
+.coach-items li { padding: 2px 0 2px 24px; position: relative; color: var(--muted); }
+.coach-items li::before { content: "○"; position: absolute; left: 4px; }
+.coach-items li.ok { color: var(--ok); }
+.coach-items li.ok::before { content: "✓"; font-weight: 700; }
+.coach-ok { padding: 6px 8px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); font-weight: 600; margin-bottom: 8px; }
+.coach-note { padding: 6px 8px; border-radius: 6px; background: var(--info-bg); font-size: 12px; margin-bottom: 8px; }
+.coach-err { padding: 6px 8px; border-radius: 6px; background: var(--err-bg); color: var(--err); margin-top: 8px; }
+.coach-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; margin-top: 4px; }
+.tut-sect { margin: 12px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.tut-visual { border-color: var(--accent); background: var(--accent-soft); }

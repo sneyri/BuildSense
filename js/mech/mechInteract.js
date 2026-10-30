@@ -112,6 +112,7 @@
       for (const [k, b] of Object.entries(tools)) { b.classList.toggle("on", Boolean(on[k])); b.setAttribute("aria-pressed", String(Boolean(on[k]))); }
       tools.fix.disabled = !id;
       dom.style.cursor = S.tool === "connect" ? "crosshair" : "";
+      BS.events.emit("mech:ui"); // для визуального обучения
     }
 
     function setTool(t) {
@@ -489,7 +490,13 @@
     dom.addEventListener("pointerdown", (e) => {
       if (e.button !== 0) return;
       setMouse(e);
-      if (S.tool === "connect") { S.connDown = { x: e.clientX, y: e.clientY }; return; } // вращение камеры остаётся доступным
+      if (S.tool === "connect") {
+        S.connDown = { x: e.clientX, y: e.clientY };
+        // нажатие на деталь — это выбор поверхности, камера при этом не вращается (иначе при движении мыши сцена уезжает);
+        // вращать можно, зажав левую кнопку на пустом месте, а также правой/средней кнопкой и колесом
+        if (partHit()) e.stopImmediatePropagation();
+        return;
+      }
       if (gizmoGroup.visible) {
         const hit = ray.intersectObjects(pickables, false)[0];
         if (hit) { e.stopImmediatePropagation(); startGizmoDrag(e, hit); }
@@ -521,6 +528,40 @@
       refresh() { refreshStrip(); if (S.tool === "connect") renderPanel(); },
       hideLock() { bar.hidden = true; },
       showLock,
+      /**
+       * Где на экране видна поверхность детали нужного вида (для подсветки в обучении): сканируем сетку лучей по габариту детали
+       * и берём попадание, которое классифицируется как want = { kind: "plane"|"cylinder", ref? }. Нет видимой — null.
+       */
+      surfaceRect(partId, want) {
+        const rec = api.meshes().get(partId);
+        const part = api.project().parts.find((p) => p.id === partId);
+        if (!rec || !part) return null;
+        const box = new T.Box3().setFromObject(rec.mesh);
+        const r = dom.getBoundingClientRect();
+        const corners = [];
+        for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) corners.push(new T.Vector3(x, y, z).project(camera));
+        const xs = corners.map((v) => v.x), ys = corners.map((v) => v.y);
+        const x0 = Math.max(-1, Math.min(...xs)), x1 = Math.min(1, Math.max(...xs)), y0 = Math.max(-1, Math.min(...ys)), y1 = Math.min(1, Math.max(...ys));
+        if (!(x1 > x0 && y1 > y0)) return null;
+        const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+        let best = null;
+        const N = 14;
+        for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
+          const nx = x0 + ((x1 - x0) * i) / N, ny = y0 + ((y1 - y0) * j) / N;
+          ray.setFromCamera(new T.Vector2(nx, ny), camera);
+          const hit = ray.intersectObjects([...api.meshes().values()].map((m) => m.mesh), false)[0];
+          if (!hit || hit.object.userData.partId !== partId) continue;
+          const lp = hit.object.worldToLocal(hit.point.clone());
+          const ln = hit.face.normal;
+          const cls = C.classifyHit(part, [lp.x, lp.y, lp.z], [ln.x, ln.y, ln.z]);
+          if (cls.kind !== want.kind || (want.ref && cls.ref !== want.ref)) continue;
+          const d = Math.hypot(nx - cx, ny - cy);
+          if (!best || d < best.d) best = { d, nx, ny };
+        }
+        if (!best) return null;
+        const px = r.left + ((best.nx + 1) / 2) * r.width, py = r.top + ((1 - best.ny) / 2) * r.height;
+        return { x: px - 22, y: py - 22, w: 44, h: 44 };
+      },
       /** Экранные координаты (CSS px) середины стрелки/дуги оси — для автотестов в браузере. */
       gizmoPoint: (ax) => { const g = gizmoGroup; const k = g.scale.x; const d = S.gizmo === "rotate" ? new T.Vector3(...AX[ax === "x" ? "y" : ax === "y" ? "z" : "x"]).multiplyScalar(0.85 * k) : new T.Vector3(...AX[ax]).multiplyScalar(0.6 * k); const v = g.position.clone().add(d).project(camera); const r = dom.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height }; },
       snapEnabled: () => S.snap,

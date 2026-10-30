@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-export const MECH_FILES = ["vendor/three/three.min.js", "js/core/namespace.js", "js/mech/mechModel.js", "js/mech/mechAssembly.js", "js/mech/mechConnect.js", "js/mech/mechKinematics.js", "js/mech/mechExplode.js", "js/mech/mechDemos.js", "js/mech/mechGeometry.js", "js/mech/mechIO.js"];
+export const MECH_FILES = ["vendor/three/three.min.js", "js/core/namespace.js", "js/mech/mechModel.js", "js/mech/mechAssembly.js", "js/mech/mechConnect.js", "js/mech/mechKinematics.js", "js/mech/mechMechanism.js", "js/mech/mechCoach.js", "js/mech/mechLessons.js", "js/mech/mechExplode.js", "js/mech/mechDemos.js", "js/mech/mechGeometry.js", "js/mech/mechIO.js"];
 
 export function loadMech(files = MECH_FILES) {
   const ctx = vm.createContext({ console });

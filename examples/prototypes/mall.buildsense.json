@@ -1,0 +1,1697 @@
+{
+  "format": "buildsense-project",
+  "schemaVersion": 3,
+  "name": "Торговый центр «Галерея» (1 этаж + фермы)",
+  "units": "m",
+  "createdAt": "2026-10-30T12:00:00.000Z",
+  "updatedAt": "2026-10-30T12:00:00.000Z",
+  "settings": {
+    "climateRegion": "2V",
+    "housingFund": "public",
+    "grid": 0.1,
+    "snap": true,
+    "site": {
+      "x": -15,
+      "y": -15,
+      "length": 140,
+      "width": 100,
+      "maxHeight": 40
+    },
+    "profile": {
+      "minExteriorWall": 0.3,
+      "minInteriorWall": 0.2,
+      "minPartition": 0.08,
+      "minColumn": 0.2,
+      "minSlab": 0.12,
+      "maxBeamSpan": 32,
+      "maxBeamSpanToDepth": 20,
+      "maxSlabSpan": 7,
+      "maxSlenderness": 25,
+      "freeWallSlenderness": 12
+    },
+    "loads": {
+      "liveLoad": 2,
+      "slabCapacity": 8
+    }
+  },
+  "house": {
+    "length": 10,
+    "width": 8,
+    "wallHeight": 6,
+    "wallThickness": 0.4,
+    "slabThickness": 0.3,
+    "foundationThickness": 0.8,
+    "roofType": "gable",
+    "roofSlope": 8,
+    "roofOverhang": 0.4
+  },
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Этаж 1",
+      "elevation": 0,
+      "height": 6
+    }
+  ],
+  "elements": [
+    {
+      "id": "slab_foundation-1",
+      "type": "slab_foundation",
+      "name": "Фундаментная плита",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": -0.8
+      },
+      "rotation": 0,
+      "size": {
+        "length": 60,
+        "width": 30,
+        "height": 0.8
+      },
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-foundation"
+      }
+    },
+    {
+      "id": "wall-1",
+      "type": "wall",
+      "name": "Стена 1 (контур C1)",
+      "category": "exterior",
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": 0,
+      "size": {
+        "length": 60,
+        "thickness": 0.4,
+        "height": 6
+      },
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p1",
+        "edgeStart": 0
+      }
+    },
+    {
+      "id": "wall-2",
+      "type": "wall",
+      "name": "Стена 2 (контур C1)",
+      "category": "exterior",
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 60,
+        "y": 0.4,
+        "z": 0
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "thickness": 0.4,
+        "height": 6
+      },
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p2",
+        "edgeStart": 0.4
+      }
+    },
+    {
+      "id": "wall-3",
+      "type": "wall",
+      "name": "Стена 3 (контур C1)",
+      "category": "exterior",
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 59.6,
+        "y": 30,
+        "z": 0
+      },
+      "rotation": 180,
+      "size": {
+        "length": 59.6,
+        "thickness": 0.4,
+        "height": 6
+      },
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p3",
+        "edgeStart": 0.4
+      }
+    },
+    {
+      "id": "wall-4",
+      "type": "wall",
+      "name": "Стена 4 (контур C1)",
+      "category": "exterior",
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 29.6,
+        "z": 0
+      },
+      "rotation": 270,
+      "size": {
+        "length": 29.2,
+        "thickness": 0.4,
+        "height": 6
+      },
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-wall",
+        "edgeFrom": "p4",
+        "edgeStart": 0.4
+      }
+    },
+    {
+      "id": "slab-1",
+      "type": "slab",
+      "name": "Пол (этаж 1)",
+      "category": "ground",
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0.4,
+        "y": 0.4,
+        "z": 0
+      },
+      "rotation": 0,
+      "size": {
+        "length": 59.2,
+        "width": 29.2,
+        "height": 0.3
+      },
+      "params": {
+        "contourId": "C1",
+        "generatedBy": "contour-slab"
+      }
+    },
+    {
+      "id": "column-1",
+      "type": "column",
+      "name": "Колонна 1",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 9.85,
+        "y": 9.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-2",
+      "type": "column",
+      "name": "Колонна 2",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 9.85,
+        "y": 19.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-3",
+      "type": "column",
+      "name": "Колонна 3",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 19.85,
+        "y": 9.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-4",
+      "type": "column",
+      "name": "Колонна 4",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 19.85,
+        "y": 19.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-5",
+      "type": "column",
+      "name": "Колонна 5",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 29.85,
+        "y": 9.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-6",
+      "type": "column",
+      "name": "Колонна 6",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 29.85,
+        "y": 19.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-7",
+      "type": "column",
+      "name": "Колонна 7",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 39.85,
+        "y": 9.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-8",
+      "type": "column",
+      "name": "Колонна 8",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 39.85,
+        "y": 19.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-9",
+      "type": "column",
+      "name": "Колонна 9",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 49.85,
+        "y": 9.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-10",
+      "type": "column",
+      "name": "Колонна 10",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 49.85,
+        "y": 19.85,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-11",
+      "type": "column",
+      "name": "Колонна 11",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 9.85,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-12",
+      "type": "column",
+      "name": "Колонна 12",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 9.85,
+        "y": 28.3,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-13",
+      "type": "column",
+      "name": "Колонна 13",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 19.85,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-14",
+      "type": "column",
+      "name": "Колонна 14",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 19.85,
+        "y": 28.3,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-15",
+      "type": "column",
+      "name": "Колонна 15",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 29.85,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-16",
+      "type": "column",
+      "name": "Колонна 16",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 29.85,
+        "y": 28.3,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-17",
+      "type": "column",
+      "name": "Колонна 17",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 39.85,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-18",
+      "type": "column",
+      "name": "Колонна 18",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 39.85,
+        "y": 28.3,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-19",
+      "type": "column",
+      "name": "Колонна 19",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 49.85,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "column-20",
+      "type": "column",
+      "name": "Колонна 20",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 49.85,
+        "y": 28.3,
+        "z": 0.3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 0.5,
+        "width": 0.5,
+        "height": 5.7
+      },
+      "params": {}
+    },
+    {
+      "id": "truss-1",
+      "type": "truss",
+      "name": "Ферма 1",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 0.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "truss-2",
+      "type": "truss",
+      "name": "Ферма 2",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 10.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "truss-3",
+      "type": "truss",
+      "name": "Ферма 3",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 20.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "truss-4",
+      "type": "truss",
+      "name": "Ферма 4",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 30.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "truss-5",
+      "type": "truss",
+      "name": "Ферма 5",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 40.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "truss-6",
+      "type": "truss",
+      "name": "Ферма 6",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 50.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "truss-7",
+      "type": "truss",
+      "name": "Ферма 7",
+      "category": null,
+      "material": "timber",
+      "levelId": "L1",
+      "position": {
+        "x": 60.05,
+        "y": 0.2,
+        "z": 6
+      },
+      "rotation": 90,
+      "size": {
+        "length": 29.6,
+        "width": 0.1,
+        "height": 1.5
+      },
+      "params": {
+        "panels": 4
+      }
+    },
+    {
+      "id": "window-1",
+      "type": "window",
+      "name": "Окно 1",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 2.538,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-2",
+      "type": "window",
+      "name": "Окно 2",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 9.813,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-3",
+      "type": "window",
+      "name": "Окно 3",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 17.088,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-4",
+      "type": "window",
+      "name": "Окно 4",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 24.363,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "door-1",
+      "type": "door",
+      "name": "Дверь 1",
+      "category": "entrance",
+      "material": "wood_door",
+      "levelId": "L1",
+      "position": {
+        "offset": 32.138,
+        "elevation": 0
+      },
+      "size": {
+        "width": 3,
+        "height": 3
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-5",
+      "type": "window",
+      "name": "Окно 5",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 38.913,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-6",
+      "type": "window",
+      "name": "Окно 6",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 46.188,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-7",
+      "type": "window",
+      "name": "Окно 7",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 53.463,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-1"
+    },
+    {
+      "id": "window-8",
+      "type": "window",
+      "name": "Окно 8",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 3.533,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-2"
+    },
+    {
+      "id": "window-9",
+      "type": "window",
+      "name": "Окно 9",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 12.8,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-2"
+    },
+    {
+      "id": "window-10",
+      "type": "window",
+      "name": "Окно 10",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 22.067,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-2"
+    },
+    {
+      "id": "window-11",
+      "type": "window",
+      "name": "Окно 11",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 2.513,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-12",
+      "type": "window",
+      "name": "Окно 12",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 9.738,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-13",
+      "type": "window",
+      "name": "Окно 13",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 16.963,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-14",
+      "type": "window",
+      "name": "Окно 14",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 24.188,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-15",
+      "type": "window",
+      "name": "Окно 15",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 31.413,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-16",
+      "type": "window",
+      "name": "Окно 16",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 38.638,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-17",
+      "type": "window",
+      "name": "Окно 17",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 45.863,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-18",
+      "type": "window",
+      "name": "Окно 18",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 53.088,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-3"
+    },
+    {
+      "id": "window-19",
+      "type": "window",
+      "name": "Окно 19",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 3.467,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-4"
+    },
+    {
+      "id": "window-20",
+      "type": "window",
+      "name": "Окно 20",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 12.6,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-4"
+    },
+    {
+      "id": "window-21",
+      "type": "window",
+      "name": "Окно 21",
+      "category": null,
+      "material": "pvc",
+      "levelId": "L1",
+      "position": {
+        "offset": 21.733,
+        "elevation": 0.9
+      },
+      "size": {
+        "width": 4,
+        "height": 3.2
+      },
+      "params": {},
+      "hostId": "wall-4"
+    },
+    {
+      "id": "roof-1",
+      "type": "roof",
+      "name": "Крыша",
+      "category": null,
+      "material": "profiled_sheet",
+      "levelId": "L1",
+      "position": {
+        "x": -0.5,
+        "y": -0.5,
+        "z": 6
+      },
+      "rotation": 0,
+      "size": {
+        "length": 61,
+        "width": 31
+      },
+      "params": {
+        "roofType": "gable",
+        "slope": 8,
+        "thickness": 0.25,
+        "overhang": 0.5,
+        "contourId": "C1",
+        "generatedBy": "contour-roof",
+        "part": 0
+      }
+    },
+    {
+      "id": "lintel-23",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 1»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 2.288,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-24",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 2»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 9.563,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-25",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 3»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 16.838,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-26",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 4»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 24.113,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-27",
+      "type": "lintel",
+      "name": "Перемычка над «Дверь 1»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 31.888,
+        "y": 0,
+        "z": 3
+      },
+      "rotation": 0,
+      "size": {
+        "length": 3.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-28",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 5»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 38.663,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-29",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 6»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 45.938,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-30",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 7»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 53.213,
+        "y": 0,
+        "z": 4.1
+      },
+      "rotation": 0,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-1"
+      }
+    },
+    {
+      "id": "lintel-31",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 8»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 60,
+        "y": 3.683,
+        "z": 4.1
+      },
+      "rotation": 90,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-2"
+      }
+    },
+    {
+      "id": "lintel-32",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 9»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 60,
+        "y": 12.95,
+        "z": 4.1
+      },
+      "rotation": 90,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-2"
+      }
+    },
+    {
+      "id": "lintel-33",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 10»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 60,
+        "y": 22.217,
+        "z": 4.1
+      },
+      "rotation": 90,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-2"
+      }
+    },
+    {
+      "id": "lintel-34",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 11»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 57.337,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-35",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 12»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 50.112,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-36",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 13»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 42.887,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-37",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 14»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 35.662,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-38",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 15»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 28.437,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-39",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 16»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 21.212,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-40",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 17»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 13.987,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-41",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 18»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 6.762,
+        "y": 30,
+        "z": 4.1
+      },
+      "rotation": 180,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-3"
+      }
+    },
+    {
+      "id": "lintel-42",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 19»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 26.383,
+        "z": 4.1
+      },
+      "rotation": 270,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-4"
+      }
+    },
+    {
+      "id": "lintel-43",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 20»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 17.25,
+        "z": 4.1
+      },
+      "rotation": 270,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-4"
+      }
+    },
+    {
+      "id": "lintel-44",
+      "type": "lintel",
+      "name": "Перемычка над «Окно 21»",
+      "category": null,
+      "material": "concrete",
+      "levelId": "L1",
+      "position": {
+        "x": 0,
+        "y": 8.117,
+        "z": 4.1
+      },
+      "rotation": 270,
+      "size": {
+        "length": 4.5,
+        "width": 0.4,
+        "height": 0.2
+      },
+      "params": {
+        "hostWallId": "wall-4"
+      }
+    }
+  ],
+  "customRules": [],
+  "plan": {
+    "contours": [
+      {
+        "id": "C1",
+        "levelId": "L1",
+        "closed": true,
+        "points": [
+          {
+            "id": "p1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "p2",
+            "x": 60,
+            "y": 0
+          },
+          {
+            "id": "p3",
+            "x": 60,
+            "y": 30
+          },
+          {
+            "id": "p4",
+            "x": 0,
+            "y": 30
+          }
+        ]
+      }
+    ]
+  }
+}

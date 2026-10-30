@@ -14,12 +14,24 @@
   <link rel="stylesheet" href="css/showcase.css">
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/motion.css">
   <link rel="stylesheet" href="css/interact.css">
+  <link rel="stylesheet" href="css/coach.css">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 </head>
 <!-- Открывается двойным щелчком (file://): все скрипты обычные, Three.js лежит в vendor/.
      Режим и вид задаются атрибутами body; переключает их js/ui/shell.js (см. docs/INTEGRATION.md). -->
 <body data-mode="arch" data-archview="split" data-active-tool="select">
+  <div id="splash" role="status" aria-live="polite">
+    <svg class="sp-logo" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 4 56 17.5 32 31 8 17.5z" fill="#4d8fdc"/><path d="M8 17.5 32 31v29L8 46.5z" fill="#2f6fdc"/><path d="M56 17.5 32 31v29l24-13.5z" fill="#1b4aa8"/>
+      <path d="M32 11 47 19.5 32 28 17 19.5z" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="2" stroke-linejoin="round"/><circle cx="32" cy="35" r="3.2" fill="#ffd166"/>
+    </svg>
+    <h1 class="sp-title">Build<span>Sense</span></h1>
+    <div class="sp-bar"><i></i></div>
+    <p class="sp-text">Загрузка…</p>
+  </div>
+
   <header class="topbar">
     <div class="brand" title="BuildSense — учебная САПР">
 <svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
@@ -231,6 +243,12 @@
     <div class="menu-title">Готовые примеры</div>
     <button type="button" role="menuitem" class="menu-item" data-new="example-l"><span class="mi-thumb" data-thumb="example-l"></span><span class="mi-text"><strong>Г-образный дом</strong><span>Дом из двух частей, с крышей над каждой.</span></span></button>
     <button type="button" role="menuitem" class="menu-item" data-new="example-two"><span class="mi-thumb" data-thumb="example-two"></span><span class="mi-text"><strong>Двухэтажный дом</strong><span>С лестницей, камином и террасой.</span></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-new="proto-estate"><span class="mi-thumb" data-thumb="example-l"></span><span class="mi-text"><strong>Усадьба (Г-образная)</strong><span>2 этажа, ленточный фундамент, вальмовая крыша, террасы.</span></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-new="proto-mansion"><span class="mi-thumb" data-thumb="example-two"></span><span class="mi-text"><strong>Особняк с портиком</strong><span>П-образный, 3 этажа, колонны, балкон, 2 лестницы.</span></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-new="proto-tower"><span class="mi-thumb" data-thumb="example-two"></span><span class="mi-text"><strong>Жилая секция, 7 этажей</strong><span>48×15 м, железобетон, балконы, плоская кровля.</span></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-new="proto-villa"><span class="mi-thumb" data-thumb="example-l"></span><span class="mi-text"><strong>Вилла-крест</strong><span>Крестообразный план, зал с колоннами и балками.</span></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-new="proto-timber"><span class="mi-thumb" data-thumb="example-l"></span><span class="mi-text"><strong>Бревенчатый дом</strong><span>Т-образный, сваи, терраса, крутая крыша.</span></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-new="proto-mall"><span class="mi-thumb" data-thumb="example-two"></span><span class="mi-text"><strong>Торговый центр</strong><span>60×30 м, каркас колонн, фермы покрытия.</span></span></button>
     <button type="button" role="menuitem" class="menu-item" data-new="example-issues"><span class="mi-thumb" data-thumb="example-issues"></span><span class="mi-text"><strong>Дом с ошибками</strong><span>Намеренные ошибки: найдите их на вкладке «Проблемы».</span></span></button>
   </div>
 
@@ -260,10 +278,12 @@
   <script src="js/io/macroSource.js"></script>
   <script src="js/editor/history.js"></script>
   <script src="examples/examples.js"></script>
+  <script src="examples/prototypes.js"></script>
   <!-- Машиностроение: модель, геометрия, файлы (без DOM) -->
   <script src="js/mech/mechModel.js"></script>
   <script src="js/mech/mechAssembly.js"></script>
   <script src="js/mech/mechKinematics.js"></script>
+  <script src="js/mech/mechMechanism.js"></script>
   <script src="js/mech/mechExplode.js"></script>
   <script src="js/mech/mechDemos.js"></script>
   <script src="js/mech/mechGeometry.js"></script>
@@ -271,6 +291,8 @@
   <script src="js/mech/mechDrawing.js"></script>
   <script src="js/mech/mechConnect.js"></script>
   <script src="js/mech/mechInteract.js"></script>
+  <script src="js/mech/mechCoach.js"></script>
+  <script src="js/mech/mechLessons.js"></script>
   <script src="js/mech/mechTutorial.js"></script>
   <script src="js/mech/mechMacroSource.js"></script>
   <!-- 3D и интерфейс -->
@@ -301,5 +323,6 @@
   <script src="js/ui/shell.js"></script>
   <script src="js/ui/mobile.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/ui/splash.js"></script>
 </body>
 </html>

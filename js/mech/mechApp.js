@@ -293,6 +293,7 @@
     for (const [id, rec] of S.meshes) if (!alive.has(id)) { disposeRec(rec); S.meshes.delete(id); }
     updateSelectionBox();
     if (S.view) { S.view.changed(); S.view.apply(); } // временный показ: разборка, симуляция, разрез, скрытие
+    BS.events.emit("mech:sync"); // для визуального обучения (mechCoach): проект или выбор изменились
   }
 
   function disposeRec(rec) {
@@ -527,11 +528,91 @@
     document.body.append(dlg);
   }
 
+  /** «Механизм»: роли деталей берутся из соединений; при нехватке данных — понятный текст, проект не меняется. */
+  function createMechanism(type) {
+    const trial = JSON.parse(JSON.stringify(S.project));
+    const t = BS.mechMechanism.create(trial, type);
+    if (!t.ok) return status(t.error, "warn");
+    let res;
+    edit(`Механизм: ${BS.mechMechanism.LABEL[type]}`, (pr) => { res = BS.mechMechanism.create(pr, type); });
+    status(`Создан механизм «${res.mechanism.name}». ${res.check.notes.join("; ")}. Откройте внизу «Симуляция» → «Пуск».`, "ok");
+    if (S.view) S.view.changed();
+  }
+
+  // ---------------------------------------------------------------- визуальное обучение (mechCoach + mechLessons)
+
+  /** Контекст урока: операции над проектом (общие с тестами) + помощники интерфейса для подсветки и проверки шагов. */
+  function coachContext() {
+    const hooks = {
+      addPart: (type) => { addPart(type); return selected(); },
+      newProject: () => { S.history.push(S.project, "Новый проект"); setProject(M.createProject(), { fit: true }); IO.autosave(S.project); status("Новый проект деталей", "ok"); },
+    };
+    const c = BS.mechCoach.dataContext(() => S.project, (label, fn) => edit(label, fn), hooks);
+    const root = () => document.getElementById("mech-root") || document;
+    const byText = (scope, sel, text) => [...scope.querySelectorAll(sel)].find((b) => (b.textContent || "").trim().startsWith(text)) || null;
+    const union = (nodes) => {
+      const rs = nodes.map((n) => n.getBoundingClientRect()).filter((r) => r.width || r.height);
+      if (!rs.length) return null;
+      const x = Math.min(...rs.map((r) => r.left)), y = Math.min(...rs.map((r) => r.top));
+      return { x, y, w: Math.max(...rs.map((r) => r.right)) - x, h: Math.max(...rs.map((r) => r.bottom)) - y };
+    };
+    c.ui = {
+      /** Кнопка ленты; если её вкладка не открыта — подсвечивается вкладка (сначала откройте её). */
+      ribbon(text) {
+        const btn = byText(document, ".mech-commands button", text);
+        if (!btn) return null;
+        const panel = btn.closest(".rb-panel");
+        const rbn = btn.closest(".ribbon");
+        if (rbn && rbn.classList.contains("collapsed")) return rbn.querySelector(".rb-tabs .active") || rbn.querySelector(".rb-tabs button");
+        if (panel && !panel.classList.contains("active")) {
+          return document.querySelector(`.mech-commands [data-rtab="${panel.dataset.rpanel}"]`) || btn;
+        }
+        return btn;
+      },
+      tool: (id) => (id === undefined ? S.ix.state().tool : document.querySelector(`.ix-tool[data-tool="${id}"]`)),
+      setTool: (t) => S.ix.setTool(t),
+      conn: () => S.ix.state().conn,
+      pick: (cls) => S.ix._pick(cls),
+      confirm: () => S.ix.confirm(),
+      connectApply: () => byText(document, ".ix-panel .ix-actions button", "Применить"),
+      selectedId: () => S.selectedId,
+      treeRow: (id) => [...S.dom.tree.querySelectorAll(".row")].find((r) => (r.getAttribute("title") || "").endsWith(`· ${id}`)) || null,
+      section(title) {
+        const props = S.dom.props;
+        const h = [...props.querySelectorAll("h3")].find((n) => n.textContent.trim().startsWith(title));
+        if (h) { const nodes = [h]; for (let n = h.nextElementSibling; n && n.tagName !== "H3"; n = n.nextElementSibling) nodes.push(n); return union(nodes); }
+        return props.querySelector(".mech-steps");
+      },
+      field(label) { return [...S.dom.props.querySelectorAll(".mech-field")].find((f) => f.textContent.includes(label)) || null; },
+      surface: (id, want) => S.ix.surfaceRect(id, want),
+      fit: () => fitView(),
+      viewerMode: () => (S.view ? S.view.state().mode : "edit"),
+      viewerState: () => (S.view ? S.view.state() : {}),
+      viewerButton: (text) => byText(document, ".mv-bar button, .mv-panel button", text),
+      viewerClick: (text) => { const b = byText(document, ".mv-bar button, .mv-panel button", text); if (b) b.click(); },
+      select: (id) => select(id),
+    };
+    return c;
+  }
+
+  /** Запустить визуальный урок: «engine» (одноцилиндровый двигатель) или «screw» (винтовая пара). */
+  function startLesson(id) {
+    const lesson = BS.mechLessons && BS.mechLessons.LESSONS.find((l) => l.id === id);
+    if (!lesson || !BS.mechCoach) return status("Визуальные уроки не подключены", "error");
+    if (BS.mechTutorial) BS.mechTutorial.close();
+    const rb = document.getElementById("mech-ribbon");
+    if (rb && BS.ribbon && rb.classList.contains("collapsed")) BS.ribbon.setCollapsed(rb, false, false); // подсвечиваемые кнопки должны быть видны
+    S.ix.setTool("select");
+    if (S.view && S.view.restore) S.view.restore(); // выйти из взрывного вида/симуляции: урок начинается с обычного режима
+    const ctx = coachContext();
+    BS.mechCoach.start(lesson, ctx, status);
+  }
+
   function toggleTutorial() {
     if (!BS.mechTutorial) return status("Модуль обучения не подключён (js/mech/mechTutorial.js)", "error");
     BS.mechTutorial.toggle({
       host: S.dom.viewport, status,
-      addPart, newProject, loadDemoAssembly, newAssembly, showDrawing, fit: fitView,
+      addPart, newProject, loadDemoAssembly, newAssembly, showDrawing, fit: fitView, startLesson,
     });
   }
 
@@ -577,7 +658,10 @@
           button("part", "Закрепить на месте", toggleFixed, "Закрепить выбранную деталь / снять закрепление (K)")),
         group("Сборка",
           button("part", "Сборка", newAssembly, "Новая сборка; выбранная деталь станет закреплённым компонентом"),
-          button("file", "Учебная сборка", loadDemoAssembly, "Открыть пример: вал с буртиком, фланец встык, втулка со смещением"))),
+          button("file", "Учебная сборка", loadDemoAssembly, "Открыть пример: вал с буртиком, фланец встык, втулка со смещением")),
+        group("Механизм",
+          button("part", "Кривошипно-шатунный", () => createMechanism("slider-crank"), "Двигатель: по соединениям определить цилиндр, поршень, шатун и коленвал и проверить, что механизм проворачивается"),
+          button("part", "Винтовая пара", () => createMechanism("screw"), "Винт и гайка: вращение винта превращается в подъём на шаг резьбы за оборот"))),
       panel("view",
         group("Камера",
           button("fit", "Показать все", fitView, "Показать все детали (F)"),
@@ -1251,5 +1335,7 @@
     getInteract: () => S.ix,
     getViewer: () => S.view,
     fitView,
+    startLesson,
+    coachContext,
   };
 })(globalThis.BuildSense);

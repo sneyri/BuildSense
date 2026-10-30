@@ -24,7 +24,8 @@ import FreeCAD as App
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) if "__file__" in globals() else os.getcwd()
 MACRO = os.path.join(ROOT, "freecad", "import_house.FCMacro")
-FILES = ["starter-house", "two-storey", "all-types", "l-house", "t-house-strip"]  # l-house: Г-образный дом по контуру плана (схема 3)
+FILES = ["starter-house", "two-storey", "all-types", "l-house", "t-house-strip",
+         "proto-estate", "proto-mansion", "proto-tower", "proto-villa", "proto-timber", "proto-mall"]  # proto-*: examples/prototypes/*.freecad.json  # l-house: Г-образный дом по контуру плана (схема 3)
 TOL = 2.0
 TOL_OPENING = 60.0
 REPORT = []
@@ -94,7 +95,7 @@ def find(doc, el_id):
 
 def check_file(slug, mode, tmp):
     errors = []
-    path = os.path.join(ROOT, "examples", slug + ".freecad.json")
+    path = os.path.join(ROOT, "examples", slug.replace("proto-", "prototypes/") + ".freecad.json")
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
     # Неизвестный тип — должен попасть в отчёт «пропущено»

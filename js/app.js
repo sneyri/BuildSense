@@ -412,7 +412,7 @@
     if (kind === "starter") p = P.createStarterProject("Мой дом");
     else if (kind === "empty") p = P.createProject("Новый проект");
     else {
-      const key = kind === "example-two" ? "twoStorey" : kind === "example-l" ? "lHouse" : "issues";
+      const key = kind.startsWith("proto-") ? kind.slice(6) : kind === "example-two" ? "twoStorey" : kind === "example-l" ? "lHouse" : "issues";
       if (!BS.examples || !BS.examples[key]) return setStatus("Пример не найден (examples/examples.js)", "error");
       p = IO.fromData(JSON.parse(JSON.stringify(BS.examples[key]))).project;
     }
@@ -651,7 +651,7 @@
 
   // Ссылки вида index.html#example=twoStorey&wizard=0&roof=hidden&view=top — для демонстрации и скриншотов
   const hash = new URLSearchParams(location.hash.slice(1));
-  if (hash.get("example")) newProject({ starter: "starter", twoStorey: "example-two", issues: "example-issues", lHouse: "example-l" }[hash.get("example")] || "starter");
+  if (hash.get("example")) newProject({ starter: "starter", twoStorey: "example-two", issues: "example-issues", lHouse: "example-l" }[hash.get("example")] || (["estate", "mansion", "tower", "villa", "timber", "mall"].includes(hash.get("example")) ? `proto-${hash.get("example")}` : "starter"));
   if (hash.get("wizard") === "0") { state.wizardOpen = false; renderWizard(); }
   if (hash.get("roof") === "hidden" && view) { state.hiddenGroups.add("roof"); view.setGroupVisible("roof", false); renderPanels(); }
   if (hash.get("view") && view) view.setView(hash.get("view"));

@@ -338,6 +338,18 @@
       node("span", "tut-about", finished === total ? "Можно вернуться к любому уроку — как шпаргалка." : "Идите по порядку: каждый урок опирается на прошлый."),
       sumBar);
     body.append(sum);
+    if (api && api.startLesson && BS.mechLessons) {
+      // визуальные уроки: подсветка на экране, проверка шагов, «Сделать за меня» (js/mech/mechCoach.js)
+      body.append(node("h4", "tut-sect", "Визуальные уроки — покажу, куда нажать"));
+      for (const l of BS.mechLessons.LESSONS) {
+        const b = node("button", "tut-lesson tut-visual");
+        b.type = "button";
+        b.append(node("span", "tut-num", "▶"), wrap("tut-main", node("strong", "", l.title), node("span", "tut-about", l.about)));
+        b.addEventListener("click", () => api.startLesson(l.id));
+        body.append(b);
+      }
+      body.append(node("h4", "tut-sect", "Уроки для чтения"));
+    }
     LESSONS.forEach((l, i) => {
       const n = doneCount(l), len = l.steps.length;
       const full = lessonDone(l), cur = l === next;
