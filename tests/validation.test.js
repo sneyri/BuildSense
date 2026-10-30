@@ -132,6 +132,7 @@ test("второй этаж без перекрытия — нет связи м
 test("нормы: сверенное правило даёт FAIL как ошибку, пользовательское — как предупреждение", () => {
   const p = P.createStarterProject();
   p.settings.climateRegion = "1A";
+  P.addElement(p, "slab", { category: "attic", position: { x: 0, y: 0, z: 2.8 }, size: { length: 10, width: 8, height: 0.2 } }); // плоский потолок
   p.customRules = [BS.ruleRegistry.makeUserRule(p, { title: "Толщина стен ≥ 0,5", parameter: "wall.thickness", operator: ">=", value: "0.5", unit: "m", elementType: "wall" })];
   const r = run(p);
   assert.ok(r.issues.some((i) => i.checkId === "NORM-SP55-6.2-HEIGHT-COLD" && i.severity === "error"));

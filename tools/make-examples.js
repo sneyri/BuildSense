@@ -45,6 +45,8 @@ extra.position.offset = w.position.offset + 0.5;                             // 
 const roof = bad.elements.find((e) => e.type === "roof");
 roof.position.z = 3.2;                                                       // крыша висит над стенами
 bad.settings.climateRegion = "1A";                                           // FAIL по п. 6.2 (2,6 м < 2,7 м)
+P.addElement(bad, "slab", { name: "Чердачное перекрытие", category: "attic",      // плоский потолок: высота однозначна
+  position: { x: 0, y: 0, z: 2.8 }, size: { length: 10, width: 8, height: 0.2 } });
 
 // 3а. Г-образный дом по контуру плана: контур → плитный фундамент → стены → пол → проёмы → этаж → крыша
 const lh = P.createProject("Г-образный дом");
@@ -85,14 +87,31 @@ for (const type of Object.keys(BS.types.TYPES)) {
   rotation: i === 0 ? 15 : 0, params: { roofType, slope: 25, thickness: 0.25 },
 }));
 
-const examples = { starter, twoStorey: two, issues: bad, lHouse: lh };
+// 5. Жилая секция: 5 этажей из модульных узлов библиотеки (газобетонные стены, многопустотные плиты)
+const section = P.createStarterProject("Жилая секция (5 этажей)");
+section.settings.bim = { object: "ЖК01", section: "С1" };
+section.elements = section.elements.filter((e) => e.type !== "roof");
+for (const wall of section.elements.filter((e) => e.type === "wall" && e.category === "exterior")) BS.modules.apply(section, wall.id, "aerated_wall");
+section.house.slabThickness = BS.modules.get("hollow_slab").size.height; // этажи ставятся с учётом толщины плиты узла
+for (let i = 0; i < 4; i++) P.addLevel(section, { copyWalls: true });
+for (const slab of section.elements.filter((e) => e.type === "slab" && e.category === "floor")) BS.modules.apply(section, slab.id, "hollow_slab");
+const sides = ["южная", "восточная", "северная", "западная"];
+for (const lv of section.levels) {
+  const walls = section.elements.filter((e) => e.type === "wall" && e.levelId === lv.id);
+  walls.forEach((w, i) => { w.name = `Стена ${sides[i] || i + 1}, газобетон (${lv.name.toLowerCase()})`; });
+}
+P.addRoofOverBuilding(section);
+section.settings.climateRegion = "2V";
+
+const examples = { starter, twoStorey: two, issues: bad, lHouse: lh, section };
 for (const p of Object.values(examples)) p.createdAt = p.updatedAt = FIXED;
 writeFileSync(out("starter-house.buildsense.json"), BS.projectIO.serialize(starter) + "\n");
 writeFileSync(out("two-storey.buildsense.json"), BS.projectIO.serialize(two) + "\n");
 writeFileSync(out("house-with-errors.buildsense.json"), BS.projectIO.serialize(bad) + "\n");
 writeFileSync(out("l-house.buildsense.json"), BS.projectIO.serialize(lh) + "\n");
+writeFileSync(out("residential-section.buildsense.json"), BS.projectIO.serialize(section) + "\n");
 th.createdAt = th.updatedAt = FIXED;
-for (const [file, p] of [["two-storey", two], ["starter-house", starter], ["all-types", all], ["l-house", lh], ["t-house-strip", th]]) {
+for (const [file, p] of [["two-storey", two], ["starter-house", starter], ["all-types", all], ["l-house", lh], ["t-house-strip", th], ["residential-section", section]]) {
   const exp = BS.freecadExport.build(p).data;
   exp.exportedAt = FIXED;
   writeFileSync(out(`${file}.freecad.json`), JSON.stringify(exp, null, 2) + "\n");

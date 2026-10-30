@@ -1,7 +1,7 @@
 // Правая панель «Проект»: место строительства, границы участка, учебный профиль, нагрузки.
 (function (BS) {
   "use strict";
-  const { el, numberField, selectField } = BS.dom;
+  const { el, numberField, selectField, textField } = BS.dom;
 
   const CLIMATE_REGIONS = [
     ["1A", "IА"], ["1B", "IБ"], ["1V", "IВ"], ["1G", "IГ"], ["1D", "IД"], ["2A", "IIА"], ["2B", "IIБ"], ["2V", "IIВ"], ["2G", "IIГ"],
@@ -18,6 +18,11 @@
         options: CLIMATE_REGIONS.map(([value, label]) => ({ value, label })), onChange: (v) => h.onSettings({ climateRegion: v }) }),
       selectField({ label: "Жилищный фонд", wide: true, value: s.housingFund,
         options: [{ value: "private", label: "Частный" }, { value: "public", label: "Государственный или муниципальный" }], onChange: (v) => h.onSettings({ housingFund: v }) }),
+
+      el("h3", {}, "BIM-код элементов"),
+      el("p", { class: "note" }, "Правило именования: объект-секция-Э<этаж>-<раздел>-<тип>-<номер>, например ЖК01-С1-Э02-КР-ПЛТ-003."),
+      textField({ label: "Код объекта", value: (s.bim || {}).object, onChange: (v) => h.onSettings({ bim: { object: v || "ЖК01" } }) }),
+      textField({ label: "Код секции / корпуса", value: (s.bim || {}).section, onChange: (v) => h.onSettings({ bim: { section: v || "С1" } }) }),
 
       el("h3", {}, "Этажи"),
       ...project.levels.map((l) => el("div", { class: "card" },

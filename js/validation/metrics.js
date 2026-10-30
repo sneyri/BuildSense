@@ -13,7 +13,8 @@
     "building.floorArea": { label: "Площадь полов этажей", unit: "m2" },
     "building.windowArea": { label: "Площадь окон в наружных стенах", unit: "m2" },
     "building.glazingRatio": { label: "Отношение площади окон к площади пола", unit: "ratio", note: "Считается по всему дому, а не по каждой комнате." },
-    "room.clearHeight": { label: "Высота помещений первого этажа", unit: "m", note: "От верха пола первого этажа до низа перекрытия или верха наружных стен." },
+    "room.clearHeight": { label: "Высота помещений этажа", unit: "m", note: "Для каждого этажа: от верха пола этажа до низа перекрытия над ним или до верха наружных стен; отделка не учитывается. На уровне здания — наименьшее значение по этажам." },
+    "storey.slopedCeiling": { label: "Потолок образован скатами крыши", unit: null, note: "Над этажом нет перекрытия, этаж накрыт скатной крышей: высота у стен — наименьшая, к коньку потолок выше." },
     "element.category": { label: "Категория элемента", unit: null },
     "wall.length": { label: "Длина стены", unit: "m" },
     "wall.thickness": { label: "Толщина стены", unit: "m" },
@@ -60,6 +61,8 @@
       const top = S.top(el, project);
       if (maxTop === null || top > maxTop) maxTop = top;
     }
+    const storeys = storeyValues(project);
+    const heights = storeys.map((s) => s.values["room.clearHeight"]).filter((v) => v !== null);
     const building = {
       "project.climateRegion": project.settings.climateRegion ?? null,
       "project.housingFund": project.settings.housingFund ?? null,
@@ -68,25 +71,41 @@
       "building.floorArea": floors.length ? U.round(floorArea, 3) : null,
       "building.windowArea": U.round(windowArea, 3),
       "building.glazingRatio": floorArea > 0 ? U.round(windowArea / floorArea, 4) : null,
-      "room.clearHeight": clearHeight(project),
+      "room.clearHeight": heights.length ? Math.min(...heights) : null,
     };
     const elements = els.map((el) => ({ id: el.id, type: el.type, name: el.name, values: elementValues(el) }));
+    elements.push(...storeys);
     return { units: units(), building, elements };
   }
 
-  function clearHeight(project) {
-    const first = project.levels.slice().sort((a, b) => a.elevation - b.elevation)[0];
-    const ground = project.elements.filter((e) => e.type === "slab" && e.levelId === first.id && e.category === "ground");
-    if (!ground.length) return null;
-    const floorTop = Math.min(...ground.map((g) => S.top(g, project)));
-    const ceilings = [];
-    for (const w of project.elements.filter((e) => e.type === "wall" && e.category === "exterior" && e.levelId === first.id)) {
-      ceilings.push(S.top(w, project));
+  /**
+   * Этажи как объекты проверки (type "storey"): высота помещений этажа и признак наклонного потолка.
+   * Этаж учитывается, если на нём есть наружные стены. memberIds — стены этажа (для подсветки в 3D).
+   */
+  function storeyValues(project) {
+    const out = [];
+    const els = project.elements;
+    const slabs = els.filter((e) => e.type === "slab");
+    const roofs = els.filter((e) => e.type === "roof");
+    for (const lv of project.levels.slice().sort((a, b) => a.elevation - b.elevation)) {
+      const walls = els.filter((e) => e.type === "wall" && e.category === "exterior" && e.levelId === lv.id);
+      if (!walls.length) continue;
+      // Пол этажа: плита пола этого этажа (верх около отметки этажа или выше — на толщину пола)
+      const floors = slabs.filter((s) => s.levelId === lv.id && (s.category === "ground" || s.category === "floor") &&
+        S.top(s, project) >= lv.elevation - 0.05 && S.top(s, project) <= lv.elevation + 0.6);
+      const wallTop = Math.min(...walls.map((w) => S.top(w, project)));
+      let height = null, sloped = null;
+      if (floors.length) {
+        const floorTop = Math.max(...floors.map((f) => S.top(f, project)));
+        const above = slabs.filter((s) => S.bottom(s, project) > floorTop + 0.5 && S.bottom(s, project) <= wallTop + 0.6);
+        const ceiling = Math.min(wallTop, ...above.map((s) => S.bottom(s, project)));
+        height = U.round(ceiling - floorTop, 3);
+        sloped = !above.length && roofs.some((r) => (r.params && r.params.roofType) !== "flat");
+      }
+      out.push({ id: lv.id, type: "storey", name: lv.name, memberIds: walls.map((w) => w.id),
+        values: { "room.clearHeight": height, "storey.slopedCeiling": sloped } });
     }
-    for (const s of project.elements.filter((e) => e.type === "slab" && S.bottom(e, project) > floorTop + 0.01)) {
-      ceilings.push(S.bottom(s, project));
-    }
-    return ceilings.length ? U.round(Math.min(...ceilings) - floorTop, 3) : null;
+    return out;
   }
 
   function elementValues(el) {

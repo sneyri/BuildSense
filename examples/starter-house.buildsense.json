@@ -32,6 +32,10 @@
     "loads": {
       "liveLoad": 2,
       "slabCapacity": 8
+    },
+    "bim": {
+      "object": "ЖК01",
+      "section": "С1"
     }
   },
   "house": {

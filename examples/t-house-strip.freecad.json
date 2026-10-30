@@ -8,7 +8,11 @@
   "project": {
     "name": "Т-образный дом на ленте",
     "climateRegion": "2V",
-    "housingFund": "private"
+    "housingFund": "private",
+    "bim": {
+      "object": "ЖК01",
+      "section": "С1"
+    }
   },
   "plan": {
     "contours": [
@@ -63,6 +67,7 @@
   "elements": [
     {
       "id": "wall-1",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-001",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -80,6 +85,7 @@
         "edgeFrom": "p1",
         "edgeStart": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -102,6 +108,7 @@
     },
     {
       "id": "wall-2",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-002",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -119,6 +126,7 @@
         "edgeFrom": "p2",
         "edgeStart": 0.38
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -141,6 +149,7 @@
     },
     {
       "id": "wall-3",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-003",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -158,6 +167,7 @@
         "edgeFrom": "p3",
         "edgeStart": 0.38
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -180,6 +190,7 @@
     },
     {
       "id": "wall-4",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-004",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -197,6 +208,7 @@
         "edgeFrom": "p4",
         "edgeStart": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -219,6 +231,7 @@
     },
     {
       "id": "wall-5",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-005",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -236,6 +249,7 @@
         "edgeFrom": "p5",
         "edgeStart": 0.38
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -258,6 +272,7 @@
     },
     {
       "id": "wall-6",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-006",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -275,6 +290,7 @@
         "edgeFrom": "p6",
         "edgeStart": 0.38
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -297,6 +313,7 @@
     },
     {
       "id": "wall-7",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-007",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -314,6 +331,7 @@
         "edgeFrom": "p7",
         "edgeStart": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -336,6 +354,7 @@
     },
     {
       "id": "wall-8",
+      "bimCode": "ЖК01-С1-Э01-КР-СТН-008",
       "type": "wall",
       "typeLabel": "Стена",
       "shape": "wall",
@@ -353,6 +372,7 @@
         "edgeFrom": "p8",
         "edgeStart": 0.38
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -375,6 +395,7 @@
     },
     {
       "id": "strip_foundation-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-001",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -392,6 +413,7 @@
         "edgeFrom": "p1",
         "edgeStart": -0.11
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -412,6 +434,7 @@
     },
     {
       "id": "strip_foundation-2",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-002",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -429,6 +452,7 @@
         "edgeFrom": "p2",
         "edgeStart": 0.49
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -449,6 +473,7 @@
     },
     {
       "id": "strip_foundation-3",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-003",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -466,6 +491,7 @@
         "edgeFrom": "p3",
         "edgeStart": 0.49
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -486,6 +512,7 @@
     },
     {
       "id": "strip_foundation-4",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-004",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -503,6 +530,7 @@
         "edgeFrom": "p4",
         "edgeStart": 0.11
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -523,6 +551,7 @@
     },
     {
       "id": "strip_foundation-5",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-005",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -540,6 +569,7 @@
         "edgeFrom": "p5",
         "edgeStart": 0.49
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -560,6 +590,7 @@
     },
     {
       "id": "strip_foundation-6",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-006",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -577,6 +608,7 @@
         "edgeFrom": "p6",
         "edgeStart": 0.49
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -597,6 +629,7 @@
     },
     {
       "id": "strip_foundation-7",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-007",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -614,6 +647,7 @@
         "edgeFrom": "p7",
         "edgeStart": 0.11
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -634,6 +668,7 @@
     },
     {
       "id": "strip_foundation-8",
+      "bimCode": "ЖК01-С1-Э01-КР-ФЛН-008",
       "type": "strip_foundation",
       "typeLabel": "Ленточный фундамент",
       "shape": "box",
@@ -651,6 +686,7 @@
         "edgeFrom": "p8",
         "edgeStart": 0.49
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -671,6 +707,7 @@
     },
     {
       "id": "slab-1",
+      "bimCode": "ЖК01-С1-Э01-КР-ПЛТ-001",
       "type": "slab",
       "typeLabel": "Перекрытие / пол",
       "shape": "prism",
@@ -686,6 +723,7 @@
         "contourId": "C1",
         "generatedBy": "contour-floor"
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -749,6 +787,7 @@
     },
     {
       "id": "roof-1",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-001",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -769,6 +808,7 @@
         "generatedBy": "contour-roof",
         "part": 0
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -791,6 +831,7 @@
     },
     {
       "id": "roof-2",
+      "bimCode": "ЖК01-С1-Э01-КР-КРШ-002",
       "type": "roof",
       "typeLabel": "Крыша",
       "shape": "roof",
@@ -811,6 +852,7 @@
         "generatedBy": "contour-roof",
         "part": 1
       },
+      "node": null,
       "relations": {
         "hostId": null,
         "hosted": [],
@@ -831,5 +873,23 @@
         "rise": 1443.38
       }
     }
-  ]
+  ],
+  "envelope": {
+    "wallGross": 109.3,
+    "windows": 0,
+    "doors": 0,
+    "wallNet": 109.3,
+    "glazingFacade": 0,
+    "roof": 103.92,
+    "footprint": 68,
+    "height": 2.7,
+    "volume": 183.6,
+    "envelope": 245.3,
+    "compactness": 1.336,
+    "counts": {
+      "walls": 8,
+      "windows": 0,
+      "doors": 0
+    }
+  }
 }
