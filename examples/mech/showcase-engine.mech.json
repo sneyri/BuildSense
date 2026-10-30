@@ -1,0 +1,664 @@
+{
+  "format": "buildsense-mech",
+  "schemaVersion": 2,
+  "units": "mm",
+  "name": "Демо B: одноцилиндровый двигатель",
+  "parts": [
+    {
+      "id": "p1",
+      "type": "shaft",
+      "name": "Коренная шейка (передняя)",
+      "params": {
+        "c1": 1,
+        "c2": 0,
+        "steps": [
+          {
+            "d": 20,
+            "L": 20
+          },
+          {
+            "d": 24,
+            "L": 44
+          }
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 86,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p2",
+      "type": "link",
+      "name": "Щека кривошипа 1",
+      "params": {
+        "C": 30,
+        "D1": 50,
+        "d1": 0,
+        "D2": 34,
+        "d2": 0,
+        "T": 10
+      },
+      "placement": {
+        "x": 0,
+        "y": 22,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 90
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p3",
+      "type": "shaft",
+      "name": "Шатунная шейка",
+      "params": {
+        "c1": 0,
+        "c2": 0,
+        "steps": [
+          {
+            "d": 16,
+            "L": 24
+          }
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 12,
+        "z": 90,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p4",
+      "type": "link",
+      "name": "Щека кривошипа 2",
+      "params": {
+        "C": 30,
+        "D1": 50,
+        "d1": 0,
+        "D2": 34,
+        "d2": 0,
+        "T": 10
+      },
+      "placement": {
+        "x": 0,
+        "y": -12,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 90
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p5",
+      "type": "shaft",
+      "name": "Коренная шейка (задняя)",
+      "params": {
+        "c1": 0,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 24,
+            "L": 44
+          },
+          {
+            "d": 20,
+            "L": 30
+          }
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": -22,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p6",
+      "type": "flange",
+      "name": "Маховик",
+      "params": {
+        "D": 120,
+        "T": 12,
+        "d": 20,
+        "hubD": 36,
+        "hubH": 10,
+        "n": 6,
+        "pcd": 90,
+        "holeD": 12
+      },
+      "placement": {
+        "x": 0,
+        "y": -66,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p7",
+      "type": "block",
+      "name": "Стенка картера передняя",
+      "params": {
+        "W": 100,
+        "H": 152,
+        "hb": 60,
+        "T": 10,
+        "d": 24
+      },
+      "placement": {
+        "x": 0,
+        "y": 34,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "aluminum"
+    },
+    {
+      "id": "p8",
+      "type": "block",
+      "name": "Стенка картера задняя",
+      "params": {
+        "W": 100,
+        "H": 152,
+        "hb": 60,
+        "T": 10,
+        "d": 24
+      },
+      "placement": {
+        "x": 0,
+        "y": -24,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "aluminum"
+    },
+    {
+      "id": "p9",
+      "type": "bushing",
+      "name": "Цилиндр",
+      "params": {
+        "D": 66,
+        "d": 50,
+        "L": 70,
+        "c": 1,
+        "ci": 0
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 152,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p10",
+      "type": "flange",
+      "name": "Головка цилиндра",
+      "params": {
+        "D": 80,
+        "T": 12,
+        "d": 10,
+        "hubD": 0,
+        "hubH": 0,
+        "n": 4,
+        "pcd": 58,
+        "holeD": 6.6
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 222,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "aluminum"
+    },
+    {
+      "id": "p11",
+      "type": "piston",
+      "name": "Поршень",
+      "params": {
+        "D": 50,
+        "H": 50,
+        "t": 8,
+        "w": 5,
+        "pinZ": 20
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 170,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "aluminum"
+    },
+    {
+      "id": "p12",
+      "type": "shaft",
+      "name": "Поршневой палец",
+      "params": {
+        "c1": 0.5,
+        "c2": 0.5,
+        "steps": [
+          {
+            "d": 10,
+            "L": 38
+          }
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 19,
+        "z": 190,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p13",
+      "type": "link",
+      "name": "Шатун",
+      "params": {
+        "C": 100,
+        "D1": 32,
+        "d1": 16,
+        "D2": 20,
+        "d2": 10,
+        "T": 18
+      },
+      "placement": {
+        "x": 0,
+        "y": 9,
+        "z": 90,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 90
+        }
+      },
+      "material": "steel"
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "A1",
+      "name": "Двигатель",
+      "components": [
+        {
+          "id": "c1",
+          "partId": "p1",
+          "fixed": true
+        },
+        {
+          "id": "c2",
+          "partId": "p2",
+          "fixed": false
+        },
+        {
+          "id": "c3",
+          "partId": "p3",
+          "fixed": false
+        },
+        {
+          "id": "c4",
+          "partId": "p4",
+          "fixed": false
+        },
+        {
+          "id": "c5",
+          "partId": "p5",
+          "fixed": false
+        },
+        {
+          "id": "c6",
+          "partId": "p6",
+          "fixed": false
+        },
+        {
+          "id": "c7",
+          "partId": "p7",
+          "fixed": false
+        },
+        {
+          "id": "c8",
+          "partId": "p8",
+          "fixed": false
+        },
+        {
+          "id": "c9",
+          "partId": "p9",
+          "fixed": true
+        },
+        {
+          "id": "c10",
+          "partId": "p10",
+          "fixed": false
+        },
+        {
+          "id": "c11",
+          "partId": "p11",
+          "fixed": false
+        },
+        {
+          "id": "c12",
+          "partId": "p12",
+          "fixed": false
+        },
+        {
+          "id": "c13",
+          "partId": "p13",
+          "fixed": false
+        }
+      ],
+      "mates": [
+        {
+          "id": "m1",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m2",
+          "type": "planar",
+          "a": {
+            "comp": "c1",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m3",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis2"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m4",
+          "type": "planar",
+          "a": {
+            "comp": "c2",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m5",
+          "type": "coaxial",
+          "a": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "axis2"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m6",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m7",
+          "type": "coaxial",
+          "a": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m8",
+          "type": "planar",
+          "a": {
+            "comp": "c4",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m9",
+          "type": "coaxial",
+          "a": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m10",
+          "type": "planar",
+          "a": {
+            "comp": "c5",
+            "ref": "step1"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m11",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m12",
+          "type": "distance",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "end1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 2
+        },
+        {
+          "id": "m13",
+          "type": "coaxial",
+          "a": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m14",
+          "type": "distance",
+          "a": {
+            "comp": "c4",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 2
+        },
+        {
+          "id": "m15",
+          "type": "coaxial",
+          "a": {
+            "comp": "c9",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c10",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m16",
+          "type": "planar",
+          "a": {
+            "comp": "c9",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c10",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        }
+      ]
+    }
+  ],
+  "demo": "engine",
+  "mechanisms": [
+    {
+      "id": "K1",
+      "type": "slider-crank",
+      "name": "Кривошипно-шатунный механизм",
+      "crank": "p1",
+      "web": "p2",
+      "pin": "p3",
+      "rod": "p13",
+      "piston": "p11",
+      "pistonPin": "p12",
+      "cylinder": "p9",
+      "head": "p10",
+      "rotating": [
+        "p4",
+        "p5",
+        "p6"
+      ]
+    }
+  ]
+}

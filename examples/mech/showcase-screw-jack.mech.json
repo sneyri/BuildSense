@@ -1,0 +1,365 @@
+{
+  "format": "buildsense-mech",
+  "schemaVersion": 2,
+  "units": "mm",
+  "name": "Демо C: винтовой домкрат",
+  "parts": [
+    {
+      "id": "p1",
+      "type": "flange",
+      "name": "Основание",
+      "params": {
+        "D": 160,
+        "T": 15,
+        "d": 24,
+        "hubD": 70,
+        "hubH": 60,
+        "n": 4,
+        "pcd": 130,
+        "holeD": 12
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p2",
+      "type": "bushing",
+      "name": "Гайка",
+      "params": {
+        "D": 50,
+        "d": 24,
+        "L": 40,
+        "c": 1,
+        "ci": 0.5
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 75,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "bronze"
+    },
+    {
+      "id": "p3",
+      "type": "screw",
+      "name": "Винт",
+      "params": {
+        "d": 24,
+        "P": 5,
+        "Lt": 130,
+        "D": 40,
+        "Lh": 16,
+        "dn": 16,
+        "Ln": 22
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 15,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p4",
+      "type": "link",
+      "name": "Рукоятка (рычаг)",
+      "params": {
+        "C": 140,
+        "D1": 36,
+        "d1": 16,
+        "D2": 24,
+        "d2": 10,
+        "T": 10
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 161,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p5",
+      "type": "shaft",
+      "name": "Ручка рукоятки",
+      "params": {
+        "c1": 0,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 10,
+            "L": 10
+          },
+          {
+            "d": 18,
+            "L": 35
+          }
+        ]
+      },
+      "placement": {
+        "x": 140,
+        "y": 0,
+        "z": 161,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "polyamide"
+    },
+    {
+      "id": "p6",
+      "type": "flange",
+      "name": "Опорная площадка",
+      "params": {
+        "D": 80,
+        "T": 12,
+        "d": 16,
+        "hubD": 0,
+        "hubH": 0,
+        "n": 0,
+        "pcd": 0,
+        "holeD": 5
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 171,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "A1",
+      "name": "Домкрат",
+      "components": [
+        {
+          "id": "c1",
+          "partId": "p1",
+          "fixed": true
+        },
+        {
+          "id": "c2",
+          "partId": "p2",
+          "fixed": false
+        },
+        {
+          "id": "c3",
+          "partId": "p3",
+          "fixed": false
+        },
+        {
+          "id": "c4",
+          "partId": "p4",
+          "fixed": false
+        },
+        {
+          "id": "c5",
+          "partId": "p5",
+          "fixed": false
+        },
+        {
+          "id": "c6",
+          "partId": "p6",
+          "fixed": false
+        }
+      ],
+      "mates": [
+        {
+          "id": "m1",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m2",
+          "type": "planar",
+          "a": {
+            "comp": "c1",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m3",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m4",
+          "type": "distance",
+          "a": {
+            "comp": "c2",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "head0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 30
+        },
+        {
+          "id": "m5",
+          "type": "coaxial",
+          "a": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m6",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "head1"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m7",
+          "type": "coaxial",
+          "a": {
+            "comp": "c4",
+            "ref": "axis2"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m8",
+          "type": "planar",
+          "a": {
+            "comp": "c4",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "step1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m9",
+          "type": "coaxial",
+          "a": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m10",
+          "type": "planar",
+          "a": {
+            "comp": "c4",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        }
+      ]
+    }
+  ],
+  "demo": "screw-jack",
+  "mechanisms": [
+    {
+      "id": "K1",
+      "type": "screw",
+      "name": "Винтовая пара",
+      "screw": "p3",
+      "nut": "p2",
+      "rotating": [
+        "p4",
+        "p5"
+      ],
+      "lifting": [
+        "p6"
+      ],
+      "stroke": 60
+    }
+  ]
+}

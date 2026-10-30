@@ -64,12 +64,14 @@
       c.addEventListener("pointermove", (e) => this._move(e));
       c.addEventListener("pointerup", (e) => this._up(e));
       c.addEventListener("pointerleave", () => { if (!this.drag) this._hide(); });
-      window.addEventListener("keydown", (e) => {
-        if (e.code === "KeyR" && this.tool === "point" && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) {
-          this.rotation = (this.rotation + 90) % 360;
-          this.cb.onHint(`${HINTS.point} Поворот: ${this.rotation}°.`);
-        }
-      });
+    }
+
+    /** Повернуть размещаемый объект на 90° (горячая клавиша R из BS.hotkeys). Возвращает true, если инструмент размещения активен. */
+    rotateStep() {
+      if (this.tool !== "point") return false;
+      this.rotation = (this.rotation + 90) % 360;
+      this.cb.onHint(`${HINTS.point} Поворот: ${this.rotation}°.`);
+      return true;
     }
 
     /** tool: "select" или тип объекта из реестра. */
@@ -104,7 +106,7 @@
     // ---------------------------------------------------------------- события
 
     _down(e) {
-      if (e.button !== 0 || !this._onCanvas(e)) { this.down = null; return; }
+      if (e.button !== 0 || !e.isPrimary || !this._onCanvas(e)) { this.down = null; return; } // второй палец (щипок) — не клик
       this.down = { x: e.clientX, y: e.clientY };
       if (this.tool !== "select") return;
       const sel = this.cb.getSelected();
@@ -141,7 +143,17 @@
       if (!p) return null;
       const snap = this.cb.getSnap();
       const tol = Math.min(0.6, Math.max(0.08, this.view.worldPerPixel(p) * 12));
-      return BS.snapping.snapPoint(project, { x: p.x, y: p.y }, { from: this.tool === "line" ? this.first : null, tol, grid: snap.grid, enabled: snap.enabled });
+      const res = BS.snapping.snapPoint(project, { x: p.x, y: p.y }, { from: this.tool === "line" ? this.first : null, tol, grid: snap.grid, enabled: snap.enabled });
+      if (res && hit && hit.elementType !== "roof") res.hitZ = hit.point.z; // высота, на которую реально указывает курсор
+      return res;
+    }
+
+    /** Этаж, на уровне которого находится курсор (если он указывает на стену другого этажа). */
+    _otherLevelAt(hitZ, lv) {
+      if (hitZ == null) return null;
+      const project = this.cb.getProject();
+      const at = project.levels.find((l) => hitZ >= l.elevation - 0.05 && hitZ <= l.elevation + l.height + 0.25);
+      return at && at.id !== lv.id ? at : null;
     }
 
     _hoverPlan(e) {
@@ -152,6 +164,12 @@
       const z = BS.support.supportLevel(project, [s], { below: P.level(project, levelId).elevation + 0.35, fallback: P.level(project, levelId).elevation });
       this._marker(s, z);
       const kind = BS.snapping.KIND_LABELS[s.kind] ? ` · ${BS.snapping.KIND_LABELS[s.kind]}` : "";
+      const other = this._otherLevelAt(s.hitZ, P.level(project, levelId));
+      if (other) {
+        this.preview.visible = false;
+        this._label({ x: s.x, y: s.y, z }, `курсор на этаже «${other.name}», а активен «${P.level(project, levelId).name}» — переключите этаж слева`);
+        return;
+      }
       try {
         if (this.tool === "point") {
           const spec = P.planPoint(project, this.type, s, { levelId, rotation: this.rotation });

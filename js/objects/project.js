@@ -701,7 +701,40 @@
     return buildStarterHouse(createProject(name));
   }
 
+  /** Концы оси стены на плане (середина толщины): { a, b } — начало и конец, м. */
+  function wallEnds(el) {
+    const r = ((el.rotation || 0) * Math.PI) / 180;
+    const ux = Math.cos(r), uy = Math.sin(r), nx = -uy, ny = ux, t = el.size.thickness / 2;
+    const a = { x: el.position.x + nx * t, y: el.position.y + ny * t };
+    return { a, b: { x: a.x + ux * el.size.length, y: a.y + uy * el.size.length } };
+  }
+
+  /**
+   * Перетащить конец стены (ручка на плане): which = "start" | "end", point — новое положение конца оси стены.
+   * Меняются НАСТОЯЩИЕ параметры (position, rotation, size.length); проёмы остаются на тех же местах в мире
+   * (их отступ пересчитывается и при необходимости ограничивается). Стены, созданные из контура, не трогаем.
+   * Возвращает тексты корректировок; бросает Error с понятным текстом.
+   */
+  function moveWallEnd(project, id, which, point) {
+    const el = find(project, id);
+    if (!el || el.type !== "wall") throw new Error("Это не стена");
+    if (el.params && el.params.contourId) throw new Error("Стена привязана к контуру дома: меняйте вершины контура, стена перестроится сама");
+    const { a, b } = wallEnds(el);
+    const p1 = which === "start" ? point : a, p2 = which === "end" ? point : b;
+    const dx = p2.x - p1.x, dy = p2.y - p1.y, len = Math.hypot(dx, dy);
+    const min = ((BS.types.get("wall").fields || {})["size.length"] || {}).min || 0.1;
+    if (!(len >= min)) throw new Error(`Стена слишком короткая: минимум ${U.fmt(min)} м`);
+    const t = el.size.thickness / 2, nx = -dy / len, ny = dx / len;
+    const openings = hosted(project, id).map((o) => ({ o, w: G.localToWorld(el, o.position.offset, 0, 0) }));
+    const pos = { x: U.round(p1.x - nx * t, 4), y: U.round(p1.y - ny * t, 4) };
+    const rot = (Math.atan2(dy, dx) * 180) / Math.PI;
+    const ux = dx / len, uy = dy / len;
+    for (const { o, w } of openings) o.position.offset = (w.x - pos.x) * ux + (w.y - pos.y) * uy;
+    return updateElement(project, id, { position: pos, rotation: rot, size: { length: U.round(len, 4) } });
+  }
+
   BS.project = {
+    wallEnds, moveWallEnd,
     FORMAT, SCHEMA_VERSION, DEFAULT_SETTINGS, DEFAULT_HOUSE,
     createProject, createStarterProject, buildStarterHouse, touch, level, topLevel, find, hosted, nextId,
     addElement, normalize, updateElement, removeElements, baseZ,

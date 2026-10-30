@@ -32,12 +32,12 @@
 
   /** Справочные приближённые плотности, кг/м³ (для оценки массы в учебных целях). */
   const MATERIALS = {
-    steel: { label: "Сталь углеродистая", density: 7850, color: 0x9aa4ad },
-    cast_iron: { label: "Чугун серый", density: 7200, color: 0x6f757b },
-    aluminum: { label: "Алюминиевый сплав", density: 2700, color: 0xc9d1d9 },
-    bronze: { label: "Бронза", density: 8800, color: 0xb08d57 },
-    brass: { label: "Латунь", density: 8500, color: 0xc8a951 },
-    polyamide: { label: "Полиамид (капролон)", density: 1150, color: 0xe8e2c8 },
+    steel: { label: "Сталь углеродистая", density: 7850, desc: "Универсальная конструкционная сталь: валы, оси, фланцы. Прочная и тяжёлая.", color: 0x9aa4ad },
+    cast_iron: { label: "Чугун серый", density: 7200, desc: "Хорошо отливается и гасит вибрации, но хрупкий: корпуса, станины.", color: 0x6f757b },
+    aluminum: { label: "Алюминиевый сплав", density: 2700, desc: "Лёгкий и не ржавеет, но мягче стали: корпуса и лёгкие детали.", color: 0xc9d1d9 },
+    bronze: { label: "Бронза", density: 8800, desc: "Хорошо скользит и выдерживает трение: втулки, подшипники скольжения.", color: 0xb08d57 },
+    brass: { label: "Латунь", density: 8500, desc: "Не ржавеет и легко обрабатывается: фитинги, втулки, мелкие детали.", color: 0xc8a951 },
+    polyamide: { label: "Полиамид (капролон)", density: 1150, desc: "Лёгкий пластик: гасит шум, работает без смазки (втулки, шестерни).", color: 0xe8e2c8 },
   };
 
   const num = (v) => typeof v === "number" && Number.isFinite(v);
@@ -86,7 +86,63 @@
         { key: "holeD", label: "Диаметр отверстий", unit: "мм", min: 0.5, default: 14, step: 0.5 },
       ],
     },
+    // плоская деталь с двумя проушинами (шатун, щека кривошипа, рычаг): выдавливание по Z на толщину T;
+    // проушина 1 — в начале координат (ось "axis"), проушина 2 — в точке (C, 0) (ось "axis2")
+    link: {
+      label: "Рычаг / шатун",
+      icon: "part",
+      extrude: true,
+      params: [
+        { key: "C", label: "Межосевое расстояние C", unit: "мм", min: 1, default: 100, step: 1 },
+        { key: "D1", label: "Проушина 1: наружный диаметр", unit: "мм", min: 2, default: 32, step: 1 },
+        { key: "d1", label: "Проушина 1: отверстие", unit: "мм", min: 0, default: 16, step: 0.5, hint: "0 — без отверстия" },
+        { key: "D2", label: "Проушина 2: наружный диаметр", unit: "мм", min: 2, default: 20, step: 1 },
+        { key: "d2", label: "Проушина 2: отверстие", unit: "мм", min: 0, default: 10, step: 0.5, hint: "0 — без отверстия" },
+        { key: "T", label: "Толщина T", unit: "мм", min: 0.5, default: 18, step: 1 },
+      ],
+    },
+    // прямоугольная плита с отверстием (корпус подшипника, стенка картера, основание): выдавливание по Z на T;
+    // центр отверстия — в начале координат (ось "axis"), плита от −W/2 до W/2 по X и от −hb до H − hb по Y
+    block: {
+      label: "Корпус / опора",
+      icon: "pad",
+      extrude: true,
+      params: [
+        { key: "W", label: "Ширина W", unit: "мм", min: 2, default: 90, step: 1 },
+        { key: "H", label: "Высота H", unit: "мм", min: 2, default: 80, step: 1 },
+        { key: "hb", label: "Высота оси отверстия от низа", unit: "мм", min: 0, default: 40, step: 1 },
+        { key: "T", label: "Толщина T", unit: "мм", min: 0.5, default: 20, step: 1 },
+        { key: "d", label: "Отверстие d", unit: "мм", min: 0, default: 30, step: 0.5, hint: "0 — сплошная плита" },
+      ],
+    },
+    piston: {
+      label: "Поршень",
+      icon: "round",
+      params: [
+        { key: "D", label: "Диаметр D", unit: "мм", min: 4, default: 50, step: 1 },
+        { key: "H", label: "Высота H", unit: "мм", min: 2, default: 50, step: 1 },
+        { key: "t", label: "Толщина днища", unit: "мм", min: 0.5, default: 8, step: 0.5 },
+        { key: "w", label: "Толщина юбки", unit: "мм", min: 0.5, default: 5, step: 0.5 },
+        { key: "pinZ", label: "Ось пальца от низа юбки", unit: "мм", min: 0.5, default: 20, step: 1, hint: "Где шатун крепится к поршню (для кинематики)" },
+      ],
+    },
+    // винт: резьба показана условно — кольцевыми зубьями профиля (тело вращения), а не винтовой линией
+    screw: {
+      label: "Винт",
+      icon: "shaft",
+      params: [
+        { key: "d", label: "Наружный диаметр резьбы d", unit: "мм", min: 2, default: 24, step: 1 },
+        { key: "P", label: "Шаг резьбы P (= ход за оборот)", unit: "мм", min: 0.5, default: 5, step: 0.5 },
+        { key: "Lt", label: "Длина резьбы", unit: "мм", min: 1, default: 130, step: 1 },
+        { key: "D", label: "Головка: диаметр", unit: "мм", min: 2, default: 40, step: 1 },
+        { key: "Lh", label: "Головка: высота", unit: "мм", min: 0.5, default: 16, step: 1 },
+        { key: "dn", label: "Шейка: диаметр", unit: "мм", min: 1, default: 16, step: 1 },
+        { key: "Ln", label: "Шейка: длина", unit: "мм", min: 0.5, default: 22, step: 1 },
+      ],
+    },
   };
+  /** Глубина условной резьбы винта (доля шага). */
+  const THREAD_DEPTH = 0.5;
 
   function defaultParams(type) {
     const t = TYPES[type];
@@ -204,6 +260,65 @@
     },
   };
 
+  Object.assign(VALIDATORS, {
+    link(p, e) {
+      if (!["C", "D1", "d1", "D2", "d2", "T"].map((k) => checkNumber(e, "link", k, p[k])).every(Boolean)) return;
+      if (p.C <= Math.abs(p.D1 - p.D2) / 2 + EPS) e.push(err("C", `Межосевое ${fmt(p.C)} мм слишком мало: одна проушина целиком внутри другой`));
+      if (p.d1 > 0 && p.d1 > p.D1 - 2 * MIN_WALL + EPS) e.push(err("d1", `Отверстие ${fmt(p.d1)} мм оставляет стенку проушины 1 тоньше ${MIN_WALL} мм`));
+      if (p.d2 > 0 && p.d2 > p.D2 - 2 * MIN_WALL + EPS) e.push(err("d2", `Отверстие ${fmt(p.d2)} мм оставляет стенку проушины 2 тоньше ${MIN_WALL} мм`));
+      if (p.d1 > 0 && p.d2 > 0 && p.C < (p.d1 + p.d2) / 2 + MIN_BRIDGE - EPS) e.push(err("C", `Отверстия проушин пересекаются: перемычка меньше ${MIN_BRIDGE} мм`));
+    },
+    block(p, e) {
+      if (!["W", "H", "hb", "T", "d"].map((k) => checkNumber(e, "block", k, p[k])).every(Boolean)) return;
+      if (p.hb > p.H) e.push(err("hb", `Ось отверстия (${fmt(p.hb)} мм) выше плиты (H = ${fmt(p.H)} мм)`));
+      else if (p.d > 0) {
+        const room = Math.min(p.hb, p.H - p.hb, p.W / 2);
+        if (p.d / 2 + MIN_WALL > room + EPS) e.push(err("d", `Отверстие ⌀${fmt(p.d)} не помещается: до ближайшего края ${fmt(room)} мм, нужна стенка ${MIN_WALL} мм`));
+      }
+    },
+    piston(p, e) {
+      if (!["D", "H", "t", "w", "pinZ"].map((k) => checkNumber(e, "piston", k, p[k])).every(Boolean)) return;
+      if (p.w > p.D / 2 - MIN_WALL + EPS) e.push(err("w", `Юбка ${fmt(p.w)} мм слишком толстая для ⌀${fmt(p.D)}`));
+      if (p.t > p.H - MIN_WALL + EPS) e.push(err("t", `Днище ${fmt(p.t)} мм не оставляет юбки при высоте ${fmt(p.H)} мм`));
+      else if (p.pinZ > p.H - p.t - EPS) e.push(err("pinZ", `Ось пальца (${fmt(p.pinZ)} мм) должна быть ниже днища (${fmt(p.H - p.t)} мм)`));
+    },
+    screw(p, e) {
+      if (!["d", "P", "Lt", "D", "Lh", "dn", "Ln"].map((k) => checkNumber(e, "screw", k, p[k])).every(Boolean)) return;
+      if (p.d / 2 - THREAD_DEPTH * p.P < MIN_WALL) e.push(err("P", `Шаг ${fmt(p.P)} мм слишком велик для ⌀${fmt(p.d)}: впадины резьбы доходят до оси`));
+      if (p.Lt < p.P - EPS) e.push(err("Lt", `Длина резьбы меньше одного шага (${fmt(p.P)} мм)`));
+      else if (p.Lt / p.P > 400) e.push(err("Lt", "Не больше 400 витков резьбы"));
+      if (p.D <= p.d + EPS) e.push(err("D", `Головка (⌀${fmt(p.D)}) должна быть шире резьбы (⌀${fmt(p.d)})`));
+      if (p.dn >= p.D - EPS) e.push(err("dn", `Шейка (⌀${fmt(p.dn)}) должна быть уже головки (⌀${fmt(p.D)})`));
+    },
+  });
+
+  const isExtrude = (type) => Boolean(TYPES[type] && TYPES[type].extrude);
+
+  /** Профиль винта (r, z): условная резьба зубьями, головка, шейка. */
+  function screwSketch(p) {
+    const R = p.d / 2, r = R - THREAD_DEPTH * p.P;
+    const n = Math.floor(p.Lt / p.P + 1e-9);
+    const pts = [[0, 0], [r, 0]];
+    for (let k = 0; k < n; k++) pts.push([R, k * p.P + p.P / 2], [r, (k + 1) * p.P]);
+    if (p.Lt - n * p.P > 1e-9) pts.push([r, p.Lt]);
+    const zh = p.Lt + p.Lh, zn = zh + p.Ln;
+    pts.push([p.D / 2, p.Lt], [p.D / 2, zh], [p.dn / 2, zh], [p.dn / 2, zn], [0, zn]);
+    return pts;
+  }
+
+  /** Контур плоской детали в плоскости XY: { kind: "stadium", r1, r2, C } или { kind: "rect", x0, y0, x1, y1 }. */
+  function outlineOf(part) {
+    const p = part.params;
+    if (part.type === "link") return { kind: "stadium", r1: p.D1 / 2, r2: p.D2 / 2, C: p.C };
+    return { kind: "rect", x0: -p.W / 2, y0: -p.hb, x1: p.W / 2, y1: p.H - p.hb };
+  }
+
+  /** Площадь выпуклой оболочки двух окружностей (r1 в 0, r2 в (C, 0)). */
+  function stadiumArea(r1, r2, C) {
+    const b = Math.asin((r1 - r2) / C);
+    return r1 * r1 * (Math.PI / 2 + b) + r2 * r2 * (Math.PI / 2 - b) + (r1 + r2) * C * Math.cos(b);
+  }
+
   /** Ошибки параметров детали: [{ field, message }]. Пустой массив — параметры корректны. */
   function validateParams(type, params) {
     if (!TYPES[type]) return [err("type", `Неизвестный тип детали «${type}»`)];
@@ -299,6 +414,31 @@
         if (p.n > 0) f.push({ id: "holes", kind: "hole", label: `Отверстия ${p.n}×⌀${fmt(p.holeD)} на ⌀${fmt(p.pcd)}`, d: p.holeD, z0: 0, z1: p.T, through: true, pattern: { kind: "polar", n: p.n, pcd: p.pcd, startAngle: 0 } });
         return f;
       }
+      case "piston": {
+        const R = p.D / 2, ri = R - p.w, zi = p.H - p.t;
+        return [
+          { id: "sketch", kind: "sketch", label: "Эскиз: днище и юбка", profile: [[0, zi], [ri, zi], [ri, 0], [R, 0], [R, p.H], [0, p.H]] },
+          { id: "revolve", kind: "revolve", label: "Вращение 360° вокруг Z", sketch: "sketch", angle: 360 },
+        ];
+      }
+      case "screw":
+        return [
+          { id: "sketch", kind: "sketch", label: `Эскиз: резьба P${fmt(p.P)} (условно), головка, шейка`, profile: screwSketch(p) },
+          { id: "revolve", kind: "revolve", label: "Вращение 360° вокруг Z", sketch: "sketch", angle: 360 },
+        ];
+      case "link":
+      case "block": {
+        const o = outlineOf(part);
+        const f = [
+          { id: "sketch", kind: "sketch", label: o.kind === "stadium" ? `Эскиз: две проушины, C = ${fmt(p.C)}` : `Эскиз: плита ${fmt(p.W)}×${fmt(p.H)}`, outline: o },
+          { id: "extrude", kind: "extrude", label: `Выдавливание на ${fmt(p.T)} вдоль Z`, sketch: "sketch", height: p.T },
+        ];
+        const holes = part.type === "link"
+          ? [[0, p.d1], [p.C, p.d2]].filter(([, d]) => d > 0).map(([x, d]) => ({ x, y: 0, d }))
+          : (p.d > 0 ? [{ x: 0, y: 0, d: p.d }] : []);
+        if (holes.length) f.push({ id: "holes", kind: "hole", label: holes.map((h) => `⌀${fmt(h.d)}`).join(" и ") + " сквозное", z0: 0, z1: p.T, through: true, points: holes });
+        return f;
+      }
       default:
         throw new Error(`Неизвестный тип детали «${part.type}»`);
     }
@@ -330,9 +470,15 @@
   function evaluate(part) {
     const f = features(part);
     const sketch = f.find((x) => x.kind === "sketch");
+    const holes = [];
+    if (sketch.outline) {
+      // плоская деталь: контур + выдавливание; profile = null (не тело вращения)
+      const ex = f.find((x) => x.kind === "extrude");
+      for (const h of f.filter((x) => x.kind === "hole")) for (const q of h.points) holes.push({ x: q.x, y: q.y, d: q.d, z0: h.z0, z1: h.z1 });
+      return { features: f, profile: null, extrude: { outline: sketch.outline, height: ex.height }, holes };
+    }
     const chamfers = f.filter((x) => x.kind === "chamfer");
     const profile = applyChamfers(sketch.profile, chamfers);
-    const holes = [];
     for (const h of f.filter((x) => x.kind === "hole")) {
       const { n, pcd, startAngle } = h.pattern;
       for (let i = 0; i < n; i++) {
@@ -382,6 +528,18 @@
         v -= p.n * (Math.PI / 4) * p.holeD * p.holeD * p.T;
         return v;
       }
+      case "piston": {
+        const R = p.D / 2, ri = R - p.w;
+        return Math.PI * (R * R * p.H - ri * ri * (p.H - p.t));
+      }
+      case "screw": // условная резьба: объём тела вращения по профилю (Папп), головка и шейка — цилиндры
+        return profileVolume(screwSketch(p));
+      case "link": {
+        const hole = (d) => (Math.PI / 4) * d * d;
+        return (stadiumArea(p.D1 / 2, p.D2 / 2, p.C) - hole(p.d1) - hole(p.d2)) * p.T;
+      }
+      case "block":
+        return (p.W * p.H - (Math.PI / 4) * p.d * p.d) * p.T;
       default:
         return NaN;
     }
@@ -415,11 +573,25 @@
 
   /** Точный габарит детали в мировых координатах: огибающая окружностей вершин профиля. */
   function worldBounds(part) {
-    const { profile } = evaluate(part);
+    const ev = evaluate(part);
     const pl = part.placement;
     const M = rotationMatrix(pl.rotation);
     const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
-    for (const [r, z] of profile) {
+    if (ev.extrude) {
+      // контур плоской детали: окружности проушин (оболочка двух окружностей имеет тот же габарит) или углы плиты
+      const o = ev.extrude.outline, T = ev.extrude.height;
+      const circles = o.kind === "stadium" ? [[0, 0, o.r1], [o.C, 0, o.r2]] : [[o.x0, o.y0, 0], [o.x1, o.y0, 0], [o.x1, o.y1, 0], [o.x0, o.y1, 0]];
+      for (const [x, y, r] of circles) for (const z of [0, T]) {
+        for (let i = 0; i < 3; i++) {
+          const c = M[i][0] * x + M[i][1] * y + M[i][2] * z + [pl.x, pl.y, pl.z][i];
+          const ext = r * Math.hypot(M[i][0], M[i][1]);
+          min[i] = Math.min(min[i], c - ext);
+          max[i] = Math.max(max[i], c + ext);
+        }
+      }
+      return { min, max, size: [0, 1, 2].map((i) => max[i] - min[i]) };
+    }
+    for (const [r, z] of ev.profile) {
       for (let i = 0; i < 3; i++) {
         const c = M[i][2] * z + [pl.x, pl.y, pl.z][i];
         const ext = r * Math.hypot(M[i][0], M[i][1]);
@@ -479,18 +651,30 @@
     if (!SUPPORTED_SCHEMAS.includes(data.schemaVersion)) throw new Error(`Версия схемы ${data.schemaVersion} не поддерживается (поддерживаются ${SUPPORTED_SCHEMAS.join(", ")})`);
     if (data.units !== "mm") throw new Error("Поддерживаются только миллиметры (units: \"mm\")");
     const pr = createProject(typeof data.name === "string" ? data.name : "Проект");
+    const notes = [];
+    const seen = new Set();
     for (const raw of Array.isArray(data.parts) ? data.parts : []) {
-      const part = createPart(pr, raw && raw.type, {
-        id: raw.id, name: raw.name, params: raw.params, placement: raw.placement, material: raw.material,
-      });
+      if (!raw || typeof raw !== "object") throw new Error("В списке деталей есть пустая или повреждённая запись — файл не открыт");
+      let id = raw.id;
+      if (id !== undefined && seen.has(id)) {
+        id = nextId(pr);
+        notes.push(`Повторяющийся id детали «${raw.id}»: «${raw.name || raw.type}» получила новый id ${id}`);
+      }
+      const part = createPart(pr, raw.type, { id, name: raw.name, params: raw.params, placement: raw.placement, material: raw.material });
+      seen.add(part.id);
       pr.parts.push(part);
     }
-    const notes = [];
     if (BS.mechAssembly && Array.isArray(data.assemblies)) {
       const r = BS.mechAssembly.normalize(data.assemblies, pr);
       pr.assemblies = r.assemblies;
       notes.push(...r.notes);
     }
+    if (BS.mechKinematics && Array.isArray(data.mechanisms)) {
+      const r = BS.mechKinematics.normalize(data.mechanisms, pr);
+      if (r.mechanisms.length) pr.mechanisms = r.mechanisms;
+      notes.push(...r.notes);
+    }
+    if (typeof data.demo === "string") pr.demo = data.demo; // какой демонстрационный проект открыт (для «восстановить исходный»)
     return { project: pr, errors: validateProject(pr), notes };
   }
 
@@ -500,6 +684,12 @@
     const errors = validateProject(project);
     if (errors.length) throw new Error(`Проект содержит ошибки: ${errors[0].message}`);
     const A = BS.mechAssembly;
+    // сборки пересчитываются на копии: в экспорт попадают положения, соответствующие сопряжениям и текущим размерам,
+    // даже если вызывающий забыл вызвать решатель (иначе в FreeCAD уехали бы устаревшие координаты)
+    if (A && Array.isArray(project.assemblies) && project.assemblies.length) {
+      project = JSON.parse(JSON.stringify(project));
+      A.solveAll(project);
+    }
     const asms = A && Array.isArray(project.assemblies) ? project.assemblies : [];
     const out = {
       format: EXPORT_FORMAT,
@@ -523,7 +713,7 @@
           density: rho,
           placement: JSON.parse(JSON.stringify(part.placement)),
           features: ev.features,
-          solid: { revolve: { axis: "Z", profile: ev.profile }, holes: ev.holes },
+          solid: ev.extrude ? { extrude: ev.extrude, holes: ev.holes } : { revolve: { axis: "Z", profile: ev.profile }, holes: ev.holes },
           analytic: { volume: vol, mass: massKg(vol, rho), bboxMin: b.min, bboxMax: b.max },
         };
       }),
@@ -542,13 +732,22 @@
         };
       });
     }
+    const K = BS.mechKinematics;
+    if (K && Array.isArray(project.mechanisms) && project.mechanisms.length) {
+      // описание механизмов — для справки; положения деталей в parts — исходные (угол 0°), без кадров симуляции
+      out.schemaVersion = EXPORT_VERSION_ASSEMBLY;
+      out.mechanisms = project.mechanisms.map((m) => {
+        const c = K.check(project, m);
+        return { ...JSON.parse(JSON.stringify(m)), ok: c.ok, errors: c.errors, notes: c.notes };
+      });
+    }
     return out;
   }
 
   BS.mechModel = {
     FORMAT, SCHEMA_VERSION, SUPPORTED_SCHEMAS, EXPORT_FORMAT, EXPORT_VERSION_PARTS, EXPORT_VERSION_ASSEMBLY, MIN_WALL, MIN_BRIDGE, MATERIALS, TYPES,
     defaultParams, paramDef, fieldLabel, validateParams, validatePart, validateProject,
-    features, applyChamfers, evaluate, shaftSketch, profileVolume, analyticVolume, density, massKg,
+    features, applyChamfers, evaluate, shaftSketch, screwSketch, outlineOf, stadiumArea, isExtrude, THREAD_DEPTH, profileVolume, analyticVolume, density, massKg,
     rotationMatrix, transformPoint, worldBounds,
     createProject, createPart, createDemoProject, nextId, normalizeProject, exportForCad,
   };

@@ -221,7 +221,11 @@
     switch (t.shape) {
       case "box":
         if (BS.shapes.isPrism(el)) buildPrism(g, el);
-        else addSolid(g, box(s.length, s.width, s.height), el);
+        else if (el.type === "lintel") {
+          // перемычка той же толщины, что стена, даёт совпадающие грани (мерцание текстур) — чуть выпускаем её из стены
+          const k = 0.004;
+          addSolid(g, box(s.length + 2 * k, s.width + 2 * k, s.height + k, -k, -k, 0), el);
+        } else addSolid(g, box(s.length, s.width, s.height), el);
         place(g, el);
         break;
       case "wall":

@@ -6,7 +6,8 @@
 Переменные окружения (необязательно):
   BUILDSENSE_MECH_TMP — папка для .FCStd/.step (по умолчанию системная временная);
   BUILDSENSE_MECH_STL — список STL (через ;) для проверки Mesh: замкнутость и объём;
-  BUILDSENSE_MECH_STL_VOLUME — ожидаемый суммарный объём STL, мм³ (допуск 0,5 %).
+  BUILDSENSE_MECH_STL_VOLUME — ожидаемый суммарный объём STL, мм³ (допуск 0,5 %);
+  BUILDSENSE_MECH_EXTRA — дополнительные *.mech-freecad.json (через ;), например из tests/mech_assembly_audit.test.js.
 
 Проверяется для examples/mech/demo.mech-freecad.json, examples/mech/assembly.mech-freecad.json
 и tests/mech_variants.freecad.json:
@@ -210,6 +211,12 @@ def face_z(part, ref):
         return float(sum(s["L"] for s in p["steps"][:i]))
     if part["type"] == "bushing":
         return float(p["L"])
+    if part["type"] in ("link", "block"):
+        return float(p["T"])
+    if part["type"] == "piston":
+        return float(p["H"])
+    if part["type"] == "screw":
+        return float({"head0": p["Lt"], "head1": p["Lt"] + p["Lh"]}.get(ref, p["Lt"] + p["Lh"] + p["Ln"]))
     if ref == "disk":
         return float(p["T"])
     return float(p["T"] + (p["hubH"] if p["hubD"] > 0 and p["hubH"] > 0 else 0))
@@ -244,9 +251,12 @@ def main():
     os.makedirs(tmp, exist_ok=True)
     print("FreeCAD", ".".join(App.Version()[:3]), "| временная папка:", tmp)
     for f in (os.path.join(ROOT, "examples", "mech", "demo.mech-freecad.json"), os.path.join(ROOT, "examples", "mech", "assembly.mech-freecad.json"),
-              os.path.join(HERE, "mech_variants.freecad.json")):
+              os.path.join(HERE, "mech_variants.freecad.json"),
+              *[os.path.join(ROOT, "examples", "mech", "showcase-%s.mech-freecad.json" % d) for d in ("shaft-supports", "engine", "screw-jack")]):
         run_file(f, tmp)
     check_interference(os.path.join(HERE, "mech_interference.freecad.json"))
+    for extra in [p for p in os.environ.get("BUILDSENSE_MECH_EXTRA", "").split(";") if p]:
+        run_file(extra, tmp)
     stl = [p for p in os.environ.get("BUILDSENSE_MECH_STL", "").split(";") if p]
     if stl:
         check_stl(stl, float(os.environ.get("BUILDSENSE_MECH_STL_VOLUME") or 0))

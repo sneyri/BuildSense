@@ -22,6 +22,14 @@
     return M.normalizeProject(data);
   }
 
+  /** Убрать из результата parse() детали с ошибками размеров вместе с их компонентами и сопряжениями в сборках. */
+  function dropInvalidParts(res) {
+    const bad = new Set(res.errors.map((e) => e.partId).filter(Boolean));
+    res.project.parts = res.project.parts.filter((p) => !bad.has(p.id));
+    if (BS.mechAssembly) for (const id of bad) BS.mechAssembly.removePart(res.project, id);
+    return bad;
+  }
+
   function exportFreecadJson(project) {
     return JSON.stringify(M.exportForCad(project), null, 2);
   }
@@ -92,5 +100,5 @@
     }
   }
 
-  BS.mechIO = { AUTOSAVE_KEY, serialize, parse, exportFreecadJson, fileNameFor, download, openFile, autosave, loadAutosave, clearAutosave };
+  BS.mechIO = { AUTOSAVE_KEY, serialize, parse, dropInvalidParts, exportFreecadJson, fileNameFor, download, openFile, autosave, loadAutosave, clearAutosave };
 })(globalThis.BuildSense);

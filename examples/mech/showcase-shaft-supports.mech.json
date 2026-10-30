@@ -1,0 +1,469 @@
+{
+  "format": "buildsense-mech",
+  "schemaVersion": 2,
+  "units": "mm",
+  "name": "Демо A: вал на подшипниковых опорах",
+  "parts": [
+    {
+      "id": "p1",
+      "type": "block",
+      "name": "Основание (плита)",
+      "params": {
+        "W": 320,
+        "H": 90,
+        "hb": 45,
+        "T": 12,
+        "d": 0
+      },
+      "placement": {
+        "x": 140,
+        "y": 0,
+        "z": 0,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p2",
+      "type": "block",
+      "name": "Корпус опоры 1",
+      "params": {
+        "W": 80,
+        "H": 72,
+        "hb": 48,
+        "T": 30,
+        "d": 32
+      },
+      "placement": {
+        "x": 60,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p3",
+      "type": "block",
+      "name": "Корпус опоры 2",
+      "params": {
+        "W": 80,
+        "H": 72,
+        "hb": 48,
+        "T": 30,
+        "d": 32
+      },
+      "placement": {
+        "x": 210,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "cast_iron"
+    },
+    {
+      "id": "p4",
+      "type": "bushing",
+      "name": "Вкладыш подшипника 1",
+      "params": {
+        "D": 32,
+        "d": 25,
+        "L": 30,
+        "c": 0.5,
+        "ci": 0.5
+      },
+      "placement": {
+        "x": 60,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "bronze"
+    },
+    {
+      "id": "p5",
+      "type": "bushing",
+      "name": "Вкладыш подшипника 2",
+      "params": {
+        "D": 32,
+        "d": 25,
+        "L": 30,
+        "c": 0.5,
+        "ci": 0.5
+      },
+      "placement": {
+        "x": 210,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "bronze"
+    },
+    {
+      "id": "p6",
+      "type": "shaft",
+      "name": "Вал",
+      "params": {
+        "c1": 1,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 20,
+            "L": 40
+          },
+          {
+            "d": 25,
+            "L": 240
+          }
+        ]
+      },
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p7",
+      "type": "bushing",
+      "name": "Установочное кольцо 1",
+      "params": {
+        "D": 40,
+        "d": 25,
+        "L": 12,
+        "c": 1,
+        "ci": 0
+      },
+      "placement": {
+        "x": 48,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p8",
+      "type": "bushing",
+      "name": "Установочное кольцо 2",
+      "params": {
+        "D": 40,
+        "d": 25,
+        "L": 12,
+        "c": 1,
+        "ci": 0
+      },
+      "placement": {
+        "x": 240,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    },
+    {
+      "id": "p9",
+      "type": "flange",
+      "name": "Полумуфта",
+      "params": {
+        "D": 90,
+        "T": 12,
+        "d": 20,
+        "hubD": 40,
+        "hubH": 16,
+        "n": 4,
+        "pcd": 66,
+        "holeD": 9
+      },
+      "placement": {
+        "x": 12,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "material": "steel"
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "A1",
+      "name": "Узел вала на двух опорах",
+      "components": [
+        {
+          "id": "c1",
+          "partId": "p1",
+          "fixed": true
+        },
+        {
+          "id": "c2",
+          "partId": "p2",
+          "fixed": true
+        },
+        {
+          "id": "c3",
+          "partId": "p3",
+          "fixed": true
+        },
+        {
+          "id": "c4",
+          "partId": "p4",
+          "fixed": false
+        },
+        {
+          "id": "c5",
+          "partId": "p5",
+          "fixed": false
+        },
+        {
+          "id": "c6",
+          "partId": "p6",
+          "fixed": false
+        },
+        {
+          "id": "c7",
+          "partId": "p7",
+          "fixed": false
+        },
+        {
+          "id": "c8",
+          "partId": "p8",
+          "fixed": false
+        },
+        {
+          "id": "c9",
+          "partId": "p9",
+          "fixed": false
+        }
+      ],
+      "mates": [
+        {
+          "id": "m1",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m2",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m3",
+          "type": "planar",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "align",
+          "offset": 0
+        },
+        {
+          "id": "m4",
+          "type": "coaxial",
+          "a": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m5",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "align",
+          "offset": 0
+        },
+        {
+          "id": "m6",
+          "type": "coaxial",
+          "a": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m7",
+          "type": "distance",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "align",
+          "offset": 60
+        },
+        {
+          "id": "m8",
+          "type": "coaxial",
+          "a": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m9",
+          "type": "planar",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "end1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m10",
+          "type": "coaxial",
+          "a": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m11",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        },
+        {
+          "id": "m12",
+          "type": "coaxial",
+          "a": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c9",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto"
+        },
+        {
+          "id": "m13",
+          "type": "planar",
+          "a": {
+            "comp": "c6",
+            "ref": "step1"
+          },
+          "b": {
+            "comp": "c9",
+            "ref": "end1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0
+        }
+      ]
+    }
+  ],
+  "demo": "shaft-supports"
+}

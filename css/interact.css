@@ -1,0 +1,39 @@
+/* Управление мышью: панель инструментов, «Соединить детали», подсказки, горячие клавиши. Только токены темы. */
+.ix-strip { position: absolute; top: 8px; left: 8px; z-index: 6; display: flex; flex-wrap: wrap; gap: 4px; max-width: calc(100% - 16px); padding: 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: var(--float-shadow); }
+.ix-tool { min-height: 26px; padding: 2px 8px; font-size: 12px; gap: 6px; }
+.ix-tool kbd, .hk-chip { font-family: var(--mono); font-size: 11px; padding: 0 5px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 3px; background: var(--panel-3); color: var(--muted); min-height: 0; line-height: 16px; }
+.ix-tool.on { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.ix-tool.on kbd { background: transparent; color: inherit; border-color: currentColor; }
+.ix-tip { position: absolute; z-index: 7; max-width: 340px; padding: 4px 8px; border-radius: 4px; background: var(--overlay); color: #fff; font-size: 12px; pointer-events: none; white-space: pre-line; }
+.ix-bar { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); z-index: 8; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: min(720px, calc(100% - 16px)); padding: 8px 10px; background: var(--panel); border: 1px solid var(--warn); border-radius: 6px; box-shadow: var(--float-shadow); }
+.ix-bar-text { flex: 1 1 280px; min-width: 0; }
+.ix-panel { position: absolute; left: 8px; bottom: 44px; z-index: 6; width: min(340px, calc(100% - 16px)); max-height: calc(100% - 100px); overflow-y: auto; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: var(--float-shadow); }
+.ix-ph { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.ix-step { margin: 0 0 8px; color: var(--muted); }
+.ix-chip { margin: 2px 0; padding: 3px 8px; border-left: 4px solid var(--line); background: var(--panel-2); border-radius: 3px; overflow-wrap: anywhere; }
+.ix-chip.a { border-left-color: #4c8dff; }
+.ix-chip.b { border-left-color: #ff9f1a; }
+.ix-choices { display: grid; gap: 4px; margin: 8px 0; }
+.ix-choice { display: flex; gap: 8px; align-items: flex-start; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; }
+.ix-choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.ix-choice small { display: block; color: var(--muted); }
+.ix-field { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+.ix-field input[type=number] { width: 90px; }
+.ix-note { color: var(--warn); font-size: 12px; margin: 4px 0; }
+.ix-info { white-space: pre-line; font-size: 12px; color: var(--text); margin: 6px 0; }
+.ix-err { color: var(--err); margin: 4px 0; }
+.ix-err:empty, .ix-info:empty { display: none; }
+.ix-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+.hk-dialog { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: rgba(0, 0, 0, .55); padding: 16px; }
+.hk-box { width: min(640px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: var(--float-shadow); overflow: hidden; }
+.hk-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.hk-content { overflow-y: auto; padding: 4px 12px 12px; }
+.hk-body h3 { margin: 12px 0 4px; font-size: 13px; color: var(--accent); }
+.hk-body table { width: 100%; border-collapse: collapse; }
+.hk-body td { padding: 3px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.hk-keys { white-space: nowrap; width: 1%; }
+.hk-chip { margin-right: 4px; cursor: pointer; }
+.hk-chip.custom { border-color: var(--accent); color: var(--accent); }
+.hk-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; }
+.hk-toast { position: fixed; left: 50%; top: 56px; transform: translateX(-50%); z-index: 70; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: min(640px, calc(100% - 16px)); padding: 8px 12px; background: var(--panel); border: 1px solid var(--accent); border-radius: 6px; box-shadow: var(--float-shadow); }

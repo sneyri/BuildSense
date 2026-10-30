@@ -35,6 +35,7 @@
   const STATUS_LABEL = {
     fixed: "закреплён", solved: "положение определено", partial: "недоопределён",
     free: "не связан с закреплёнными", conflict: "конфликт сопряжений", invalid: "деталь с ошибками",
+    driven: "задан механизмом",
   };
 
   const fmt = (v) => String(Math.round(v * 1000) / 1000).replace(".", ",");
@@ -89,6 +90,19 @@
 
   // ------------------------------------------------------------------ привязки детали
 
+  /** Оси детали (все параллельны локальной Z): { id, label, p — точка в локальной системе }. */
+  function axes(part) {
+    const out = [{ id: "axis", label: part.type === "link" ? "ось проушины 1" : "ось", p: [0, 0, 0] }];
+    if (part.type === "link") out.push({ id: "axis2", label: "ось проушины 2", p: [part.params.C, 0, 0] });
+    return out;
+  }
+
+  /** Ось ref детали в мировых координатах при положении pose. */
+  function axisRef(part, pose, ref) {
+    const a = axes(part).find((x) => x.id === ref) || axes(part)[0];
+    return { p: add(pose.t, matVec(pose.R, a.p)), d: matVec(pose.R, [0, 0, 1]), local: a.p };
+  }
+
   /** Плоские грани детали: { id, label, z, n (±1 вдоль оси), rIn, rOut } в локальной системе. */
   function faces(part) {
     const p = part.params;
@@ -113,6 +127,19 @@
       face("end0", "Низ диска (z = 0)", 0, -1);
       if (hub) face("disk", `Верх диска у ступицы (z = ${fmt(p.T)})`, p.T, 1);
       face("end1", hub ? `Торец ступицы (z = ${fmt(p.T + p.hubH)})` : `Верх диска (z = ${fmt(p.T)})`, hub ? p.T + p.hubH : p.T, 1);
+    } else if (part.type === "piston") {
+      face("end0", "Низ юбки (z = 0)", 0, -1);
+      face("end1", `Днище сверху (z = ${fmt(p.H)})`, p.H, 1);
+    } else if (part.type === "screw") {
+      face("end0", "Торец резьбы (z = 0)", 0, -1);
+      face("head0", `Низ головки (z = ${fmt(p.Lt)})`, p.Lt, -1);
+      face("head1", `Верх головки (z = ${fmt(p.Lt + p.Lh)})`, p.Lt + p.Lh, 1);
+      face("end1", `Торец шейки (z = ${fmt(p.Lt + p.Lh + p.Ln)})`, p.Lt + p.Lh + p.Ln, 1);
+    } else if (M.isExtrude(part.type)) {
+      // плоская деталь: две грани контура; кольца у них нет (rIn/rOut = null — касание не проверяется)
+      out.push({ id: "end0", label: "Нижняя плоскость (z = 0)", z: 0, n: -1, rIn: null, rOut: null });
+      out.push({ id: "end1", label: `Верхняя плоскость (z = ${fmt(p.T)})`, z: p.T, n: 1, rIn: null, rOut: null });
+      return out;
     }
     // радиальная протяжённость грани — по горизонтальным рёбрам профиля (уже с фасками)
     const prof = M.evaluate(part).profile;
@@ -132,6 +159,8 @@
   }
 
   function refLabel(part, ref) {
+    const ax = part && axes(part).find((x) => x.id === ref);
+    if (ax) return ax.label;
     if (ref === "axis") return "ось";
     const f = part && faces(part).find((x) => x.id === ref);
     return f ? f.label : `грань «${ref}»`;
@@ -214,11 +243,13 @@
     const pa = partOf(project, asm, m.a.comp), pb = partOf(project, asm, m.b.comp);
     if (!pa || !pb) return "Сопряжение ссылается на компонент, которого нет в сборке";
     if (m.type === "coaxial") {
-      if (m.a.ref !== "axis" || m.b.ref !== "axis") return "Соосность задаётся только между осями деталей";
+      for (const [side, part] of [[m.a, pa], [m.b, pb]]) {
+        if (!axes(part).some((x) => x.id === side.ref)) return `Соосность задаётся между осями: у «${part.name}» нет оси «${side.ref}»`;
+      }
       if (!["auto", "same", "opposite"].includes(m.orient || "auto")) return "Направление осей: auto, same или opposite";
     } else {
       for (const [side, part] of [[m.a, pa], [m.b, pb]]) {
-        if (side.ref === "axis") return `${MATE_TYPES[m.type].label}: нужна плоская грань, а не ось`;
+        if (axes(part).some((x) => x.id === side.ref)) return `${MATE_TYPES[m.type].label}: нужна плоская грань, а не ось`;
         if (!faces(part).some((f) => f.id === side.ref)) return `У «${part.name}» нет плоской грани «${side.ref}»`;
       }
       if (!["contact", "align"].includes(m.mode)) return "Режим граней: contact (встык) или align (заподлицо)";
@@ -321,7 +352,7 @@
     const pa = partOf(project, asm, m.a.comp), pb = partOf(project, asm, m.b.comp);
     const A = poses.get(m.a.comp), B = poses.get(m.b.comp);
     if (m.type === "coaxial") {
-      const a = axisOf(A), b = axisOf(B);
+      const a = axisRef(pa, A, m.a.ref), b = axisRef(pb, B, m.b.ref);
       const s = len(cross(a.d, b.d));
       const dist = len(cross(sub(b.p, a.p), a.d));
       if (s > TOL_DIR) return { ok: false, text: `оси не параллельны (угол ${fmt(Math.asin(Math.min(1, s)) * 180 / Math.PI)}°)` };
@@ -351,7 +382,7 @@
    * broken (грань не найдена / ошибка) | unsolved (компоненты не связаны с закреплёнными) | suppressed |
    * nocontact (грани встык: плоскости совмещены, но кольца граней не перекрываются — касания нет).
    */
-  function solve(project, asm, { apply = true } = {}) {
+  function solve(project, asm, { apply = true, driven = null } = {}) {
     const res = { ok: true, components: {}, mates: {}, messages: [], interference: [], contacts: [] };
     const msg = (severity, text, extra = {}) => res.messages.push({ severity, text, ...extra });
     const comps = asm.components;
@@ -379,6 +410,11 @@
 
     for (const c of comps) {
       if (c.fixed && valid(c.id)) { poses.set(c.id, poseOf(part(c.id))); res.components[c.id] = { status: "fixed", text: STATUS_LABEL.fixed }; }
+      // положение детали механизма (шатун, поршень) задаёт кинематика (js/mech/mechKinematics.js), а не сопряжения
+      else if (driven && driven.has(c.partId) && valid(c.id)) {
+        poses.set(c.id, poseOf(part(c.id)));
+        res.components[c.id] = { status: "driven", text: `положение задаёт механизм «${driven.get(c.partId)}» (кинематика, исходное положение — угол 0°)` };
+      }
     }
     if (!comps.some((c) => c.fixed)) {
       msg("warning", "В сборке нет закреплённого компонента: положение сборки ничем не задано. Закрепите один компонент (обычно вал или корпус).");
@@ -418,12 +454,14 @@
 
       // 1. направление оси компонента
       let dir = null;
-      let lineP = null, lineD = null;
+      let lineP = null, lineD = null, myAxis = [0, 0, 0];
       if (coax.length) {
-        const K = poses.get(other(coax[0], c.id));
-        const ax = axisOf(K);
+        const m = coax[0];
+        const mine = m.a.comp === c.id ? m.a : m.b, theirs = m.a.comp === c.id ? m.b : m.a;
+        const ax = axisRef(part(theirs.comp), poses.get(theirs.comp), theirs.ref);
         lineP = ax.p;
         lineD = ax.d;
+        myAxis = (axes(p).find((x) => x.id === mine.ref) || axes(p)[0]).p; // своя ось может быть не через начало (проушина 2)
       }
       let viaFace = null;
       if (axial.length) {
@@ -477,7 +515,8 @@
         return add(base, mul(u, -f0 / (f1 - f0)));
       };
       if (coax.length) {
-        const base = add(lineP, mul(lineD, dot(sub(cur.t, lineP), lineD)));
+        const off = matVec(R, myAxis);
+        const base = sub(add(lineP, mul(lineD, dot(sub(add(cur.t, off), lineP), lineD))), off);
         if (axial.length && !conflicts.length) {
           t = solveLinear(base, lineD, axial[0]);
           if (!t) { conflicts.push({ m: axial[0], text: "грань параллельна оси — осевое положение ею не задаётся" }); t = base; }
@@ -562,6 +601,10 @@
     }
     checkContacts(project, asm, res, poses);
     checkInterference(project, asm, res, poses);
+    const unchecked = res.contacts.filter((c) => !c.checked).length + res.interference.filter((i) => !i.checked).length;
+    if (unchecked) {
+      res.messages.push({ severity: "info", text: `Точно не проверено: ${res.interference.filter((i) => !i.checked).length} пар деталей с пересекающимися габаритами и ${res.contacts.filter((c) => !c.checked).length} касаний граней — это плоские детали или детали не на одной оси. Пересечение таких пар программа не считает` });
+    }
     return res;
   }
 
@@ -577,9 +620,8 @@
       const A = poses.get(m.a.comp), B = poses.get(m.b.comp);
       const pa = partOf(project, asm, m.a.comp), pb = partOf(project, asm, m.b.comp);
       const fa = faces(pa).find((f) => f.id === m.a.ref), fb = faces(pb).find((f) => f.id === m.b.ref);
-      if (!collinear(axisOf(A), axisOf(B))) {
-        res.contacts.push({ mateId: m.id, checked: false });
-        res.messages.push({ severity: "info", text: `${mateLabel(project, asm, m)}: плоскости совмещены; касание колец граней не проверено (оси деталей не совпадают)`, mateIds: [m.id] });
+      if (fa.rIn === null || fb.rIn === null || !collinear(axisOf(A), axisOf(B))) {
+        res.contacts.push({ mateId: m.id, checked: false }); // плоская деталь или разные оси: касание не проверяется
         continue;
       }
       const lo = Math.max(fa.rIn, fb.rIn), hi = Math.min(fa.rOut, fb.rOut);
@@ -629,7 +671,7 @@
   }
 
   function checkInterference(project, asm, res, poses) {
-    const ids = asm.components.map((c) => c.id).filter((id) => poses.has(id) && ["fixed", "solved", "partial", "conflict"].includes(res.components[id].status));
+    const ids = asm.components.map((c) => c.id).filter((id) => poses.has(id) && ["fixed", "solved", "partial", "conflict", "driven"].includes(res.components[id].status));
     for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
       const pa = partOf(project, asm, ids[i]), pb = partOf(project, asm, ids[j]);
       const A = poses.get(ids[i]), B = poses.get(ids[j]);
@@ -637,9 +679,8 @@
       const boxes = [0, 1, 2].every((k) => ba.min[k] < bb.max[k] - TOL_LEN && bb.min[k] < ba.max[k] - TOL_LEN);
       if (!boxes) continue;
       const axA = axisOf(A), axB = axisOf(B);
-      if (!collinear(axA, axB)) {
-        res.interference.push({ a: ids[i], b: ids[j], checked: false });
-        res.messages.push({ severity: "info", text: `${pa.name} и ${pb.name}: габариты пересекаются; точная проверка для несоосных деталей не выполняется`, compIds: [ids[i], ids[j]] });
+      if (!collinear(axA, axB) || !M.evaluate(pa).profile || !M.evaluate(pb).profile) {
+        res.interference.push({ a: ids[i], b: ids[j], checked: false }); // итог — одним сообщением в solve()
         continue;
       }
       const map = (part, pose) => {
@@ -663,7 +704,14 @@
   /** Решить все сборки проекта (с записью положений). Map: id сборки → результат. */
   function solveAll(project) {
     const out = new Map();
-    for (const a of list(project)) out.set(a.id, solve(project, a));
+    const K = BS.mechKinematics;
+    const pass = () => {
+      const driven = K ? K.drivenParts(project) : null;
+      for (const a of list(project)) out.set(a.id, solve(project, a, { driven }));
+    };
+    pass();
+    // исходное положение механизмов (угол 0°) зависит от решённых сопряжений; затем — второй проход для проверок
+    if (K && Array.isArray(project.mechanisms) && project.mechanisms.length) { K.applyRest(project); pass(); }
     return out;
   }
 
@@ -674,8 +722,8 @@
   function addMate(project, asm, spec) {
     const m = {
       id: nextNum(asm.mates, "m"), type: spec.type,
-      a: { comp: spec.a.comp, ref: spec.type === "coaxial" ? "axis" : spec.a.ref },
-      b: { comp: spec.b.comp, ref: spec.type === "coaxial" ? "axis" : spec.b.ref },
+      a: { comp: spec.a.comp, ref: spec.type === "coaxial" ? spec.a.ref || "axis" : spec.a.ref },
+      b: { comp: spec.b.comp, ref: spec.type === "coaxial" ? spec.b.ref || "axis" : spec.b.ref },
       suppressed: false,
     };
     if (m.type === "coaxial") m.orient = spec.orient || "auto";
@@ -718,7 +766,7 @@
   }
 
   BS.mechAssembly = {
-    MATE_TYPES, STATUS_LABEL, faces, refLabel, list, createAssembly, assemblyOfPart, componentOfPart, addComponent,
+    MATE_TYPES, STATUS_LABEL, faces, axes, axisRef, refLabel, list, createAssembly, assemblyOfPart, componentOfPart, addComponent,
     removeComponent, removePart, partOf, mateLabel, mateError, validate, normalize, residual, solve, solveAll, addMate,
     overlapVolume, sectionAt, eulerXYZ, rotateOnto, createDemoAssemblyProject,
   };

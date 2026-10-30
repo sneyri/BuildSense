@@ -23,6 +23,7 @@
       this.pickEnabled = true;
       this.hiddenGroups = new Set();
       this.isolateIds = null;
+      this.hiddenIds = new Set(); // режим «Внутри»: скрытые элементы (не удаляются)
       this.selectedIds = new Set();
       this.issues = new Map();
       this.simStates = new Map();
@@ -121,10 +122,20 @@
       this.ground.material.color.set(dark ? 0x3e4a3d : 0xc9d6c2);
     }
 
+    /** Цвета фона и земли берутся из CSS-токенов текущей темы (--viewport, --ground). */
+    applyCssTheme() {
+      const cs = getComputedStyle(document.body);
+      const bg = cs.getPropertyValue("--viewport").trim(), ground = cs.getPropertyValue("--ground").trim();
+      try {
+        if (bg) this.scene.background = new T.Color(bg);
+        if (ground) this.ground.material.color.set(ground);
+      } catch { /* неподдерживаемый формат цвета — остаётся прежний */ }
+    }
+
     _bindPicking() {
       const el = this.renderer.domElement;
       let down = null;
-      el.addEventListener("pointerdown", (e) => { down = { x: e.clientX, y: e.clientY, b: e.button }; });
+      el.addEventListener("pointerdown", (e) => { down = e.isPrimary ? { x: e.clientX, y: e.clientY, b: e.button } : null; }); // щипок двумя пальцами не выбирает объект
       el.addEventListener("pointerup", (e) => {
         if (!down || down.b !== 0) return;
         const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
@@ -266,6 +277,11 @@
       this._applyVisibility();
     }
 
+    setHiddenIds(ids) {
+      this.hiddenIds = new Set(ids || []);
+      this._applyVisibility();
+    }
+
     setIsolate(ids) {
       this.isolateIds = ids && ids.length ? new Set(ids) : null;
       this._applyVisibility();
@@ -276,6 +292,7 @@
         let v = !this.hiddenGroups.has(o.userData.group);
         if (o.userData.elementType === "roof" && this.hiddenGroups.has("roof")) v = false;
         if (this.isolateIds) v = this.isolateIds.has(o.userData.elementId);
+        if (this.hiddenIds.has(o.userData.elementId)) v = false;
         if (this.cleanView && o.userData.elementType === "room") v = false;
         o.visible = v;
         o.traverse((ch) => { if (ch.userData.isEdge) ch.visible = !this.cleanView; });

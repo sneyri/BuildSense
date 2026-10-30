@@ -1,11 +1,5 @@
 /* BuildSense · Машиностроение. Только токены из css/app.css; кнопки и .field стилизует app.css. */
 
-.mech-commands { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; flex: 1; min-width: 0; }
-.mech-commands .mech-sep { width: 1px; align-self: stretch; margin: 4px 4px; background: var(--line); }
-.mech-commands button svg { width: 16px; height: 16px; flex: none; }
-.mech-commands button { display: inline-flex; align-items: center; gap: 6px; }
-.mech-commands button:disabled { opacity: 0.45; cursor: default; }
-
 #mech-root { min-width: 0; }
 .mech-viewport { position: relative; min-width: 0; overflow: hidden; background: var(--viewport); }
 /* canvas вне потока: его прежняя ширина (атрибут width) не раздувает сетку страницы */
@@ -53,3 +47,97 @@
 .mech-mate-form { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); padding: 6px; margin: 8px 0; }
 .mech-mate-form > button, .mech-props-actions button { margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; }
 .mech-mate-form button svg { width: 14px; height: 14px; }
+
+/* Чертёж детали: окно предпросмотра */
+.drawing-dialog { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(0, 0, 0, .55); padding: 16px; }
+.drawing-box { display: flex; flex-direction: column; width: min(1200px, 100%); max-height: 100%; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: var(--float-shadow); overflow: hidden; }
+.drawing-head { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.drawing-head .drawing-note { color: var(--muted); font-size: 12px; margin-right: auto; }
+.drawing-scroll { overflow: auto; padding: 12px; background: #8a9099; }
+.drawing-canvas { display: block; width: 100%; height: auto; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, .4); }
+
+/* Обучение: плавающая панель поверх 3D-вида */
+.tut-panel { position: absolute; top: 8px; right: 8px; z-index: 5; width: min(360px, calc(100% - 16px)); max-height: calc(100% - 16px); display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: var(--float-shadow); overflow: hidden; }
+.tut-head { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--line); background: var(--panel-2); }
+.tut-head strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tut-body { padding: 10px 12px; overflow-y: auto; min-height: 0; line-height: 1.5; }
+.tut-body h3 { margin: 6px 0 8px; font-size: 15px; }
+.tut-body p { margin: 0 0 8px; }
+.tut-body ul { margin: 0 0 8px; padding-left: 18px; }
+.tut-body li { margin-bottom: 4px; }
+.tut-body code { font-family: var(--mono); background: var(--panel-3); padding: 0 4px; border-radius: 3px; }
+.tut-lead { color: var(--muted); }
+.tut-lead { color: var(--muted); }
+/* Сводка прогресса и карточки уроков: пройденный — зелёный, следующий — акцентный, остальные — нейтральные */
+.tut-summary { display: grid; gap: 4px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); }
+.tut-summary.is-all { border-color: var(--ok); background: var(--ok-bg); }
+.tut-bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.tut-bar i { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+.tut-summary.is-all .tut-bar i, .tut-lesson.is-done .tut-bar i { background: var(--ok); }
+.tut-lesson {
+  display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; width: 100%; margin-bottom: 8px; padding: 10px 12px;
+  text-align: left; white-space: normal; justify-content: stretch; background: var(--panel-2); border-color: var(--line);
+}
+.tut-lesson .tut-main { display: grid; gap: 3px; min-width: 0; }
+.tut-lesson .tut-about { color: var(--muted); font-size: 12px; }
+.tut-lesson .tut-meta { color: var(--muted); font-size: 11px; }
+.tut-num {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-weight: 600; font-size: 12px;
+  background: var(--panel-3); color: var(--muted); border: 1px solid var(--line-strong);
+}
+.tut-lesson.is-done { background: var(--ok-bg); border-color: var(--ok); }
+.tut-lesson.is-done .tut-num { background: var(--ok); border-color: var(--ok); color: #fff; }
+.tut-lesson.is-done .tut-meta { color: var(--ok); font-weight: 600; }
+.tut-lesson.is-done:hover { background: color-mix(in srgb, var(--ok) 22%, var(--panel-2)); border-color: var(--ok); }
+.tut-lesson.is-next { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.tut-lesson.is-next .tut-num { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.tut-lesson.is-next .tut-meta { color: var(--accent); font-weight: 600; }
+.tut-lesson.is-part .tut-num { border-color: var(--accent); color: var(--accent); }
+.tut-gloss-link { border-style: dashed; background: transparent; }
+.tut-gloss-link .tut-num { border-radius: var(--radius); }
+.tut-count { color: var(--muted); font-size: 12px; }
+.tut-progress { display: flex; gap: 3px; margin: 4px 0 6px; }
+.tut-progress i { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+.tut-progress i.ok { background: var(--ok); }
+.tut-progress i.cur { background: var(--accent); }
+.tut-tip { padding: 6px 8px; border-left: 3px solid var(--info); background: var(--info-bg); border-radius: 3px; font-size: 12px; }
+.tut-act { width: 100%; margin: 4px 0; }
+.tut-show { width: 100%; margin-bottom: 4px; }
+.tut-nav { display: flex; justify-content: space-between; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--line); background: var(--panel-2); }
+.tut-gloss dt { font-weight: 600; margin-top: 8px; }
+.tut-gloss dd { margin: 0; color: var(--muted); }
+.tut-btn { border-color: var(--accent); }
+@keyframes tut-pulse { 0%, 100% { box-shadow: 0 0 0 0 var(--accent); } 50% { box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 6px var(--accent); } }
+.tut-pulse { animation: tut-pulse 1s ease-in-out 4; outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Раздел «Сборка» в свойствах детали */
+.asm-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); overflow: hidden; }
+.asm-card-head { display: flex; align-items: center; gap: 10px; padding: 10px; }
+.asm-ico { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: var(--radius); background: var(--accent-soft); color: var(--accent); }
+.asm-ico svg { width: 18px; height: 18px; }
+.asm-card-title { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.asm-card-title .note { font-size: 11px; }
+.asm-state { padding: 8px 10px; border-top: 1px solid var(--line); font-size: 12px; line-height: 16px; border-left: 3px solid var(--info); background: var(--info-bg); }
+.asm-state.pass { border-left-color: var(--ok); background: var(--ok-bg); }
+.asm-state.warning { border-left-color: var(--warn); background: var(--warn-bg); }
+.asm-state.error { border-left-color: var(--err); background: var(--err-bg); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); cursor: pointer; }
+.toggle-row:hover { border-color: var(--accent); }
+.toggle-row .tr-text { display: grid; gap: 2px; min-width: 0; }
+.toggle-row .note { font-size: 12px; }
+input.switch { appearance: none; flex: none; width: 36px; height: 20px; border-radius: 10px; background: var(--line-strong); border: 0; padding: 0; position: relative; cursor: pointer; box-shadow: none; transition: background .15s; }
+input.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+input.switch:checked { background: var(--accent); }
+input.switch:checked::after { transform: translateX(16px); }
+.sub-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin-top: 4px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.sub-head .note { margin: 0; font-size: 11px; flex-basis: 100%; }
+.count-chip { min-width: 18px; padding: 0 6px; border-radius: 9px; background: var(--panel-3); color: var(--muted); font-size: 11px; text-align: center; }
+.empty-card { display: grid; gap: 2px; padding: 10px; border: 1px dashed var(--line-strong); border-radius: var(--radius); text-align: center; }
+.empty-card .note { font-size: 12px; }
+.mate-row { display: flex; align-items: flex-start; gap: 8px; width: 100%; padding: 6px 8px; text-align: left; white-space: normal; background: var(--panel-2); }
+.mate-main { display: grid; gap: 1px; min-width: 0; }
+.mate-main .note { font-size: 11px; }
+.mech-mate-list li { margin: 0 0 4px; }
+.mech-mate-form.is-empty { display: grid; gap: 4px; justify-items: start; border-style: dashed; background: transparent; }
+.quick-add { display: flex; flex-wrap: wrap; gap: 6px; }
+.psec-body > button.danger { color: var(--err); border-color: color-mix(in srgb, var(--err) 45%, var(--line-strong)); }

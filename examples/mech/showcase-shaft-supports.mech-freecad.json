@@ -1,0 +1,1380 @@
+{
+  "format": "buildsense-mech-freecad",
+  "schemaVersion": 2,
+  "units": "mm",
+  "name": "Демо A: вал на подшипниковых опорах",
+  "generator": "BuildSense 1.0.0",
+  "note": "Источник истины — params. profile/holes — вычисленные фичи в локальной системе детали (ось вращения Z).",
+  "parts": [
+    {
+      "id": "p1",
+      "name": "Основание (плита)",
+      "type": "block",
+      "params": {
+        "W": 320,
+        "H": 90,
+        "hb": 45,
+        "T": 12,
+        "d": 0
+      },
+      "material": "cast_iron",
+      "materialLabel": "Чугун серый",
+      "density": 7200,
+      "placement": {
+        "x": 140,
+        "y": 0,
+        "z": 0,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: плита 320×90",
+          "outline": {
+            "kind": "rect",
+            "x0": -160,
+            "y0": -45,
+            "x1": 160,
+            "y1": 45
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 12 вдоль Z",
+          "sketch": "sketch",
+          "height": 12
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "rect",
+            "x0": -160,
+            "y0": -45,
+            "x1": 160,
+            "y1": 45
+          },
+          "height": 12
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 345600,
+        "mass": 2.48832,
+        "bboxMin": [
+          -20,
+          -45,
+          0
+        ],
+        "bboxMax": [
+          300,
+          45,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p2",
+      "name": "Корпус опоры 1",
+      "type": "block",
+      "params": {
+        "W": 80,
+        "H": 72,
+        "hb": 48,
+        "T": 30,
+        "d": 32
+      },
+      "material": "cast_iron",
+      "materialLabel": "Чугун серый",
+      "density": 7200,
+      "placement": {
+        "x": 60,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: плита 80×72",
+          "outline": {
+            "kind": "rect",
+            "x0": -40,
+            "y0": -48,
+            "x1": 40,
+            "y1": 24
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 30 вдоль Z",
+          "sketch": "sketch",
+          "height": 30
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "⌀32 сквозное",
+          "z0": 0,
+          "z1": 30,
+          "through": true,
+          "points": [
+            {
+              "x": 0,
+              "y": 0,
+              "d": 32
+            }
+          ]
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "rect",
+            "x0": -40,
+            "y0": -48,
+            "x1": 40,
+            "y1": 24
+          },
+          "height": 30
+        },
+        "holes": [
+          {
+            "x": 0,
+            "y": 0,
+            "d": 32,
+            "z0": 0,
+            "z1": 30
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 148672.56842043038,
+        "mass": 1.0704424926270988,
+        "bboxMin": [
+          60,
+          -40,
+          12
+        ],
+        "bboxMax": [
+          90,
+          40,
+          84
+        ]
+      }
+    },
+    {
+      "id": "p3",
+      "name": "Корпус опоры 2",
+      "type": "block",
+      "params": {
+        "W": 80,
+        "H": 72,
+        "hb": 48,
+        "T": 30,
+        "d": 32
+      },
+      "material": "cast_iron",
+      "materialLabel": "Чугун серый",
+      "density": 7200,
+      "placement": {
+        "x": 210,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: плита 80×72",
+          "outline": {
+            "kind": "rect",
+            "x0": -40,
+            "y0": -48,
+            "x1": 40,
+            "y1": 24
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 30 вдоль Z",
+          "sketch": "sketch",
+          "height": 30
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "⌀32 сквозное",
+          "z0": 0,
+          "z1": 30,
+          "through": true,
+          "points": [
+            {
+              "x": 0,
+              "y": 0,
+              "d": 32
+            }
+          ]
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "rect",
+            "x0": -40,
+            "y0": -48,
+            "x1": 40,
+            "y1": 24
+          },
+          "height": 30
+        },
+        "holes": [
+          {
+            "x": 0,
+            "y": 0,
+            "d": 32,
+            "z0": 0,
+            "z1": 30
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 148672.56842043038,
+        "mass": 1.0704424926270988,
+        "bboxMin": [
+          210,
+          -40,
+          12
+        ],
+        "bboxMax": [
+          240,
+          40,
+          84
+        ]
+      }
+    },
+    {
+      "id": "p4",
+      "name": "Вкладыш подшипника 1",
+      "type": "bushing",
+      "params": {
+        "D": 32,
+        "d": 25,
+        "L": 30,
+        "c": 0.5,
+        "ci": 0.5
+      },
+      "material": "bronze",
+      "materialLabel": "Бронза",
+      "density": 8800,
+      "placement": {
+        "x": 60,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля (RZ)",
+          "profile": [
+            [
+              12.5,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              16,
+              30
+            ],
+            [
+              12.5,
+              30
+            ]
+          ]
+        },
+        {
+          "id": "chamferOuter",
+          "kind": "chamfer",
+          "label": "Фаска наружная 0,5×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1,
+            2
+          ],
+          "size": 0.5
+        },
+        {
+          "id": "chamferInner",
+          "kind": "chamfer",
+          "label": "Фаска внутренняя 0,5×45°",
+          "sketch": "sketch",
+          "vertices": [
+            0,
+            3
+          ],
+          "size": 0.5
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              12.5,
+              0.5
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              15.5,
+              0
+            ],
+            [
+              16,
+              0.5
+            ],
+            [
+              16,
+              29.5
+            ],
+            [
+              15.5,
+              30
+            ],
+            [
+              13,
+              30
+            ],
+            [
+              12.5,
+              29.5
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 9356.4483205538,
+        "mass": 0.08233674522087345,
+        "bboxMin": [
+          60,
+          -16.000000000000004,
+          44
+        ],
+        "bboxMax": [
+          90,
+          16,
+          76
+        ]
+      }
+    },
+    {
+      "id": "p5",
+      "name": "Вкладыш подшипника 2",
+      "type": "bushing",
+      "params": {
+        "D": 32,
+        "d": 25,
+        "L": 30,
+        "c": 0.5,
+        "ci": 0.5
+      },
+      "material": "bronze",
+      "materialLabel": "Бронза",
+      "density": 8800,
+      "placement": {
+        "x": 210,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля (RZ)",
+          "profile": [
+            [
+              12.5,
+              0
+            ],
+            [
+              16,
+              0
+            ],
+            [
+              16,
+              30
+            ],
+            [
+              12.5,
+              30
+            ]
+          ]
+        },
+        {
+          "id": "chamferOuter",
+          "kind": "chamfer",
+          "label": "Фаска наружная 0,5×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1,
+            2
+          ],
+          "size": 0.5
+        },
+        {
+          "id": "chamferInner",
+          "kind": "chamfer",
+          "label": "Фаска внутренняя 0,5×45°",
+          "sketch": "sketch",
+          "vertices": [
+            0,
+            3
+          ],
+          "size": 0.5
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              12.5,
+              0.5
+            ],
+            [
+              13,
+              0
+            ],
+            [
+              15.5,
+              0
+            ],
+            [
+              16,
+              0.5
+            ],
+            [
+              16,
+              29.5
+            ],
+            [
+              15.5,
+              30
+            ],
+            [
+              13,
+              30
+            ],
+            [
+              12.5,
+              29.5
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 9356.4483205538,
+        "mass": 0.08233674522087345,
+        "bboxMin": [
+          210,
+          -16.000000000000004,
+          44
+        ],
+        "bboxMax": [
+          240,
+          16,
+          76
+        ]
+      }
+    },
+    {
+      "id": "p6",
+      "name": "Вал",
+      "type": "shaft",
+      "params": {
+        "c1": 1,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 20,
+            "L": 40
+          },
+          {
+            "d": 25,
+            "L": 240
+          }
+        ]
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля: 2 ступ.",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              10,
+              40
+            ],
+            [
+              12.5,
+              40
+            ],
+            [
+              12.5,
+              280
+            ],
+            [
+              0,
+              280
+            ]
+          ]
+        },
+        {
+          "id": "chamferStart",
+          "kind": "chamfer",
+          "label": "Фаска левого торца 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1
+          ],
+          "size": 1
+        },
+        {
+          "id": "chamferEnd",
+          "kind": "chamfer",
+          "label": "Фаска правого торца 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            4
+          ],
+          "size": 1
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              9,
+              0
+            ],
+            [
+              10,
+              1
+            ],
+            [
+              10,
+              40
+            ],
+            [
+              12.5,
+              40
+            ],
+            [
+              12.5,
+              279
+            ],
+            [
+              11.5,
+              280
+            ],
+            [
+              0,
+              280
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 130307.50368437303,
+        "mass": 1.0229139039223283,
+        "bboxMin": [
+          -5.51091059616309e-16,
+          -12.500000000000018,
+          47.5
+        ],
+        "bboxMax": [
+          280,
+          12.499999999999998,
+          72.5
+        ]
+      }
+    },
+    {
+      "id": "p7",
+      "name": "Установочное кольцо 1",
+      "type": "bushing",
+      "params": {
+        "D": 40,
+        "d": 25,
+        "L": 12,
+        "c": 1,
+        "ci": 0
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 48,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля (RZ)",
+          "profile": [
+            [
+              12.5,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              20,
+              12
+            ],
+            [
+              12.5,
+              12
+            ]
+          ]
+        },
+        {
+          "id": "chamferOuter",
+          "kind": "chamfer",
+          "label": "Фаска наружная 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1,
+            2
+          ],
+          "size": 1
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              12.5,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              20,
+              1
+            ],
+            [
+              20,
+              11
+            ],
+            [
+              19,
+              12
+            ],
+            [
+              12.5,
+              12
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 9065.589200708946,
+        "mass": 0.07116487522556522,
+        "bboxMin": [
+          48,
+          -20,
+          40
+        ],
+        "bboxMax": [
+          60,
+          20,
+          80
+        ]
+      }
+    },
+    {
+      "id": "p8",
+      "name": "Установочное кольцо 2",
+      "type": "bushing",
+      "params": {
+        "D": 40,
+        "d": 25,
+        "L": 12,
+        "c": 1,
+        "ci": 0
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 240,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля (RZ)",
+          "profile": [
+            [
+              12.5,
+              0
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              20,
+              12
+            ],
+            [
+              12.5,
+              12
+            ]
+          ]
+        },
+        {
+          "id": "chamferOuter",
+          "kind": "chamfer",
+          "label": "Фаска наружная 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1,
+            2
+          ],
+          "size": 1
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              12.5,
+              0
+            ],
+            [
+              19,
+              0
+            ],
+            [
+              20,
+              1
+            ],
+            [
+              20,
+              11
+            ],
+            [
+              19,
+              12
+            ],
+            [
+              12.5,
+              12
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 9065.589200708946,
+        "mass": 0.07116487522556522,
+        "bboxMin": [
+          240,
+          -20,
+          40
+        ],
+        "bboxMax": [
+          252,
+          20,
+          80
+        ]
+      }
+    },
+    {
+      "id": "p9",
+      "name": "Полумуфта",
+      "type": "flange",
+      "params": {
+        "D": 90,
+        "T": 12,
+        "d": 20,
+        "hubD": 40,
+        "hubH": 16,
+        "n": 4,
+        "pcd": 66,
+        "holeD": 9
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 12,
+        "y": 0,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 90,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: диск со ступицей",
+          "profile": [
+            [
+              10,
+              0
+            ],
+            [
+              45,
+              0
+            ],
+            [
+              45,
+              12
+            ],
+            [
+              20,
+              12
+            ],
+            [
+              20,
+              28
+            ],
+            [
+              10,
+              28
+            ]
+          ]
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "Отверстия 4×⌀9 на ⌀66",
+          "d": 9,
+          "z0": 0,
+          "z1": 12,
+          "through": true,
+          "pattern": {
+            "kind": "polar",
+            "n": 4,
+            "pcd": 66,
+            "startAngle": 0
+          }
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              10,
+              0
+            ],
+            [
+              45,
+              0
+            ],
+            [
+              45,
+              12
+            ],
+            [
+              20,
+              12
+            ],
+            [
+              20,
+              28
+            ],
+            [
+              10,
+              28
+            ]
+          ]
+        },
+        "holes": [
+          {
+            "x": 33,
+            "y": 0,
+            "d": 9,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": 2.0206672185931327e-15,
+            "y": 33,
+            "d": 9,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -33,
+            "y": 4.0413344371862654e-15,
+            "d": 9,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -6.062001655779398e-15,
+            "y": -33,
+            "d": 9,
+            "z0": 0,
+            "z1": 12
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 84596.80697586595,
+        "mass": 0.6640849347605478,
+        "bboxMin": [
+          11.999999999999996,
+          -45,
+          15
+        ],
+        "bboxMax": [
+          40,
+          45,
+          105
+        ]
+      }
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "A1",
+      "name": "Узел вала на двух опорах",
+      "ok": true,
+      "components": [
+        {
+          "id": "c1",
+          "partId": "p1",
+          "fixed": true,
+          "status": "fixed",
+          "note": "закреплён"
+        },
+        {
+          "id": "c2",
+          "partId": "p2",
+          "fixed": true,
+          "status": "fixed",
+          "note": "закреплён"
+        },
+        {
+          "id": "c3",
+          "partId": "p3",
+          "fixed": true,
+          "status": "fixed",
+          "note": "закреплён"
+        },
+        {
+          "id": "c4",
+          "partId": "p4",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c5",
+          "partId": "p5",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c6",
+          "partId": "p6",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c7",
+          "partId": "p7",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c8",
+          "partId": "p8",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c9",
+          "partId": "p9",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        }
+      ],
+      "mates": [
+        {
+          "id": "m1",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Корпус опоры 1 ↔ Корпус опоры 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m2",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Корпус опоры 1 ↔ Вкладыш подшипника 1",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m3",
+          "type": "planar",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "align",
+          "offset": 0,
+          "label": "Грани заподлицо: Корпус опоры 1 ↔ Вкладыш подшипника 1",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m4",
+          "type": "coaxial",
+          "a": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Корпус опоры 2 ↔ Вкладыш подшипника 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m5",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "align",
+          "offset": 0,
+          "label": "Грани заподлицо: Корпус опоры 2 ↔ Вкладыш подшипника 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m6",
+          "type": "coaxial",
+          "a": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Вкладыш подшипника 1 ↔ Вал",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m7",
+          "type": "distance",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "align",
+          "offset": 60,
+          "label": "Смещение 60 мм (заподлицо): Корпус опоры 1 ↔ Вал",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m8",
+          "type": "coaxial",
+          "a": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Вал ↔ Установочное кольцо 1",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m9",
+          "type": "planar",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "end1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Корпус опоры 1 ↔ Установочное кольцо 1",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m10",
+          "type": "coaxial",
+          "a": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Вал ↔ Установочное кольцо 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m11",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Корпус опоры 2 ↔ Установочное кольцо 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m12",
+          "type": "coaxial",
+          "a": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c9",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Вал ↔ Полумуфта",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m13",
+          "type": "planar",
+          "a": {
+            "comp": "c6",
+            "ref": "step1"
+          },
+          "b": {
+            "comp": "c9",
+            "ref": "end1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Вал ↔ Полумуфта",
+          "status": "ok",
+          "note": "выполнено"
+        }
+      ],
+      "messages": [
+        {
+          "severity": "info",
+          "text": "Точно не проверено: 4 пар деталей с пересекающимися габаритами и 2 касаний граней — это плоские детали или детали не на одной оси. Пересечение таких пар программа не считает"
+        }
+      ]
+    }
+  ]
+}

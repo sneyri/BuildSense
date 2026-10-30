@@ -142,11 +142,49 @@
     return tris;
   }
 
+  // ------------------------------------------------------------------ плоская деталь (выдавливание)
+
+  /** Контур (две проушины или плита) с отверстиями → THREE.Shape в плоскости XY. */
+  function outlineShape(ex, holes) {
+    const o = ex.outline;
+    const s = new T.Shape();
+    if (o.kind === "stadium") {
+      const phi = Math.acos((o.r1 - o.r2) / o.C); // направление нормали к внешней касательной
+      s.moveTo(o.r1 * Math.cos(phi), o.r1 * Math.sin(phi));
+      s.absarc(0, 0, o.r1, phi, 2 * Math.PI - phi, false);
+      s.lineTo(o.C + o.r2 * Math.cos(-phi), o.r2 * Math.sin(-phi));
+      s.absarc(o.C, 0, o.r2, -phi, phi, false);
+      s.closePath();
+    } else {
+      s.moveTo(o.x0, o.y0); s.lineTo(o.x1, o.y0); s.lineTo(o.x1, o.y1); s.lineTo(o.x0, o.y1); s.closePath();
+    }
+    for (const h of holes) {
+      const path = new T.Path();
+      path.absarc(h.x, h.y, h.d / 2, 0, 2 * Math.PI, true);
+      s.holes.push(path);
+    }
+    return s;
+  }
+
+  /** Выдавливание контура на высоту вдоль Z — одна замкнутая оболочка. */
+  function extrudeTris(ev, segments = DEFAULT_SEGMENTS) {
+    const g = new T.ExtrudeGeometry(outlineShape(ev.extrude, ev.holes), { depth: ev.extrude.height, bevelEnabled: false, curveSegments: Math.max(12, Math.round(segments / 2)) });
+    const flat = g.index ? g.toNonIndexed() : g;
+    const tris = new TriSet();
+    tris.pos = Array.from(flat.getAttribute("position").array);
+    flat.computeVertexNormals();
+    tris.nrm = Array.from(flat.getAttribute("normal").array);
+    if (flat !== g) flat.dispose();
+    g.dispose();
+    return tris;
+  }
+
   // ------------------------------------------------------------------ деталь
 
   /** Сетка детали в локальной системе (ось вращения — Z, торец на z = 0). */
   function buildPartTris(part, segments = DEFAULT_SEGMENTS) {
     const ev = M.evaluate(part);
+    if (ev.extrude) return extrudeTris(ev, segments);
     if (ev.holes.length) return flangeGeometry(part, segments);
     return revolveGeometry(ev.profile, segments);
   }
@@ -238,8 +276,8 @@
     g.dispose();
     const analytic = M.analyticVolume(part);
     const ev = M.evaluate(part);
-    let pappus = M.profileVolume(ev.profile);
-    for (const h of ev.holes) pappus -= (Math.PI * h.d * h.d / 4) * (h.z1 - h.z0);
+    let pappus = ev.profile ? M.profileVolume(ev.profile) : analytic; // у плоских деталей профиля вращения нет
+    if (ev.profile) for (const h of ev.holes) pappus -= (Math.PI * h.d * h.d / 4) * (h.z1 - h.z0);
     const mesh = meshVolume(tri);
     const rho = M.density(part);
     return {

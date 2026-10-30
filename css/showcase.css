@@ -1,0 +1,66 @@
+/* BuildSense · Машиностроение — панель просмотра (взрывной вид, симуляция, разрез) и галерея демо. Токены — из css/app.css. */
+
+/* внизу по центру: вверху слева — панель инструментов выбора/перемещения (js/mech/mechInteract.js) */
+.mv-root {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 5;
+  display: flex; flex-direction: column-reverse; align-items: center; gap: 6px;
+  width: max-content; max-width: calc(100% - 16px); pointer-events: none;
+}
+/* подсказка с габаритом — вправо вверх, чтобы не накрывать панель просмотра */
+.mech-viewport .mech-hud { left: auto; right: 8px; top: 8px; bottom: auto; max-width: 42%; }
+.mv-bar, .mv-panel {
+  pointer-events: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+  padding: 4px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel); box-shadow: var(--float-shadow, 0 4px 16px rgba(0, 0, 0, .35));
+}
+.mv-bar button { display: inline-flex; align-items: center; gap: 6px; }
+.mv-bar button svg, .mv-panel button svg { width: 15px; height: 15px; flex: none; }
+.mv-bar button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+.mv-bar button.accent:not(.on) { border-color: var(--accent); color: var(--accent); }
+.mv-sep { width: 1px; align-self: stretch; margin: 2px 4px; background: var(--line); }
+.mv-panel { flex-direction: column; align-items: stretch; padding: 6px 8px; max-width: min(860px, 100%); }
+.mv-panel[hidden] { display: none; }
+.mv-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mv-col { display: flex; flex-direction: column; gap: 6px; }
+.mv-row + .mv-row, .mv-col + .mv-row, .mv-row + .mv-col { border-top: 1px solid var(--line); padding-top: 6px; }
+.mv-row .note, .mv-col .note { font-size: 12px; color: var(--muted); max-width: 640px; }
+.mv-row .field { margin: 0; }
+.mv-slider { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.mv-slider input[type="range"] { width: 140px; accent-color: var(--accent); }
+.mv-slider output { min-width: 44px; font-family: var(--mono); color: var(--text); }
+.mv-chip { font-size: 12px; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); }
+.mv-state { font-family: var(--mono); font-size: 12px; color: var(--text); }
+.mv-badge { font-size: 11px; font-weight: 600; padding: 0 6px; line-height: 18px; border-radius: 2px; background: var(--panel-3); color: var(--muted); }
+.mv-badge.running { background: var(--ok-bg); color: var(--ok); }
+.mv-badge.paused { background: var(--warn-bg); color: var(--warn); }
+.mv-err { color: var(--err); font-size: 12px; max-width: 640px; }
+.mv-more summary { cursor: pointer; font-size: 12px; color: var(--accent); }
+.mv-more .note { margin-top: 4px; }
+.mv-panel { background: color-mix(in srgb, var(--panel) 92%, transparent); }
+
+/* дерево: показать / скрыть деталь */
+.mech-tree .row .mv-eye { margin-left: auto; width: 22px; height: 22px; min-height: 22px; padding: 0; opacity: .55; }
+.mech-tree .row .mv-eye svg { width: 14px; height: 14px; }
+.mech-tree .row:hover .mv-eye, .mech-tree .row .mv-eye.off { opacity: 1; }
+.mech-tree .row .mv-eye.off { color: var(--warn); }
+.mech-tree .row.is-hidden .mech-name { opacity: .5; text-decoration: line-through; }
+
+/* галерея демонстрационных проектов */
+.mv-gallery .drawing-box { width: min(1080px, 100%); }
+.mv-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; padding: 12px; overflow: auto; }
+.mv-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); overflow: hidden; }
+.mv-card img, .mv-noimg { display: block; width: 100%; aspect-ratio: 360 / 220; object-fit: cover; background: var(--viewport); }
+.mv-noimg { display: grid; place-items: center; color: var(--muted); font-size: 12px; }
+.mv-card-body { display: flex; flex-direction: column; gap: 6px; padding: 10px; flex: 1; }
+.mv-card-body p { margin: 0; font-size: 13px; color: var(--muted); }
+.mv-card-body ul { margin: 0; padding-left: 18px; font-size: 12px; }
+.mv-card-actions { margin-top: auto; display: flex; gap: 6px; padding-top: 6px; }
+.mv-card-actions button { display: inline-flex; align-items: center; gap: 6px; }
+.mv-card-actions button svg { width: 14px; height: 14px; }
+.mv-stash { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 12px 0; padding: 8px 10px; border: 1px solid var(--warn); border-radius: var(--radius); background: var(--warn-bg); font-size: 13px; }
+
+@media (max-width: 720px) {
+  .mv-root { bottom: 4px; }
+  .mv-bar button span { display: none; }
+  .mv-slider input[type="range"] { width: 100px; }
+}

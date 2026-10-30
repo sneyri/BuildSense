@@ -7,10 +7,10 @@
 .plan-overlay > * { pointer-events: auto; }
 .plan-overlay > .plan-empty { pointer-events: none; }
 .plan-empty .row-actions, .plan-empty button { pointer-events: auto; }
-.plan-empty { max-width: 460px; margin: auto; }
-.plan-empty strong { color: var(--text); font-size: 15px; }
-.plan-empty p { margin: 4px 0 10px; line-height: 1.45; }
-.plan-empty .row-actions { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.plan-empty { inset: 12px auto auto 12px; width: 280px; height: auto; place-content: start; text-align: left; margin: 0; padding: 12px 16px; font-size: 12px; background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 28px rgba(0, 0, 0, .35); backdrop-filter: blur(3px); }
+.plan-empty strong { color: var(--text); font-size: 13px; }
+.plan-empty p { margin: 4px 0 8px; line-height: 1.35; }
+.plan-empty .row-actions { display: flex; gap: 6px; justify-content: flex-start; flex-wrap: wrap; }
 
 .plan-seg button { white-space: nowrap; }
 

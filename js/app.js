@@ -21,6 +21,7 @@
     calcOpen: false,
     dims: false,
     isolate: false,
+    inside: false,
     hiddenGroups: new Set(),
     issueMap: new Map(),
   };
@@ -122,6 +123,7 @@
       view.setIssues(state.issueMap);
       view.setSelected(state.selectedIds);
       if (state.isolate) view.setIsolate([...state.selectedIds]);
+      applyInside();
       if (refit) view.setView("iso");
       if (failed.length) message = `${message ? message + ". " : ""}Не построены (некорректные данные): ${failed.join(", ")}`;
     }
@@ -131,10 +133,22 @@
     if (message) setStatus(message, s.error ? "error" : null);
   }
 
+  /** Режим «Внутри»: прячет крышу и всё выше потолка активного этажа (перекрытие, верхние этажи) — модель не меняется. */
+  function applyInside() {
+    if (!view) return;
+    if (!state.inside) { view.setHiddenIds(null); return; }
+    const lv = P.level(state.project, state.levelId);
+    const cut = lv.elevation + lv.height - 0.01;
+    const ids = state.project.elements
+      .filter((e) => e.type === "roof" || BS.shapes.bottom(e, state.project) >= cut)
+      .map((e) => e.id);
+    view.setHiddenIds(ids);
+  }
+
   function renderPanels() {
     $("project-name").value = state.project.name;
     BS.ui.palette.render($("palette"), $("levels"), state, {
-      onTool: setTool, onAction: action, onLevel: (id) => { state.levelId = id; renderPanels(); setStatus(`Активный этаж: ${P.level(state.project, id).name}`); },
+      onTool: setTool, onAction: action, onLevel: (id) => { state.levelId = id; applyInside(); renderPanels(); setStatus(`Активный этаж: ${P.level(state.project, id).name}`); },
       onAddLevel: () => action("add-level"),
     });
     BS.ui.tree.render($("visibility"), $("tree"), { ...state, issues: state.issueMap }, {
@@ -172,6 +186,10 @@
     }
     if (state.selectedIds.size) switchTab("right", "props");
     renderPanels();
+    if (state.selectedIds.size === 1 && BS.hints) {
+      const el = state.project.elements.find((e) => e.id === [...state.selectedIds][0]);
+      if (el && el.type === "wall" && !(el.params && el.params.contourId)) BS.hints.once("arch.handles", "Потяните квадратные ручки на концах стены на плане — длина и направление изменятся, проёмы останутся на месте.");
+    }
   }
 
   function focus(ids) {
@@ -194,9 +212,11 @@
 
   function setTool(type) {
     state.activeTool = type;
+    document.body.dataset.activeTool = type;
     if (tools) tools.setTool(type);
     document.querySelectorAll("[data-tool]").forEach((b) => b.classList.toggle("active", b.dataset.tool === type));
     renderPanels();
+    if (type === "wall" && BS.hints) BS.hints.once("arch.wall", "Стены: щёлкайте по точкам плана — длина видна во время рисования, можно набрать её цифрами. Esc — отмена, ? — горячие клавиши.");
   }
 
   // ---------------------------------------------------------------- обработчики панелей
@@ -302,12 +322,28 @@
       case "wizard":
         state.wizardOpen = !state.wizardOpen;
         return renderWizard();
-      case "theme": {
-        const light = document.body.classList.toggle("light");
-        try { localStorage.setItem("buildsense.theme", light ? "light" : "dark"); } catch { /* не критично */ }
-        if (view) view.setTheme(!light);
+      case "drawing": {
+        try {
+          const lv = P.level(state.project, state.levelId);
+          const canvas = BS.houseDrawing.render(state.project, { levelId: state.levelId });
+          BS.mechDrawing.openPreview(canvas, { title: `Чертёж: ${state.project.name || "Дом"} · ${lv.name}`, fileName: `${(state.project.name || "dom").replace(/[\/:*?"<>|]+/g, "_").replace(/\s+/g, "_")}_${lv.name.replace(/\s+/g, "_")}_чертёж.png`, onStatus: setStatus });
+        } catch (e) { setStatus(e.message, "error"); }
         return;
       }
+      case "rotate-tool":
+        if (!tools || !tools.rotateStep()) setStatus("Поворот работает при расстановке: выберите на палитре объект (например, дверь или колонну) и нажмите «Повернуть».");
+        return;
+      case "delete-selected":
+        if (!state.selectedIds.size) return setStatus("Сначала выберите объект: коснитесь его на плане или в 3D-модели.");
+        return propHandlers.onDelete([...state.selectedIds]);
+      case "duplicate-selected":
+        if (!state.selectedIds.size) return setStatus("Сначала выберите объект: коснитесь его на плане или в 3D-модели.");
+        return propHandlers.onDuplicate([...state.selectedIds]);
+      case "cancel-tool":
+        if (tools && tools.cancel()) return;
+        if (state.activeTool !== "select") return setTool("select");
+        return select([]);
+      case "theme": return BS.themes.next();
       case "new-menu": return toggleMenu();
       case "wiz-foundation": return edit("Фундамент", () => {
         const h = p.house;
@@ -540,6 +576,12 @@
       if (view) view.setIsolate(state.isolate ? [...state.selectedIds] : null);
       if (!state.isolate && state.selectedIds.size === 0) setStatus("Сначала выберите объект для изоляции");
     }
+    if (name === "inside") {
+      state.inside = !state.inside;
+      setToggle("inside", state.inside);
+      applyInside();
+      setStatus(state.inside ? "Режим «Внутри»: крыша и потолок активного этажа скрыты — можно ставить лестницы и перегородки. Повторное нажатие — вернуть." : "Потолок и крыша снова видны");
+    }
     if (name === "snap") {
       const on = state.project.settings.snap === false;
       state.project.settings.snap = on;
@@ -566,36 +608,41 @@
   window.addEventListener("dragover", (e) => e.preventDefault());
   window.addEventListener("drop", async (e) => { e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) await openFile(f); });
 
-  document.addEventListener("keydown", (e) => {
-    if (document.body.dataset.mode === "mech") return; // горячие клавиши дома не действуют в режиме машиностроения
-    const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement && document.activeElement.tagName);
-    const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && e.code === "KeyZ" && !typing) { e.preventDefault(); return undoRedo(!e.shiftKey); }
-    if (ctrl && e.code === "KeyY" && !typing) { e.preventDefault(); return undoRedo(false); }
-    if (ctrl && e.code === "KeyS") { e.preventDefault(); return action("save"); }
-    if (ctrl && e.code === "KeyD" && state.selectedIds.size) { e.preventDefault(); return propHandlers.onDuplicate([...state.selectedIds]); }
-    if (typing || ctrl) return;
-    if (e.key === "Escape") {
-      if (tools && tools.cancel()) return;
+  // Горячие клавиши архитектуры — через единый менеджер (js/ui/hotkeys.js); общие (отмена, сохранить, Delete …) — тоже здесь,
+  // а в режиме машиностроения те же сочетания перекрываются его собственными действиями.
+  function registerArchHotkeys() {
+    const H = BS.hotkeys;
+    const sel = () => state.selectedIds.size > 0;
+    const R = (def) => H.register({ group: "arch", ...def });
+    R({ id: "arch.undo", label: "Отменить", keys: ["Ctrl+KeyZ"], run: () => undoRedo(true) });
+    R({ id: "arch.redo", label: "Повторить", keys: ["Ctrl+KeyY", "Ctrl+Shift+KeyZ"], run: () => undoRedo(false) });
+    R({ id: "arch.save", label: "Сохранить проект (JSON)", keys: ["Ctrl+KeyS"], run: () => action("save") });
+    R({ id: "arch.duplicate", label: "Дублировать выбранное", keys: ["Ctrl+KeyD"], enabled: sel, run: () => propHandlers.onDuplicate([...state.selectedIds]) });
+    R({ id: "arch.delete", label: "Удалить выбранное", keys: ["Delete"], enabled: sel, run: () => propHandlers.onDelete([...state.selectedIds]) });
+    R({ id: "arch.escape", label: "Отмена операции / сброс инструмента и выделения", keys: ["Escape"], run: () => {
+      if (document.body.classList.contains("clean-view")) return false; // Esc в «чистом просмотре» обрабатывает shell.js
+      if (tools && tools.cancel()) return true;
       if (state.activeTool !== "select") return setTool("select");
       if (state.isolate) return toggle("isolate");
-      return select([]);
-    }
-    if (e.key === "Delete" && state.selectedIds.size) return propHandlers.onDelete([...state.selectedIds]);
-    if (e.code === "KeyV") return setTool("select");
-    if (e.code === "KeyW") return setTool("wall");
-    if (e.code === "KeyF" && view) return view.setView("fit");
-    if (e.code === "KeyI") return toggle("isolate");
-  });
+      select([]);
+    } });
+    R({ id: "arch.select", label: "Выбор и перемещение (потяните выбранный объект)", keys: ["KeyV"], run: () => setTool("select") });
+    R({ id: "arch.move", label: "Перемещение: выбрать объект и потянуть мышью", keys: ["KeyG"], run: () => { setTool("select"); setStatus("Перемещение: щёлкните объект и потяните его — он прилипает к сетке и к соседям. Esc — отмена."); } });
+    R({ id: "arch.wall", label: "Инструмент «Стена»", keys: ["KeyW"], run: () => setTool("wall") });
+    R({ id: "arch.rotate", label: "Повернуть размещаемый объект на 90° (при расстановке)", keys: ["KeyR"], run: () => { if (!tools || !tools.rotateStep()) setStatus("Поворот работает при расстановке объекта: выберите, например, дверь или колонну на палитре, затем нажмите R."); } });
+    R({ id: "arch.isolate", label: "Изолировать выбранный объект", keys: ["KeyI"], run: () => toggle("isolate") });
+    R({ id: "arch.snap", label: "Привязки: включить / выключить", keys: ["KeyX"], run: () => { toggle("snap"); setStatus(state.project.settings.snap === false ? "Привязки выключены" : "Привязки включены"); } });
+    R({ id: "arch.fit", label: "Показать всё в кадре", keys: ["KeyF"], enabled: () => Boolean(view), run: () => view.setView("fit") });
+    R({ id: "arch.view.top", label: "Вид сверху", keys: ["Numpad7", "Digit7"], enabled: () => Boolean(view), run: () => { view.setView("top"); setToggle("ortho", true); } });
+    R({ id: "arch.view.front", label: "Вид спереди", keys: ["Numpad1", "Digit1"], enabled: () => Boolean(view), run: () => view.setView("front") });
+    R({ id: "arch.view.iso", label: "Изометрический вид", keys: ["Numpad0", "Digit0"], enabled: () => Boolean(view), run: () => view.setView("iso") });
+  }
 
   // ---------------------------------------------------------------- старт
 
-  try {
-    if (localStorage.getItem("buildsense.theme") === "light") {
-      document.body.classList.add("light");
-      if (view) view.setTheme(false);
-    }
-  } catch { /* не критично */ }
+  registerArchHotkeys();
+  BS.themes.onChange(() => { if (view) view.applyCssTheme(); if (plan) plan.draw(); });
+  BS.themes.init();
   BS.icons.apply();
   $("grid-step").value = String(state.project.settings.grid || 0.1);
   setToggle("snap", state.project.settings.snap !== false);

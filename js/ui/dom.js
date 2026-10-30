@@ -35,9 +35,10 @@
     return el("label", { class: "field", title }, el("span", {}, label), el("span", { class: "unit" }, input, unit ? el("em", {}, unit) : null));
   }
 
-  function selectField({ label, value, options, onChange, wide, title }) {
+  function selectField({ label, value, options, onChange, wide, title, info }) {
     const sel = el("select", { title, onchange: () => onChange(sel.value) },
-      options.map((o) => el("option", { value: o.value, selected: String(o.value) === String(value) }, o.label)));
+      options.map((o) => el("option", { value: o.value, selected: String(o.value) === String(value), "data-desc": o.desc, "data-tag": o.tag, "data-thumb": o.thumb, "data-color": o.color }, o.label)));
+    if (info) sel.dataset.info = info;
     return el("label", { class: wide ? "field wide" : "field", title }, el("span", {}, label), sel);
   }
 
@@ -67,5 +68,22 @@
     return node;
   }
 
-  BS.dom = { el, fill, numberField, selectField, textField, checkField, readonly, iconButton, fmtNum };
+  /** Плоский список узлов → карточки-разделы: каждый h3 начинает раздел (.psec) со своим телом. Узлы до первого h3 остаются как есть. */
+  function sections(nodes) {
+    const out = [];
+    let body = null;
+    for (const n of nodes.flat(Infinity)) {
+      if (n === null || n === undefined || n === false) continue;
+      if (n.tagName === "H3") {
+        body = el("div", { class: "psec-body" });
+        out.push(el("section", { class: "psec" }, n, body));
+      } else if (n.tagName === "HR") {
+        continue; // разделители заменены границами карточек
+      } else if (body) body.append(n);
+      else out.push(n);
+    }
+    return out;
+  }
+
+  BS.dom = { el, fill, sections, numberField, selectField, textField, checkField, readonly, iconButton, fmtNum };
 })(globalThis.BuildSense);

@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-export const MECH_FILES = ["vendor/three/three.min.js", "js/core/namespace.js", "js/mech/mechModel.js", "js/mech/mechAssembly.js", "js/mech/mechGeometry.js", "js/mech/mechIO.js"];
+export const MECH_FILES = ["vendor/three/three.min.js", "js/core/namespace.js", "js/mech/mechModel.js", "js/mech/mechAssembly.js", "js/mech/mechConnect.js", "js/mech/mechKinematics.js", "js/mech/mechExplode.js", "js/mech/mechDemos.js", "js/mech/mechGeometry.js", "js/mech/mechIO.js"];
 
 export function loadMech(files = MECH_FILES) {
   const ctx = vm.createContext({ console });
@@ -28,6 +28,13 @@ export function variantsProject(BS) {
   pr.parts.push(M.createPart(pr, "shaft", { name: "Вал с равными ступенями", params: { steps: [{ d: 20, L: 10 }, { d: 20, L: 15 }, { d: 30, L: 5 }, { d: 16, L: 25 }], c1: 0, c2: 2 }, placement: { x: 80, y: 0, z: 0, rotation: { x: 0, y: 0, z: 0 } } }));
   pr.parts.push(M.createPart(pr, "flange", { name: "Фланец без ступицы", params: { D: 100, T: 10, d: 30, hubD: 0, hubH: 0, n: 4, pcd: 75, holeD: 11 }, placement: { x: 0, y: 120, z: 0, rotation: { x: 15, y: 25, z: 45 } } }));
   pr.parts.push(M.createPart(pr, "flange", { name: "Шайба (без отверстий)", params: { D: 30, T: 3, d: 13, hubD: 0, hubH: 0, n: 0, pcd: 0, holeD: 5 }, placement: { x: 150, y: 120, z: 0, rotation: { x: 0, y: 0, z: 0 } } }));
+  // плоские детали (выдавливание) и новые тела вращения
+  pr.parts.push(M.createPart(pr, "link", { name: "Шатун", placement: { x: 0, y: 260, z: 0, rotation: { x: 20, y: -35, z: 70 } } }));
+  pr.parts.push(M.createPart(pr, "link", { name: "Щека (разные проушины, без отверстий)", params: { C: 30, D1: 50, d1: 0, D2: 34, d2: 0, T: 10 }, placement: { x: 160, y: 260, z: 0, rotation: { x: 0, y: 0, z: 0 } } }));
+  pr.parts.push(M.createPart(pr, "block", { name: "Корпус опоры", placement: { x: 300, y: 260, z: 0, rotation: { x: 90, y: 0, z: 15 } } }));
+  pr.parts.push(M.createPart(pr, "block", { name: "Плита без отверстия", params: { W: 120, H: 60, hb: 30, T: 8, d: 0 }, placement: { x: 0, y: 420, z: 0, rotation: { x: 0, y: 0, z: 0 } } }));
+  pr.parts.push(M.createPart(pr, "piston", { name: "Поршень", placement: { x: 200, y: 420, z: 0, rotation: { x: 0, y: 45, z: 0 } } }));
+  pr.parts.push(M.createPart(pr, "screw", { name: "Винт с условной резьбой", params: { d: 20, P: 4, Lt: 62, D: 30, Lh: 10, dn: 12, Ln: 15 }, placement: { x: 320, y: 420, z: 0, rotation: { x: 0, y: 0, z: 0 } } }));
   return pr;
 }
 
@@ -78,6 +85,12 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   writeFileSync(path.join(ROOT, "examples/mech/assembly.mech.json"), BS.mechIO.serialize(asm) + "\n");
   writeFileSync(path.join(ROOT, "examples/mech/assembly.mech-freecad.json"), BS.mechIO.exportFreecadJson(asm) + "\n");
   writeFileSync(path.join(ROOT, "js/mech/mechMacroSource.js"), macroSourceJs());
+  for (const d of BS.mechDemos.DEMOS) {
+    // демонстрационные проекты (исходное положение, без кадров симуляции и разборки) и их экспорт для FreeCAD
+    const pr = d.create();
+    writeFileSync(path.join(ROOT, `examples/mech/showcase-${d.id}.mech.json`), BS.mechIO.serialize(pr) + "\n");
+    writeFileSync(path.join(ROOT, `examples/mech/showcase-${d.id}.mech-freecad.json`), BS.mechIO.exportFreecadJson(pr) + "\n");
+  }
   writeFileSync(path.join(ROOT, "tests/mech_variants.freecad.json"), BS.mechIO.exportFreecadJson(variantsProject(BS)) + "\n");
   writeFileSync(path.join(ROOT, "tests/mech_interference.freecad.json"), JSON.stringify(interferenceExport(BS), null, 2) + "\n");
   if (process.argv[2]) {

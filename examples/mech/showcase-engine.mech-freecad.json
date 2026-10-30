@@ -1,0 +1,1906 @@
+{
+  "format": "buildsense-mech-freecad",
+  "schemaVersion": 2,
+  "units": "mm",
+  "name": "Демо B: одноцилиндровый двигатель",
+  "generator": "BuildSense 1.0.0",
+  "note": "Источник истины — params. profile/holes — вычисленные фичи в локальной системе детали (ось вращения Z).",
+  "parts": [
+    {
+      "id": "p1",
+      "name": "Коренная шейка (передняя)",
+      "type": "shaft",
+      "params": {
+        "c1": 1,
+        "c2": 0,
+        "steps": [
+          {
+            "d": 20,
+            "L": 20
+          },
+          {
+            "d": 24,
+            "L": 44
+          }
+        ]
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": 86,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля: 2 ступ.",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              10,
+              20
+            ],
+            [
+              12,
+              20
+            ],
+            [
+              12,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ]
+        },
+        {
+          "id": "chamferStart",
+          "kind": "chamfer",
+          "label": "Фаска левого торца 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1
+          ],
+          "size": 1
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              9,
+              0
+            ],
+            [
+              10,
+              1
+            ],
+            [
+              10,
+              20
+            ],
+            [
+              12,
+              20
+            ],
+            [
+              12,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 26157.94763133982,
+        "mass": 0.2053398889060176,
+        "bboxMin": [
+          -12,
+          22,
+          48
+        ],
+        "bboxMax": [
+          12,
+          86,
+          72
+        ]
+      }
+    },
+    {
+      "id": "p2",
+      "name": "Щека кривошипа 1",
+      "type": "link",
+      "params": {
+        "C": 30,
+        "D1": 50,
+        "d1": 0,
+        "D2": 34,
+        "d2": 0,
+        "T": 10
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": 22,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 90
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: две проушины, C = 30",
+          "outline": {
+            "kind": "stadium",
+            "r1": 25,
+            "r2": 17,
+            "C": 30
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 10 вдоль Z",
+          "sketch": "sketch",
+          "height": 10
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "stadium",
+            "r1": 25,
+            "r2": 17,
+            "C": 30
+          },
+          "height": 10
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 27407.7917485384,
+        "mass": 0.21515116522602645,
+        "bboxMin": [
+          -25,
+          11.999999999999998,
+          35
+        ],
+        "bboxMax": [
+          25,
+          22.000000000000004,
+          107
+        ]
+      }
+    },
+    {
+      "id": "p3",
+      "name": "Шатунная шейка",
+      "type": "shaft",
+      "params": {
+        "c1": 0,
+        "c2": 0,
+        "steps": [
+          {
+            "d": 16,
+            "L": 24
+          }
+        ]
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": 12,
+        "z": 90,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля: 1 ступ.",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              24
+            ],
+            [
+              0,
+              24
+            ]
+          ]
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              24
+            ],
+            [
+              0,
+              24
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 4825.486315913922,
+        "mass": 0.03788006757992429,
+        "bboxMin": [
+          -8,
+          -12,
+          82
+        ],
+        "bboxMax": [
+          8,
+          12,
+          98
+        ]
+      }
+    },
+    {
+      "id": "p4",
+      "name": "Щека кривошипа 2",
+      "type": "link",
+      "params": {
+        "C": 30,
+        "D1": 50,
+        "d1": 0,
+        "D2": 34,
+        "d2": 0,
+        "T": 10
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": -12,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 90
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: две проушины, C = 30",
+          "outline": {
+            "kind": "stadium",
+            "r1": 25,
+            "r2": 17,
+            "C": 30
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 10 вдоль Z",
+          "sketch": "sketch",
+          "height": 10
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "stadium",
+            "r1": 25,
+            "r2": 17,
+            "C": 30
+          },
+          "height": 10
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 27407.7917485384,
+        "mass": 0.21515116522602645,
+        "bboxMin": [
+          -25,
+          -22,
+          35
+        ],
+        "bboxMax": [
+          25,
+          -11.999999999999996,
+          107
+        ]
+      }
+    },
+    {
+      "id": "p5",
+      "name": "Коренная шейка (задняя)",
+      "type": "shaft",
+      "params": {
+        "c1": 0,
+        "c2": 1,
+        "steps": [
+          {
+            "d": 24,
+            "L": 44
+          },
+          {
+            "d": 20,
+            "L": 30
+          }
+        ]
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": -22,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля: 2 ступ.",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              12,
+              44
+            ],
+            [
+              10,
+              44
+            ],
+            [
+              10,
+              74
+            ],
+            [
+              0,
+              74
+            ]
+          ]
+        },
+        {
+          "id": "chamferEnd",
+          "kind": "chamfer",
+          "label": "Фаска правого торца 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            4
+          ],
+          "size": 1
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              12,
+              0
+            ],
+            [
+              12,
+              44
+            ],
+            [
+              10,
+              44
+            ],
+            [
+              10,
+              73
+            ],
+            [
+              9,
+              74
+            ],
+            [
+              0,
+              74
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 29299.540284929608,
+        "mass": 0.23000139123669744,
+        "bboxMin": [
+          -12,
+          -96,
+          48
+        ],
+        "bboxMax": [
+          12,
+          -22,
+          72
+        ]
+      }
+    },
+    {
+      "id": "p6",
+      "name": "Маховик",
+      "type": "flange",
+      "params": {
+        "D": 120,
+        "T": 12,
+        "d": 20,
+        "hubD": 36,
+        "hubH": 10,
+        "n": 6,
+        "pcd": 90,
+        "holeD": 12
+      },
+      "material": "cast_iron",
+      "materialLabel": "Чугун серый",
+      "density": 7200,
+      "placement": {
+        "x": 0,
+        "y": -66,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: диск со ступицей",
+          "profile": [
+            [
+              10,
+              0
+            ],
+            [
+              60,
+              0
+            ],
+            [
+              60,
+              12
+            ],
+            [
+              18,
+              12
+            ],
+            [
+              18,
+              22
+            ],
+            [
+              10,
+              22
+            ]
+          ]
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "Отверстия 6×⌀12 на ⌀90",
+          "d": 12,
+          "z0": 0,
+          "z1": 12,
+          "through": true,
+          "pattern": {
+            "kind": "polar",
+            "n": 6,
+            "pcd": 90,
+            "startAngle": 0
+          }
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              10,
+              0
+            ],
+            [
+              60,
+              0
+            ],
+            [
+              60,
+              12
+            ],
+            [
+              18,
+              12
+            ],
+            [
+              18,
+              22
+            ],
+            [
+              10,
+              22
+            ]
+          ]
+        },
+        "holes": [
+          {
+            "x": 45,
+            "y": 0,
+            "d": 12,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": 22.500000000000004,
+            "y": 38.97114317029974,
+            "d": 12,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -22.49999999999999,
+            "y": 38.97114317029974,
+            "d": 12,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -45,
+            "y": 5.5109105961630896e-15,
+            "d": 12,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -22.50000000000002,
+            "y": -38.97114317029973,
+            "d": 12,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": 22.500000000000004,
+            "y": -38.97114317029974,
+            "d": 12,
+            "z0": 0,
+            "z1": 12
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 130841.05083670771,
+        "mass": 0.9420555660242956,
+        "bboxMin": [
+          -60,
+          -88,
+          0
+        ],
+        "bboxMax": [
+          60,
+          -66,
+          120
+        ]
+      }
+    },
+    {
+      "id": "p7",
+      "name": "Стенка картера передняя",
+      "type": "block",
+      "params": {
+        "W": 100,
+        "H": 152,
+        "hb": 60,
+        "T": 10,
+        "d": 24
+      },
+      "material": "aluminum",
+      "materialLabel": "Алюминиевый сплав",
+      "density": 2700,
+      "placement": {
+        "x": 0,
+        "y": 34,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: плита 100×152",
+          "outline": {
+            "kind": "rect",
+            "x0": -50,
+            "y0": -60,
+            "x1": 50,
+            "y1": 92
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 10 вдоль Z",
+          "sketch": "sketch",
+          "height": 10
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "⌀24 сквозное",
+          "z0": 0,
+          "z1": 10,
+          "through": true,
+          "points": [
+            {
+              "x": 0,
+              "y": 0,
+              "d": 24
+            }
+          ]
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "rect",
+            "x0": -50,
+            "y0": -60,
+            "x1": 50,
+            "y1": 92
+          },
+          "height": 10
+        },
+        "holes": [
+          {
+            "x": 0,
+            "y": 0,
+            "d": 24,
+            "z0": 0,
+            "z1": 10
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 147476.1065788307,
+        "mass": 0.3981854877628429,
+        "bboxMin": [
+          -50,
+          23.999999999999996,
+          0
+        ],
+        "bboxMax": [
+          50,
+          34.00000000000001,
+          152
+        ]
+      }
+    },
+    {
+      "id": "p8",
+      "name": "Стенка картера задняя",
+      "type": "block",
+      "params": {
+        "W": 100,
+        "H": 152,
+        "hb": 60,
+        "T": 10,
+        "d": 24
+      },
+      "material": "aluminum",
+      "materialLabel": "Алюминиевый сплав",
+      "density": 2700,
+      "placement": {
+        "x": 0,
+        "y": -24,
+        "z": 60,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: плита 100×152",
+          "outline": {
+            "kind": "rect",
+            "x0": -50,
+            "y0": -60,
+            "x1": 50,
+            "y1": 92
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 10 вдоль Z",
+          "sketch": "sketch",
+          "height": 10
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "⌀24 сквозное",
+          "z0": 0,
+          "z1": 10,
+          "through": true,
+          "points": [
+            {
+              "x": 0,
+              "y": 0,
+              "d": 24
+            }
+          ]
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "rect",
+            "x0": -50,
+            "y0": -60,
+            "x1": 50,
+            "y1": 92
+          },
+          "height": 10
+        },
+        "holes": [
+          {
+            "x": 0,
+            "y": 0,
+            "d": 24,
+            "z0": 0,
+            "z1": 10
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 147476.1065788307,
+        "mass": 0.3981854877628429,
+        "bboxMin": [
+          -50,
+          -34,
+          0
+        ],
+        "bboxMax": [
+          50,
+          -23.999999999999993,
+          152
+        ]
+      }
+    },
+    {
+      "id": "p9",
+      "name": "Цилиндр",
+      "type": "bushing",
+      "params": {
+        "D": 66,
+        "d": 50,
+        "L": 70,
+        "c": 1,
+        "ci": 0
+      },
+      "material": "cast_iron",
+      "materialLabel": "Чугун серый",
+      "density": 7200,
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 152,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля (RZ)",
+          "profile": [
+            [
+              25,
+              0
+            ],
+            [
+              33,
+              0
+            ],
+            [
+              33,
+              70
+            ],
+            [
+              25,
+              70
+            ]
+          ]
+        },
+        {
+          "id": "chamferOuter",
+          "kind": "chamfer",
+          "label": "Фаска наружная 1×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1,
+            2
+          ],
+          "size": 1
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              25,
+              0
+            ],
+            [
+              32,
+              0
+            ],
+            [
+              33,
+              1
+            ],
+            [
+              33,
+              69
+            ],
+            [
+              32,
+              70
+            ],
+            [
+              25,
+              70
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 101833.67866856196,
+        "mass": 0.7332024864136462,
+        "bboxMin": [
+          -33,
+          -33,
+          152
+        ],
+        "bboxMax": [
+          33,
+          33,
+          222
+        ]
+      }
+    },
+    {
+      "id": "p10",
+      "name": "Головка цилиндра",
+      "type": "flange",
+      "params": {
+        "D": 80,
+        "T": 12,
+        "d": 10,
+        "hubD": 0,
+        "hubH": 0,
+        "n": 4,
+        "pcd": 58,
+        "holeD": 6.6
+      },
+      "material": "aluminum",
+      "materialLabel": "Алюминиевый сплав",
+      "density": 2700,
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 222,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: диск",
+          "profile": [
+            [
+              5,
+              0
+            ],
+            [
+              40,
+              0
+            ],
+            [
+              40,
+              12
+            ],
+            [
+              5,
+              12
+            ]
+          ]
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "Отверстия 4×⌀6,6 на ⌀58",
+          "d": 6.6,
+          "z0": 0,
+          "z1": 12,
+          "through": true,
+          "pattern": {
+            "kind": "polar",
+            "n": 4,
+            "pcd": 58,
+            "startAngle": 0
+          }
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              5,
+              0
+            ],
+            [
+              40,
+              0
+            ],
+            [
+              40,
+              12
+            ],
+            [
+              5,
+              12
+            ]
+          ]
+        },
+        "holes": [
+          {
+            "x": 29,
+            "y": 0,
+            "d": 6.6,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": 1.7757378587636622e-15,
+            "y": 29,
+            "d": 6.6,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -29,
+            "y": 3.5514757175273244e-15,
+            "d": 6.6,
+            "z0": 0,
+            "z1": 12
+          },
+          {
+            "x": -5.327213576290986e-15,
+            "y": -29,
+            "d": 6.6,
+            "z0": 0,
+            "z1": 12
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 57733.927840962635,
+        "mass": 0.15588160517059912,
+        "bboxMin": [
+          -40,
+          -40,
+          222
+        ],
+        "bboxMax": [
+          40,
+          40,
+          234
+        ]
+      }
+    },
+    {
+      "id": "p11",
+      "name": "Поршень",
+      "type": "piston",
+      "params": {
+        "D": 50,
+        "H": 50,
+        "t": 8,
+        "w": 5,
+        "pinZ": 20
+      },
+      "material": "aluminum",
+      "materialLabel": "Алюминиевый сплав",
+      "density": 2700,
+      "placement": {
+        "x": 0,
+        "y": 0,
+        "z": 170,
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: днище и юбка",
+          "profile": [
+            [
+              0,
+              42
+            ],
+            [
+              20,
+              42
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              25,
+              50
+            ],
+            [
+              0,
+              50
+            ]
+          ]
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              0,
+              42
+            ],
+            [
+              20,
+              42
+            ],
+            [
+              20,
+              0
+            ],
+            [
+              25,
+              0
+            ],
+            [
+              25,
+              50
+            ],
+            [
+              0,
+              50
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 45396.01384437251,
+        "mass": 0.12256923737980578,
+        "bboxMin": [
+          -25,
+          -25,
+          170
+        ],
+        "bboxMax": [
+          25,
+          25,
+          220
+        ]
+      }
+    },
+    {
+      "id": "p12",
+      "name": "Поршневой палец",
+      "type": "shaft",
+      "params": {
+        "c1": 0.5,
+        "c2": 0.5,
+        "steps": [
+          {
+            "d": 10,
+            "L": 38
+          }
+        ]
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": 19,
+        "z": 190,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз профиля: 1 ступ.",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              38
+            ],
+            [
+              0,
+              38
+            ]
+          ]
+        },
+        {
+          "id": "chamferStart",
+          "kind": "chamfer",
+          "label": "Фаска левого торца 0,5×45°",
+          "sketch": "sketch",
+          "vertices": [
+            1
+          ],
+          "size": 0.5
+        },
+        {
+          "id": "chamferEnd",
+          "kind": "chamfer",
+          "label": "Фаска правого торца 0,5×45°",
+          "sketch": "sketch",
+          "vertices": [
+            2
+          ],
+          "size": 0.5
+        },
+        {
+          "id": "revolve",
+          "kind": "revolve",
+          "label": "Вращение 360° вокруг Z",
+          "sketch": "sketch",
+          "angle": 360
+        }
+      ],
+      "solid": {
+        "revolve": {
+          "axis": "Z",
+          "profile": [
+            [
+              0,
+              0
+            ],
+            [
+              4.5,
+              0
+            ],
+            [
+              5,
+              0.5
+            ],
+            [
+              5,
+              37.5
+            ],
+            [
+              4.5,
+              38
+            ],
+            [
+              0,
+              38
+            ]
+          ]
+        },
+        "holes": []
+      },
+      "analytic": {
+        "volume": 2976.9208386641285,
+        "mass": 0.02336882858351341,
+        "bboxMin": [
+          -5,
+          -19,
+          185
+        ],
+        "bboxMax": [
+          5,
+          19,
+          195
+        ]
+      }
+    },
+    {
+      "id": "p13",
+      "name": "Шатун",
+      "type": "link",
+      "params": {
+        "C": 100,
+        "D1": 32,
+        "d1": 16,
+        "D2": 20,
+        "d2": 10,
+        "T": 18
+      },
+      "material": "steel",
+      "materialLabel": "Сталь углеродистая",
+      "density": 7850,
+      "placement": {
+        "x": 0,
+        "y": 9,
+        "z": 90,
+        "rotation": {
+          "x": 90,
+          "y": 0,
+          "z": 90
+        }
+      },
+      "features": [
+        {
+          "id": "sketch",
+          "kind": "sketch",
+          "label": "Эскиз: две проушины, C = 100",
+          "outline": {
+            "kind": "stadium",
+            "r1": 16,
+            "r2": 10,
+            "C": 100
+          }
+        },
+        {
+          "id": "extrude",
+          "kind": "extrude",
+          "label": "Выдавливание на 18 вдоль Z",
+          "sketch": "sketch",
+          "height": 18
+        },
+        {
+          "id": "holes",
+          "kind": "hole",
+          "label": "⌀16 и ⌀10 сквозное",
+          "z0": 0,
+          "z1": 18,
+          "through": true,
+          "points": [
+            {
+              "x": 0,
+              "y": 0,
+              "d": 16
+            },
+            {
+              "x": 100,
+              "y": 0,
+              "d": 10
+            }
+          ]
+        }
+      ],
+      "solid": {
+        "extrude": {
+          "outline": {
+            "kind": "stadium",
+            "r1": 16,
+            "r2": 10,
+            "C": 100
+          },
+          "height": 18
+        },
+        "holes": [
+          {
+            "x": 0,
+            "y": 0,
+            "d": 16,
+            "z0": 0,
+            "z1": 18
+          },
+          {
+            "x": 100,
+            "y": 0,
+            "d": 10,
+            "z0": 0,
+            "z1": 18
+          }
+        ]
+      },
+      "analytic": {
+        "volume": 51917.09673038856,
+        "mass": 0.40754920933355027,
+        "bboxMin": [
+          -16,
+          -9.000000000000002,
+          74
+        ],
+        "bboxMax": [
+          16,
+          9.000000000000005,
+          200
+        ]
+      }
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "A1",
+      "name": "Двигатель",
+      "ok": true,
+      "components": [
+        {
+          "id": "c1",
+          "partId": "p1",
+          "fixed": true,
+          "status": "fixed",
+          "note": "закреплён"
+        },
+        {
+          "id": "c2",
+          "partId": "p2",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c3",
+          "partId": "p3",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c4",
+          "partId": "p4",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c5",
+          "partId": "p5",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c6",
+          "partId": "p6",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c7",
+          "partId": "p7",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c8",
+          "partId": "p8",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c9",
+          "partId": "p9",
+          "fixed": true,
+          "status": "fixed",
+          "note": "закреплён"
+        },
+        {
+          "id": "c10",
+          "partId": "p10",
+          "fixed": false,
+          "status": "solved",
+          "note": "положение определено сопряжениями; поворот вокруг собственной оси не ограничен"
+        },
+        {
+          "id": "c11",
+          "partId": "p11",
+          "fixed": false,
+          "status": "free",
+          "note": "нет сопряжений"
+        },
+        {
+          "id": "c12",
+          "partId": "p12",
+          "fixed": false,
+          "status": "free",
+          "note": "нет сопряжений"
+        },
+        {
+          "id": "c13",
+          "partId": "p13",
+          "fixed": false,
+          "status": "free",
+          "note": "нет сопряжений"
+        }
+      ],
+      "mates": [
+        {
+          "id": "m1",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Коренная шейка (передняя) ↔ Щека кривошипа 1",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m2",
+          "type": "planar",
+          "a": {
+            "comp": "c1",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Коренная шейка (передняя) ↔ Щека кривошипа 1",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m3",
+          "type": "coaxial",
+          "a": {
+            "comp": "c2",
+            "ref": "axis2"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Щека кривошипа 1 ↔ Шатунная шейка",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m4",
+          "type": "planar",
+          "a": {
+            "comp": "c2",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c3",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Щека кривошипа 1 ↔ Шатунная шейка",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m5",
+          "type": "coaxial",
+          "a": {
+            "comp": "c3",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "axis2"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Шатунная шейка ↔ Щека кривошипа 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m6",
+          "type": "planar",
+          "a": {
+            "comp": "c3",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c4",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Шатунная шейка ↔ Щека кривошипа 2",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m7",
+          "type": "coaxial",
+          "a": {
+            "comp": "c4",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Щека кривошипа 2 ↔ Коренная шейка (задняя)",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m8",
+          "type": "planar",
+          "a": {
+            "comp": "c4",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c5",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Щека кривошипа 2 ↔ Коренная шейка (задняя)",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m9",
+          "type": "coaxial",
+          "a": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Коренная шейка (задняя) ↔ Маховик",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m10",
+          "type": "planar",
+          "a": {
+            "comp": "c5",
+            "ref": "step1"
+          },
+          "b": {
+            "comp": "c6",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Коренная шейка (задняя) ↔ Маховик",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m11",
+          "type": "coaxial",
+          "a": {
+            "comp": "c1",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Коренная шейка (передняя) ↔ Стенка картера передняя",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m12",
+          "type": "distance",
+          "a": {
+            "comp": "c2",
+            "ref": "end0"
+          },
+          "b": {
+            "comp": "c7",
+            "ref": "end1"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 2,
+          "label": "Смещение 2 мм (встык): Щека кривошипа 1 ↔ Стенка картера передняя",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m13",
+          "type": "coaxial",
+          "a": {
+            "comp": "c5",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Коренная шейка (задняя) ↔ Стенка картера задняя",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m14",
+          "type": "distance",
+          "a": {
+            "comp": "c4",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c8",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 2,
+          "label": "Смещение 2 мм (встык): Щека кривошипа 2 ↔ Стенка картера задняя",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m15",
+          "type": "coaxial",
+          "a": {
+            "comp": "c9",
+            "ref": "axis"
+          },
+          "b": {
+            "comp": "c10",
+            "ref": "axis"
+          },
+          "suppressed": false,
+          "orient": "auto",
+          "label": "Соосность: Цилиндр ↔ Головка цилиндра",
+          "status": "ok",
+          "note": "выполнено"
+        },
+        {
+          "id": "m16",
+          "type": "planar",
+          "a": {
+            "comp": "c9",
+            "ref": "end1"
+          },
+          "b": {
+            "comp": "c10",
+            "ref": "end0"
+          },
+          "suppressed": false,
+          "mode": "contact",
+          "offset": 0,
+          "label": "Грани встык: Цилиндр ↔ Головка цилиндра",
+          "status": "ok",
+          "note": "выполнено"
+        }
+      ],
+      "messages": [
+        {
+          "severity": "warning",
+          "text": "Поршень: нет сопряжений; положение не задано"
+        },
+        {
+          "severity": "warning",
+          "text": "Поршневой палец: нет сопряжений; положение не задано"
+        },
+        {
+          "severity": "warning",
+          "text": "Шатун: нет сопряжений; положение не задано"
+        },
+        {
+          "severity": "info",
+          "text": "Точно не проверено: 2 пар деталей с пересекающимися габаритами и 4 касаний граней — это плоские детали или детали не на одной оси. Пересечение таких пар программа не считает"
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "id": "K1",
+      "type": "slider-crank",
+      "name": "Кривошипно-шатунный механизм",
+      "crank": "p1",
+      "web": "p2",
+      "pin": "p3",
+      "rod": "p13",
+      "piston": "p11",
+      "pistonPin": "p12",
+      "cylinder": "p9",
+      "head": "p10",
+      "rotating": [
+        "p4",
+        "p5",
+        "p6"
+      ],
+      "ok": true,
+      "errors": [],
+      "notes": [
+        "радиус кривошипа r = 30 мм, шатун l = 100 мм, ход поршня 60 мм",
+        "зазор между поршнем и головкой в ВМТ — 2 мм"
+      ]
+    }
+  ]
+}

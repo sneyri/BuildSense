@@ -27,7 +27,7 @@
     parts.push(el("h3", {}, t.label), readonly("Идентификатор", e.id));
     parts.push(textField({ label: "Название", value: e.name, onChange: (v) => h.onChange(e.id, { name: v || e.id }) }));
     if (t.categories) {
-      parts.push(selectField({ label: "Категория", value: e.category, options: Object.entries(t.categories).map(([value, label]) => ({ value, label })), onChange: (v) => h.onChange(e.id, { category: v }) }));
+      parts.push(selectField({ label: "Категория", info: `${e.type}.category`, value: e.category, options: Object.entries(t.categories).map(([value, label]) => ({ value, label })), onChange: (v) => h.onChange(e.id, { category: v }) }));
     }
     if (t.materials.length > 1) {
       parts.push(selectField({ label: "Материал", value: e.material, options: t.materials.map((m) => ({ value: m, label: BS.materials.label(m) })), onChange: (v) => h.onChange(e.id, { material: v }) }));
@@ -96,7 +96,7 @@
 
     // Расчёт
     parts.push(calcBlock(project, e, state, h));
-    BS.dom.fill(root, el("div", { class: "form" }, parts));
+    BS.dom.fill(root, el("div", { class: "form" }, BS.dom.sections(parts)));
   }
 
   function xyz(e, h, grid) {

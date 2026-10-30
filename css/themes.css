@@ -1,0 +1,29 @@
+/* BuildSense — темы оформления. Переключатель: js/ui/themes.js (body[data-theme="id"]).
+   Каждая тема переопределяет те же токены, что и :root в app.css; --ground — цвет земли в 3D. */
+:root { --ground: #3e4a3d; }
+body.light { --ground: #c9d6c2; }
+
+/* Тема в духе профессиональных САПР: светлые панели, синие акценты, светлый серо-голубой вьюпорт */
+body[data-theme="tflex"] {
+  --bg: #dfe5ec; --panel: #f2f5f9; --panel-2: #ffffff; --panel-3: #e4eaf2; --field: #ffffff; --line: #c3ccd8; --line-strong: #9fabbb;
+  --text: #1b2430; --muted: #566274; --accent: #1b6ac9; --accent-soft: #d3e4f8; --accent-text: #fff;
+  --err: #c53a31; --err-bg: #fbe9e7; --warn: #a96400; --warn-bg: #fbf0dd; --info: #2462b3; --info-bg: #e3edf9; --ok: #1d7f45; --ok-bg: #e2f3e8;
+  --viewport: #d7dfe8; --ground: #c3cfdc; --overlay: rgba(27, 36, 48, .88); --float-shadow: 0 2px 8px rgba(30, 50, 80, .22);
+  color-scheme: light;
+}
+body[data-theme="blueprint"] {
+  --bg: #0b2a5b; --panel: #0f3470; --panel-2: #134085; --panel-3: #1a4d9c; --field: #0a2350; --line: #3a6cc0; --line-strong: #7fa6e6;
+  --text: #f2f7ff; --muted: #b3c9ee; --accent: #ffffff; --accent-soft: rgba(255, 255, 255, .18); --accent-text: #0b2a5b;
+  --err: #ff9a8f; --err-bg: rgba(255, 154, 143, .18); --warn: #ffe08a; --warn-bg: rgba(255, 224, 138, .16); --info: #bfe0ff; --info-bg: rgba(191, 224, 255, .16); --ok: #a6f0c4; --ok-bg: rgba(166, 240, 196, .16);
+  --viewport: #0d3270; --ground: #164a99; --overlay: rgba(11, 42, 91, .9); --float-shadow: 0 2px 8px rgba(0, 10, 40, .45);
+}
+
+/* Общая «инженерная» отделка: градиент на панелях и лента вкладок, чуть глубже, чем плоский фон */
+.topbar { background: linear-gradient(180deg, var(--panel-2), var(--panel)); }
+.tabs { background: linear-gradient(180deg, var(--panel), var(--panel-2)); }
+
+/* Логотип */
+.brand-logo { width: 26px; height: 26px; flex: none; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .35)); }
+.brand h1 { font-size: 15px; letter-spacing: .2px; }
+.brand h1 span { color: var(--accent); font-weight: 700; }
+.theme-select { width: 150px; }

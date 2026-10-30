@@ -8,8 +8,10 @@
   "use strict";
   const U = BS.util;
   const fmt = U.fmt;
-  const SNAP_PX = 10;
-  const HIT_PX = 8;
+  // На сенсорном экране палец толще курсора: зоны попадания и привязки больше
+  const COARSE = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+  const SNAP_PX = COARSE ? 20 : 10;
+  const HIT_PX = COARSE ? 18 : 8;
 
   const HINTS = {
     select: "План: перетаскивайте вершины контура, двойной щелчок по ребру — новая вершина, Delete — удалить выбранную вершину. Колесо — масштаб, перетаскивание пустого места — сдвиг.",
@@ -37,6 +39,9 @@
       this.opts = null;
       this._toolsSig = "";
       this._tableSig = "";
+      this._ptrs = new Map(); // активные касания: щипок двумя пальцами = масштаб и сдвиг
+      this._pinch = null;
+      if (COARSE || (typeof innerWidth === "number" && innerWidth <= 820)) this._tableOpen = false; // на телефоне таблица вершин свёрнута
 
       this.canvas = document.createElement("canvas");
       this.canvas.className = "plan-canvas";
@@ -54,7 +59,17 @@
       this.table.hidden = true;
       this.info = document.createElement("div");
       this.info.className = "plan-info";
-      this.overlay.append(this.empty, this.popEl, this.table, this.info);
+      this.drawBar = document.createElement("div");
+      this.drawBar.className = "plan-drawbar";
+      this.drawBar.hidden = true;
+      const mk = (text, cls, title, fn) => { const b = document.createElement("button"); b.type = "button"; if (cls) b.className = cls; b.textContent = text; b.title = title; b.addEventListener("click", fn); return b; };
+      this._dbUndo = mk("↶ Убрать точку", "", "Удалить последнюю поставленную точку (Backspace)", () => { this.draft.pop(); this.typed = ""; this.draw(); });
+      this._dbClose = mk("✓ Замкнуть контур", "primary", "Закончить контур: соединить последнюю точку с первой (Enter)", () => { if (this.draft.length >= 3) this._finishDraft(); });
+      this._dbCancel = mk("✕ Отмена", "", "Отменить рисование (Esc)", () => this.cancelDraft());
+      this._dbCount = document.createElement("span");
+      this._dbCount.className = "plan-drawbar-count";
+      this.drawBar.append(this._dbCount, this._dbUndo, this._dbClose, this._dbCancel);
+      this.overlay.append(this.empty, this.popEl, this.table, this.info, this.drawBar);
       container.append(this.canvas, this.overlay);
 
       this._bind();
@@ -175,6 +190,7 @@
       cv.addEventListener("pointerdown", (e) => this._down(e));
       cv.addEventListener("pointermove", (e) => this._move(e));
       cv.addEventListener("pointerup", (e) => this._up(e));
+      cv.addEventListener("pointercancel", (e) => this._up(e, true));
       cv.addEventListener("pointerleave", () => { this.cursor = null; this.draw(); });
       cv.addEventListener("dblclick", (e) => this._dbl(e));
       cv.addEventListener("keydown", (e) => this._key(e));
@@ -186,28 +202,39 @@
     }
 
     _down(e) {
-      this.canvas.focus();
+      this.canvas.focus({ preventScroll: true });
       this.shift = e.shiftKey;
+      this._ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (e.pointerType === "touch" && this._ptrs.size === 2) { this._startPinch(); return; }
+      if (this._ptrs.size > 1) return;
+      this._pinch = null;
+      this._afterPinch = false;
       const { sx, sy } = this.eventPoint(e);
       const world = this.toWorld(sx, sy);
       if (e.button === 1 || e.button === 2) { this._startPan(e, sx, sy); return; }
       if (this.mode === "draw") {
-        const from = this.draft[this.draft.length - 1] || null;
-        const { p } = this.snap(world, from);
-        if (this.draft.length >= 3 && this._near(this.draft[0], sx, sy)) return this._finishDraft();
-        if (from && Math.hypot(p.x - from.x, p.y - from.y) < 0.05) return;
-        this.draft.push(p);
-        this.typed = "";
-        this.draw();
+        if (e.pointerType === "touch") {
+          // палец: точка ставится по отпусканию, если палец не поехал (иначе это сдвиг плана)
+          this.drag = { kind: "tap", sx, sy, world, cx: this.view.cx, cy: this.view.cy };
+          this._capture(e.pointerId);
+          return;
+        }
+        return this._addDraftPoint(world, sx, sy);
+      }
+      // Выбор: ручка конца стены → вершина → ребро → элемент → сдвиг вида
+      const hitW = this._hitWallHandle(sx, sy);
+      if (hitW) {
+        this.drag = { kind: "wallEnd", id: hitW.id, which: hitW.which, sx, sy, moved: false };
+        this._capture(e.pointerId);
+        this.api.setStatus("Тяните конец стены: длина и направление меняются, проёмы остаются на месте. Shift — строго по осям, Esc — отмена.");
         return;
       }
-      // Выбор: вершина → ребро → элемент → сдвиг вида
       const hitV = this._hitVertex(sx, sy);
       if (hitV) {
         this.activeId = hitV.contour.id;
         this.selVertex = { contourId: hitV.contour.id, index: hitV.index };
         this.drag = { kind: "vertex", contourId: hitV.contour.id, index: hitV.index, sx, sy, moved: false };
-        this.canvas.setPointerCapture(e.pointerId);
+        this._capture(e.pointerId);
         this.render();
         return;
       }
@@ -218,25 +245,80 @@
         this.render();
       }
       this.drag = { kind: "click", sx, sy, world, additive: e.shiftKey || e.ctrlKey, edge: !!hitE };
-      this.canvas.setPointerCapture(e.pointerId);
+      this._capture(e.pointerId);
     }
+
+    /** Поставить точку контура в мировых координатах (или замкнуть, если коснулись первой). */
+    _addDraftPoint(world, sx, sy) {
+      const from = this.draft[this.draft.length - 1] || null;
+      const { p } = this.snap(world, from);
+      if (this.draft.length >= 3 && this._near(this.draft[0], sx, sy)) return this._finishDraft();
+      if (from && Math.hypot(p.x - from.x, p.y - from.y) < 0.05) return;
+      this.draft.push(p);
+      this.typed = "";
+      this.cursor = p;
+      this.draw();
+    }
+
+    _pinchPoints() {
+      const [a, b] = [...this._ptrs.values()];
+      const r = this.canvas.getBoundingClientRect();
+      return { dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, mx: (a.x + b.x) / 2 - r.left, my: (a.y + b.y) / 2 - r.top };
+    }
+
+    _startPinch() {
+      this.drag = null;
+      this.preview = null;
+      const { dist, mx, my } = this._pinchPoints();
+      this._pinch = { d0: dist, s0: this.view.s, world: this.toWorld(mx, my) };
+      this.draw();
+    }
+
+    _pinchMove() {
+      if (this._ptrs.size < 2) return;
+      const { dist, mx, my } = this._pinchPoints();
+      this.view.s = U.clamp(this._pinch.s0 * (dist / this._pinch.d0), 4, 600);
+      const now = this.toWorld(mx, my); // точка плана под центром щипка остаётся под ним
+      this.view.cx += this._pinch.world.x - now.x;
+      this.view.cy += this._pinch.world.y - now.y;
+      this.draw();
+    }
+
+    _capture(id) { try { this.canvas.setPointerCapture(id); } catch { /* касание уже закончилось */ } }
 
     _startPan(e, sx, sy) {
       this.drag = { kind: "pan", sx, sy, cx: this.view.cx, cy: this.view.cy };
-      this.canvas.setPointerCapture(e.pointerId);
+      this._capture(e.pointerId);
     }
 
     _move(e) {
       this.shift = e.shiftKey;
+      if (this._ptrs.has(e.pointerId)) this._ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (this._pinch) { this._pinchMove(); return; }
+      if (this._ptrs.size > 1 || this._afterPinch) return;
       const { sx, sy } = this.eventPoint(e);
       const world = this.toWorld(sx, sy);
       const d = this.drag;
-      if (d && d.kind === "click" && Math.hypot(sx - d.sx, sy - d.sy) > 4) {
+      const slop = e.pointerType === "touch" ? 9 : 4;
+      if (d && (d.kind === "click" || d.kind === "tap") && Math.hypot(sx - d.sx, sy - d.sy) > slop) {
         this.drag = { kind: "pan", sx: d.sx, sy: d.sy, cx: this.view.cx, cy: this.view.cy };
       }
       if (this.drag && this.drag.kind === "pan") {
         this.view.cx = this.drag.cx - (sx - this.drag.sx) / this.view.s;
         this.view.cy = this.drag.cy + (sy - this.drag.sy) / this.view.s;
+        this.draw();
+        return;
+      }
+      if (d && d.kind === "wallEnd") {
+        const w = BS.project.find(this.project, d.id);
+        if (!w) return;
+        const ends = BS.project.wallEnds(w);
+        const fixed = d.which === "start" ? ends.b : ends.a;
+        const { p, kind } = this.snap(world, fixed);
+        d.moved = d.moved || Math.hypot(sx - d.sx, sy - d.sy) > 3;
+        this.wallPreview = { id: d.id, which: d.which, p, fixed };
+        this.snapKind = kind;
+        this.cursor = p;
         this.draw();
         return;
       }
@@ -274,11 +356,33 @@
       }
     }
 
-    _up(e) {
+    _up(e, cancelled = false) {
+      this._ptrs.delete(e.pointerId);
+      if (this._pinch) { // щипок закончился: оставшийся палец не должен ничего делать до отпускания
+        if (this._ptrs.size < 2) { this._pinch = null; this._afterPinch = this._ptrs.size > 0; }
+        this.drag = null;
+        return;
+      }
+      if (this._afterPinch) { if (!this._ptrs.size) this._afterPinch = false; this.drag = null; return; }
       const d = this.drag;
       this.drag = null;
       try { this.canvas.releasePointerCapture(e.pointerId); } catch { /* не захвачен */ }
       if (!d) return;
+      if (cancelled) { this.preview = null; this.render(); return; }
+      if (d.kind === "tap") { this._addDraftPoint(d.world, d.sx, d.sy); return; }
+      if (d.kind === "wallEnd") {
+        const wp = this.wallPreview;
+        this.wallPreview = null;
+        if (d.moved && wp) {
+          this.api.edit("Длина стены", () => {
+            const notes = BS.project.moveWallEnd(this.project, wp.id, wp.which, wp.p);
+            const w = BS.project.find(this.project, wp.id);
+            return `Стена: длина ${fmt(w.size.length)} м${notes.length ? ". " + notes.join("; ") : ""}`;
+          });
+        }
+        this.render();
+        return;
+      }
       if (d.kind === "vertex") {
         const pv = this.preview;
         this.preview = null;
@@ -301,15 +405,48 @@
     _dbl(e) {
       if (this.mode !== "select") return;
       const { sx, sy } = this.eventPoint(e);
-      const hit = this._hitEdge(sx, sy);
+      // стена нарисована полосой внутри контура — двойной щелчок по полосе тоже считается попаданием в ребро
+      const band = (this.project.house.wallThickness || 0.3) * this.view.s + 4;
+      const hit = this._hitEdge(sx, sy, Math.max(12, band));
       if (!hit) return;
-      const { p } = this.snap(hit.point);
+      const pts0 = hit.contour.points;
+      const a = pts0[hit.index], b = pts0[(hit.index + 1) % pts0.length];
+      let p = { x: U.round(hit.point.x, 3), y: U.round(hit.point.y, 3) };
+      const g = this.grid(), r = (v) => U.round(Math.round(v / g) * g, 4);
+      // по горизонтальному/вертикальному ребру — шаг сетки вдоль ребра; по наклонному точка остаётся на линии
+      if (Math.abs(a.y - b.y) < 1e-9) p = { x: r(p.x), y: a.y };
+      else if (Math.abs(a.x - b.x) < 1e-9) p = { x: a.x, y: r(p.y) };
+      if (pts0.some((q) => Math.hypot(q.x - p.x, q.y - p.y) < 0.05)) {
+        this.api.setStatus("Здесь уже есть вершина — выберите другое место на ребре", "warn");
+        return;
+      }
       this.api.edit("Новая вершина контура", () => {
-        const pts = hit.contour.points.map((q) => ({ ...q }));
+        const pts = pts0.map((q) => ({ ...q }));
         pts.splice(hit.index + 1, 0, { x: p.x, y: p.y });
         const notes = BS.contour.setPoints(this.project, hit.contour.id, pts);
+        this.activeId = hit.contour.id;
         this.selVertex = { contourId: hit.contour.id, index: hit.index + 1 };
         return `Добавлена вершина ${hit.index + 2}. Перетащите её, чтобы изменить форму${notes.length ? ". " + notes.join("; ") : ""}`;
+      });
+    }
+
+    /** Кнопка «+ Вершина»: середина ребра, следующего за выбранной вершиной, иначе — самого длинного ребра. */
+    _addVertexButton() {
+      const c = this.activeContour();
+      if (!c) { this.api.setStatus("Сначала нарисуйте контур дома", "warn"); return; }
+      const pts0 = c.points, n = pts0.length;
+      const len = (i) => Math.hypot(pts0[(i + 1) % n].x - pts0[i].x, pts0[(i + 1) % n].y - pts0[i].y);
+      let i = this.selVertex && this.selVertex.contourId === c.id ? this.selVertex.index : -1;
+      if (i < 0) for (let k = 0; k < n; k++) if (i < 0 || len(k) > len(i)) i = k;
+      const a = pts0[i], b = pts0[(i + 1) % n];
+      const p = { x: U.round((a.x + b.x) / 2, 3), y: U.round((a.y + b.y) / 2, 3) };
+      this.api.edit("Новая вершина контура", () => {
+        const pts = pts0.map((q) => ({ ...q }));
+        pts.splice(i + 1, 0, p);
+        const notes = BS.contour.setPoints(this.project, c.id, pts);
+        this.activeId = c.id;
+        this.selVertex = { contourId: c.id, index: i + 1 };
+        return `Добавлена вершина ${i + 2} посередине ребра. Перетащите её в нужное место${notes.length ? ". " + notes.join("; ") : ""}`;
       });
     }
 
@@ -334,6 +471,11 @@
         } else handled = false;
       } else if ((k === "Delete" || k === "Backspace") && this.selVertex) {
         this._deleteVertex(this.selVertex);
+      } else if (k === "Escape" && this.drag && this.drag.kind === "wallEnd") {
+        this.drag = null;
+        this.wallPreview = null;
+        this.api.setStatus("Изменение стены отменено");
+        this.draw();
       } else if (k === "Escape" && (this.selVertex || this.popup)) {
         this.selVertex = null;
         this._closePopup();
@@ -403,6 +545,52 @@
       return Math.hypot(s.x - sx, s.y - sy) <= px;
     }
 
+    /** Стены, у которых показываем ручки: выбранные, на этом этаже, не привязанные к контуру. */
+    _handleWalls() {
+      const sel = new Set(this.api.getSelected ? this.api.getSelected() || [] : []);
+      return this._levelElements().filter((e) => e.type === "wall" && !e.hostId && sel.has(e.id) && !(e.params && e.params.contourId));
+    }
+
+    _hitWallHandle(sx, sy) {
+      for (const w of this._handleWalls()) {
+        const { a, b } = BS.project.wallEnds(w);
+        if (this._near(b, sx, sy, HIT_PX + 2)) return { id: w.id, which: "end" };
+        if (this._near(a, sx, sy, HIT_PX + 2)) return { id: w.id, which: "start" };
+      }
+      return null;
+    }
+
+    _drawWallHandles(ctx, col) {
+      const wp = this.wallPreview;
+      for (const w of this._handleWalls()) {
+        const { a, b } = BS.project.wallEnds(w);
+        for (const [pt, which] of [[a, "start"], [b, "end"]]) {
+          const dragging = wp && wp.id === w.id && wp.which === which;
+          const s = this.toScreen(dragging ? wp.p : pt);
+          ctx.fillStyle = dragging ? col.accent : "#fff";
+          ctx.strokeStyle = col.accent;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.rect(s.x - 5, s.y - 5, 10, 10); ctx.fill(); ctx.stroke();
+        }
+      }
+      if (wp) {
+        const q1 = this.toScreen(wp.fixed), q2 = this.toScreen(wp.p);
+        ctx.save();
+        ctx.strokeStyle = col.accent; ctx.lineWidth = 3; ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(q1.x, q1.y); ctx.lineTo(q2.x, q2.y); ctx.stroke();
+        ctx.restore();
+        const L = Math.hypot(wp.p.x - wp.fixed.x, wp.p.y - wp.fixed.y);
+        const label = `${fmt(L)} м`;
+        ctx.font = `600 12px ${col.font}`;
+        const tw = ctx.measureText(label).width + 10;
+        const mx = (q1.x + q2.x) / 2, my = (q1.y + q2.y) / 2 - 14;
+        ctx.fillStyle = col.accent;
+        ctx.fillRect(mx - tw / 2, my - 10, tw, 20);
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(label, mx, my);
+      }
+    }
+
     _hitVertex(sx, sy) {
       for (const c of this.contours()) {
         const pts = this.contourPoints(c);
@@ -411,7 +599,7 @@
       return null;
     }
 
-    _hitEdge(sx, sy) {
+    _hitEdge(sx, sy, tolPx = 6) {
       const w = this.toWorld(sx, sy);
       let best = null;
       for (const c of this.contours()) {
@@ -420,7 +608,7 @@
           const a = pts[i], b = pts[(i + 1) % pts.length];
           const q = BS.geometry.closestPointOnSegment(w, a, b);
           const d = Math.hypot(q.x - w.x, q.y - w.y) * this.view.s;
-          if (d <= 6 && (!best || d < best.d)) best = { d, contour: c, index: i, point: q };
+          if (d <= tolPx && (!best || d < best.d)) best = { d, contour: c, index: i, point: q };
         }
       }
       return best;
@@ -542,16 +730,19 @@
       seg.className = "segmented plan-seg";
       seg.setAttribute("role", "group");
       seg.setAttribute("aria-label", "Построение по плану");
+      seg.dataset.label = "Построить";
       seg.append(
-        btn("Контур", "wall-line", "Нарисовать контур дома щелчками по углам", () => this.startDraw(), this.mode === "draw"),
-        btn("Фундамент", "rect", "Фундамент по контуру: плита или лента", () => this._togglePopup("found"), this.popup === "found"),
-        btn("Стены", "wall-line", "Наружные стены по рёбрам контура", () => this._togglePopup("walls"), this.popup === "walls"),
-        btn("Перекрытие", "rect", "Пол внутри стен или перекрытие над этажом", () => this._togglePopup("slab"), this.popup === "slab"),
-        btn("Крыша", "dimension", "Крыша над контуром", () => this._togglePopup("roof"), this.popup === "roof"));
+        btn("Контур", "sketch", "Нарисовать контур дома щелчками по углам", () => this.startDraw(), this.mode === "draw"),
+        btn("Фундамент", "slab", "Фундамент по контуру: плита или лента", () => this._togglePopup("found"), this.popup === "found"),
+        btn("Стены", "wall", "Наружные стены по рёбрам контура", () => this._togglePopup("walls"), this.popup === "walls"),
+        btn("Перекрытие", "strip", "Пол внутри стен или перекрытие над этажом", () => this._togglePopup("slab"), this.popup === "slab"),
+        btn("Крыша", "roof", "Крыша над контуром", () => this._togglePopup("roof"), this.popup === "roof"));
       const extra = document.createElement("div");
       extra.className = "segmented plan-seg";
+      extra.dataset.label = "Правка";
       extra.append(
-        btn("Перестроить", null, "Перестроить элементы контура по его текущей форме", () => this.run("rebuild")),
+        btn("Перестроить", "reset", "Перестроить элементы контура по его текущей форме", () => this.run("rebuild")),
+        btn("Вершина", "plus", "Добавить вершину в середину ребра после выбранной вершины (или самого длинного ребра). Также — двойной щелчок по ребру", () => this._addVertexButton()),
         btn("Вписать", "grid", "Показать весь план", () => this.fit()));
       this.toolsEl.replaceChildren(seg, extra);
       if (BS.icons && BS.icons.apply) { try { BS.icons.apply(this.toolsEl); } catch { /* иконки не критичны */ } }
@@ -703,6 +894,16 @@
 
     // ---------------------------------------------------------------- отрисовка
 
+    _renderDrawBar() {
+      const on = this.mode === "draw";
+      this.drawBar.hidden = !on;
+      if (!on) return;
+      const n = this.draft.length;
+      this._dbCount.textContent = n ? `Точек: ${n}` : "Коснитесь плана, чтобы поставить первую точку";
+      this._dbUndo.disabled = !n;
+      this._dbClose.disabled = n < 3;
+    }
+
     render() {
       if (!this.opts) this.opts = this._defaults();
       if (this.activeId && !BS.contour.get(this.project, this.activeId)) this.activeId = null;
@@ -746,6 +947,7 @@
     }
 
     draw() {
+      this._renderDrawBar();
       const ctx = this.canvas.getContext("2d");
       if (!ctx) return;
       const col = this._colors();
@@ -755,8 +957,10 @@
       ctx.fillRect(0, 0, w, h);
       this._drawGrid(ctx, col, w, h);
       this._drawSite(ctx, col);
+      this._drawUnderlay(ctx, col);
       this._drawElements(ctx, col);
       this._drawContours(ctx, col);
+      this._drawWallHandles(ctx, col);
       this._drawDraft(ctx, col);
       this._drawCursor(ctx, col);
       this._drawScale(ctx, col, w, h);
@@ -813,6 +1017,29 @@
       ctx.beginPath();
       pts.forEach((q, i) => { const p = this.toScreen(q); if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y); });
       ctx.closePath();
+    }
+
+    /** Подложка: стены и перекрытия этажа ниже — бледным контуром, чтобы строить следующий этаж по первому. */
+    _drawUnderlay(ctx, col) {
+      const levels = this.project.levels.slice().sort((a, b) => a.elevation - b.elevation);
+      const cur = BS.project.level(this.project, this.levelId);
+      const below = levels.filter((l) => l.elevation < cur.elevation).pop();
+      if (!below) return;
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = col.muted;
+      ctx.fillStyle = col.muted;
+      ctx.lineWidth = 1;
+      for (const el of this.project.elements) {
+        if (el.levelId !== below.id || el.hostId || !["wall", "slab", "column", "round_column"].includes(el.type)) continue;
+        const fp = BS.shapes.footprint(el, this.project);
+        if (fp.length < 3) continue;
+        this._poly(ctx, fp);
+        if (el.type === "wall") { ctx.globalAlpha = 0.12; ctx.fill(); ctx.globalAlpha = 0.45; }
+        ctx.stroke();
+      }
+      ctx.restore();
     }
 
     _drawElements(ctx, col) {
