@@ -125,6 +125,7 @@
       if (state.isolate) view.setIsolate([...state.selectedIds]);
       applyInside();
       if (refit) view.setView("iso");
+      if (refit && plan && plan.fit) plan.fit();
       if (failed.length) message = `${message ? message + ". " : ""}Не построены (некорректные данные): ${failed.join(", ")}`;
     }
     IO.autosave(state.project);
